@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_20_112652) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_14_135514) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -805,7 +805,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_20_112652) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at", precision: nil
-    t.integer "trust_level"
     t.boolean "developer"
     t.string "cid"
     t.string "discord"
