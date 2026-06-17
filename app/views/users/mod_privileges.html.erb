@@ -165,7 +165,9 @@
                     revoke
                   </button>
                 <% else %>
-                  <button class="button is-outlined js-role-grant-btn" data-role="mod-global" data-user="<%= @user.id %>">
+                  <button class="button is-outlined js-role-grant-btn"
+                          data-role="mod-global"
+                          data-user="<%= @user.id %>">
                     grant
                   </button>
                 <% end %>
@@ -192,12 +194,16 @@
                       granted
                     </button>
                   <% else %>
-                    <button class="button is-filled js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">
+                    <button class="button is-filled js-role-grant-btn"
+                            data-role="admin-global"
+                            data-user="<%= @user.id %>">
                       revoke
                     </button>
                   <% end %>
                 <% else %>
-                  <button class="button is-outlined js-role-grant-btn" data-role="admin-global" data-user="<%= @user.id %>">
+                  <button class="button is-outlined js-role-grant-btn"
+                          data-role="admin-global"
+                          data-user="<%= @user.id %>">
                     grant
                   </button>
                 <% end %>
