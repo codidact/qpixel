@@ -7,7 +7,10 @@
 
   <div class="grid--cell is-9-lg is-12">
     <h1>Dashboard</h1>
-    <p class="lead">Please note that information shown in these user moderation tools is sensitive and should not be shared with anyone outside the moderator and admin team.</p>
+    <p class="lead">
+      Please note that information shown in these user moderation tools is sensitive and should not be shared with
+      anyone outside the moderator and admin team.
+    </p>
 
     <div class="widget">
       <div class="widget--header">Account Information</div>
@@ -23,7 +26,10 @@
           </tr>
           <tr>
             <th>Joined</th>
-            <td><%= @user.created_at.strftime("%Y-%m-%d") %> (network), <%= @user.community_user.created_at.strftime("%Y-%m-%d") %> (community)</td>
+            <td>
+              <%= @user.created_at.strftime("%Y-%m-%d") %> (network),
+              <%= @user.community_user.created_at.strftime("%Y-%m-%d") %> (community)
+            </td>
           </tr>
         </table>
       </div>
@@ -54,7 +60,9 @@
             <td>
               <% last_post = @user.posts.last %>
               <% if last_post %>
-              <span title="<%= last_post.created_at.iso8601 %>"><%= time_ago_in_words(last_post.created_at, locale: :en_abbrev) %> ago</span>
+              <span title="<%= last_post.created_at.iso8601 %>">
+                <%= time_ago_in_words(last_post.created_at, locale: :en_abbrev) %> ago
+              </span>
               <% else %>
               never
               <% end %>
@@ -74,7 +82,9 @@
             <td>
               <% last_vote = @user.votes.last %>
               <% if last_vote %>
-              <span title="<%= last_vote.created_at.iso8601 %>"><%= time_ago_in_words(last_vote.created_at, locale: :en_abbrev) %> ago</span>
+              <span title="<%= last_vote.created_at.iso8601 %>">
+                <%= time_ago_in_words(last_vote.created_at, locale: :en_abbrev) %> ago
+              </span>
               <% else %>
               never
               <% end %>
@@ -94,7 +104,9 @@
             <td>
               <% last_comment = @user.comments.last %>
               <% if last_comment %>
-              <span title="<%= last_comment.created_at.iso8601 %>"><%= time_ago_in_words(last_comment.created_at, locale: :en_abbrev) %> ago</span>
+              <span title="<%= last_comment.created_at.iso8601 %>">
+                <%= time_ago_in_words(last_comment.created_at, locale: :en_abbrev) %> ago
+              </span>
               <% else %>
               never
               <% end %>
@@ -114,7 +126,9 @@
             <td>
               <% last_suggested_edit = @user.suggested_edits.last %>
               <% if last_suggested_edit %>
-              <span title="<%= last_suggested_edit.created_at.iso8601 %>"><%= time_ago_in_words(last_suggested_edit.created_at, locale: :en_abbrev) %> ago</span>
+              <span title="<%= last_suggested_edit.created_at.iso8601 %>">
+                <%= time_ago_in_words(last_suggested_edit.created_at, locale: :en_abbrev) %> ago
+              </span>
               <% else %>
               never
               <% end %>
@@ -133,7 +147,9 @@
             <td>
               <% last_flag = @user.flags.last %>
               <% if last_flag %>
-              <span title="<%= last_flag.created_at.iso8601 %>"><%= time_ago_in_words(last_flag.created_at, locale: :en_abbrev) %> ago</span>
+              <span title="<%= last_flag.created_at.iso8601 %>">
+                <%= time_ago_in_words(last_flag.created_at, locale: :en_abbrev) %> ago
+              </span>
               <% else %>
               never
               <% end %>
