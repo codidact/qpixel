@@ -391,4 +391,22 @@ module ApplicationHelper
   def safe_per_page(params, min = 20)
     params[:per_page].nil? || params[:per_page].to_i < min ? min : params[:per_page].to_i
   end
+
+  ##
+  # Is the Moderator Tools tab of the user page the active tab?
+  # @param user [User] user whose page is being viewed
+  # @return [Boolean]
+  def user_mod_tools_tab_active?(user)
+    current_page?(mod_user_path(user)) ||
+    current_page?(full_user_log_path(user)) ||
+    current_page?(user_annotations_path(user)) ||
+    current_page?(mod_vote_summary_path(user)) ||
+    current_page?(user_privileges_path(user)) ||
+    current_page?(mod_warning_log_path(user)) ||
+    current_page?(new_mod_warning_path(user)) ||
+    current_page?(mod_delete_path(user)) ||
+    current_page?(mod_delete_network_account_path(user)) ||
+    current_page?(mod_failban_path(user)) ||
+    current_page?(start_impersonating_path(user))
+  end
 end
