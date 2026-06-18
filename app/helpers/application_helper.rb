@@ -397,16 +397,16 @@ module ApplicationHelper
   # @param user [User] user whose page is being viewed
   # @return [Boolean]
   def user_mod_tools_tab_active?(user)
-    current_page?(mod_user_path(user)) ||
-    current_page?(full_user_log_path(user)) ||
-    current_page?(user_annotations_path(user)) ||
-    current_page?(mod_vote_summary_path(user)) ||
-    current_page?(user_privileges_path(user)) ||
-    current_page?(mod_warning_log_path(user)) ||
-    current_page?(new_mod_warning_path(user)) ||
-    current_page?(mod_delete_path(user)) ||
-    current_page?(mod_delete_network_account_path(user)) ||
-    current_page?(mod_failban_path(user)) ||
-    current_page?(start_impersonating_path(user))
+    current_page?(mod_user_url(user)) ||
+      current_page?(full_user_log_url(user)) ||
+      current_page?(user_annotations_url(user)) ||
+      current_page?(mod_vote_summary_url(user)) ||
+      current_page?(user_privileges_url(user)) ||
+      current_page?(mod_warning_log_url(user)) ||
+      current_page?(new_mod_warning_url(user)) ||
+      current_page?(mod_delete_url(user)) ||
+      current_page?(mod_delete_network_account_url(user)) ||
+      current_page?(mod_failban_url(user)) ||
+      current_page?(start_impersonating_url(user))
   end
 end
