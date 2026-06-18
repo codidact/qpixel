@@ -26,6 +26,14 @@ sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadli
 sudo apt install mysql-server libmysqlclient-dev
 ```
 
+For Red Hat-Based Linux:
+
+```
+sudo dnf install gcc make pkg-config
+sudo dnf install autoconf bison @development-tools openssl-libs libyaml-devel readline-devel zlibrary-devel ncurses-devel libffi-devel gdbm-devel
+sudo dnf install mysql-server mysql-devel
+```
+
 For Arch-Based Linux:
 
 ```
