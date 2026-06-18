@@ -444,7 +444,6 @@ users:
     - profile
     - profile_markdown
     - staff
-    - trust_level
   query: >
     WHERE deleted = FALSE
 
