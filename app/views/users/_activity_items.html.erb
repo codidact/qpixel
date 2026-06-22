@@ -15,7 +15,7 @@
         <td class="h-fs-caption">
           <% working_title = i.answer? ? "A: #{i.parent.title}" : i.title %>
           <strong><%= working_title %></strong><br>
-          <%= i.body_plain[0..300] + ((i.body_plain.length > 300) ? "..." : "") %><br>
+          <%= i.body_plain&.truncate(300) %><br>
           <%= link_to '(more)',
                       generic_share_link(i),
                       'aria-label': "More information about #{type_name} #{working_title}" %>
@@ -25,7 +25,7 @@
         <td class="wrap-word">Comment</td>
         <td><%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %></td>
         <td class="h-fs-caption">
-          <%= i.content[0..300] + ((i.content.length > 300) ? '...' : '') %><br>
+          <%= i.content&.truncate(300) %><br>
           <%= link_to '(more)', comment_link(i), 'aria-label': 'More information about comment' %>
         </td>
         <td>&mdash;</td>
@@ -56,7 +56,7 @@
         <td class="wrap-word"><span class="h-fw-bold h-c-red-700">Warning</span></td>
         <td>&mdash;</td>
         <td class="h-fs-caption">
-          <%= i.body[0..300] + ((i.body.length > 300) ? "..." : "") %>
+          <%= i.body&.truncate(300) %>
         </td>
         <td>&mdash;</td>
       <% elsif mod && i.class == Flag %>
@@ -69,7 +69,7 @@
     <% end %>
         </td>
         <td class="h-fs-caption">
-          <%= i.reason[0..300] + ((i.reason.length > 300) ? "..." : "") %><br>
+          <%= i.reason&.truncate(300) %><br>
         </td>
         <td>
           <%= i.status || "pending" %>

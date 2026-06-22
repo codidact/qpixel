@@ -250,6 +250,7 @@ module ApplicationHelper
 
   ##
   # Split a string after a specified number of characters, only breaking at word boundaries.
+  # @deprecated Use {String#truncate}[https://www.rubydoc.info/gems/activesupport/String#truncate-instance_method].
   # @param text [String] The text to split.
   # @param max_length [Integer] The maximum number of characters to leave in the resulting strings.
   # @return [Array<String>]
