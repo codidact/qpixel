@@ -1,5 +1,10 @@
-ActionMailer::Base.add_delivery_method :ses, AWS::SES::Base,
-                                       access_key_id: Rails.application.credentials.ses_access_key,
-                                       secret_access_key: Rails.application.credentials.ses_secret_key,
-                                       server: 'email.us-east-1.amazonaws.com',
-                                       signature_version: 4
+Rails.application.configure do
+  if config.action_mailer.delivery_method == :ses
+    Aws.config.update(region: 'us-east-1',
+                      credentials: Aws::Credentials.new(Rails.application.credentials.ses_access_key,
+                                                        Rails.application.credentials.ses_secret_key))
+
+    ses_client = Aws::SESV2::Client.new
+    config.action_mailer.ses_v2_settings = { sesv2_client: ses_client }
+  end
+end
