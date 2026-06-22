@@ -13,7 +13,7 @@
   <% end %>
   <meta property="og:url" content="<%= post_url(@post) %>" />
   <meta property="og:title" content="<%= @post.title %>" />
-  <meta property="og:description" content="<%= @post.body_plain[0..150].strip %>..." />
+  <meta property="og:description" content="<%= @post.body_plain&.truncate(150) %>" />
   <meta property="og:image" content="<%= "#{SiteSetting['SiteLogoPath']}" %>" />
 <% end %>
 
