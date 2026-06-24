@@ -89,6 +89,16 @@ class ModeratorController < ApplicationController
     redirect_to mod_spammers_path
   end
 
+  def pii_correlation
+    @user = User.find(params[:id])
+    respond_to do |format|
+      format.html
+      format.template do
+        @target = User.find_by(id: params[:target_id])
+      end
+    end
+  end
+
   private
 
   def set_post
