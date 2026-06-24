@@ -26,6 +26,14 @@ sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadli
 sudo apt install mysql-server libmysqlclient-dev
 ```
 
+For Red Hat-Based Linux:
+
+```
+sudo dnf install gcc make pkg-config
+sudo dnf install autoconf bison @development-tools openssl-libs libyaml-devel readline-devel zlibrary-devel ncurses-devel libffi-devel gdbm-devel
+sudo dnf install mysql-server mysql-devel
+```
+
 For Arch-Based Linux:
 
 ```
@@ -131,6 +139,7 @@ the MySQL server with `sudo mysql -u root` and create a new database user for QP
 CREATE USER qpixel@localhost IDENTIFIED BY 'choose_a_password_here';
 GRANT ALL ON qpixel_dev.* TO qpixel@localhost;
 GRANT ALL ON qpixel_test.* TO qpixel@localhost;
+GRANT ALL ON qpixel_dump.* TO qpixel@localhost;
 GRANT ALL ON qpixel.* TO qpixel@localhost;
 ```
 

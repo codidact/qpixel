@@ -102,6 +102,7 @@ end
 
 group :development, :test do
   gem 'byebug', '~> 11.1'
+  gem 'octokit', '~> 10.0'
 end
 
 group :development do

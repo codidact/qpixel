@@ -58,7 +58,7 @@ class CommentsController < ApplicationController
       notification = "New comment thread on #{@comment.root.title}: #{@comment_thread.title}"
 
       NewThreadFollower.where(post: @post).each do |ntf|
-        unless ntf.user.same_as?(current_user)
+        unless ntf.user.same_as?(current_user) || pings.include?(ntf.user_id)
           ntf.user.create_notification(notification, helpers.comment_link(@comment))
         end
         ThreadFollower.create(user: ntf.user, comment_thread: @comment_thread)
@@ -92,9 +92,8 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
-        title = @post.parent.nil? ? @post.title : @post.parent.title
         follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{title}'",
+                                          "on the post '#{@comment.root.title}'",
                                           helpers.comment_link(@comment))
       end
     else
@@ -473,16 +472,15 @@ class CommentsController < ApplicationController
 
   # @param pings [Array<Integer>] list of pinged user ids
   def apply_pings(pings)
+    context = @comment_thread.comments.first.same_as?(@comment) ? 'new' : 'comment in the'
+    notification_text =
+      "You were mentioned in a #{context} thread '#{@comment_thread.title}' on the post '#{@comment.root.title}'"
+
     pings.each do |p|
       user = User.where(id: p).first
       next if user.nil?
 
-      next if user.same_as?(@comment.post.user)
-
-      title = @post.parent.nil? ? @post.title : @post.parent.title
-      user.create_notification("You were mentioned in a comment in the thread '#{@comment_thread.title}' " \
-                               "on the post '#{title}'",
-                               helpers.comment_link(@comment))
+      user.create_notification(notification_text, helpers.comment_link(@comment))
     end
   end
 

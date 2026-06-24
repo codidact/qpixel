@@ -408,4 +408,8 @@ Rails.application.routes.draw do
   scope 'network' do
     root                                   to: 'fake_community#communities', as: :fc_communities
   end
+
+  scope 'data' do
+    root                                   to: 'dumps#index', as: :data_dumps
+  end
 end

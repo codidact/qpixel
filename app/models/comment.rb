@@ -3,6 +3,7 @@ class Comment < ApplicationRecord
   include PostRelated
   include SoftDeletable
   include Timestamped
+  include Identity
 
   USER_PING_REG_EXP = /@#(-?\d+)/
 

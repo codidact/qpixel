@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_22_151439) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_14_135514) do
   create_table "abilities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "community_id"
     t.string "name"
@@ -268,6 +268,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_22_151439) do
     t.index ["user_id"], name: "index_complaints_on_user_id"
   end
 
+  create_table "dumps", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "automatic", default: false, null: false
+    t.string "link"
+    t.string "checksum"
+  end
+
   create_table "email_logs", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "log_type"
     t.string "destination"
@@ -294,8 +304,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_22_151439) do
   end
 
   create_table "filters", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "name", null: false
+    t.bigint "user_id", default: -1, null: false
+    t.string "name", default: "", null: false
     t.float "min_score"
     t.float "max_score"
     t.integer "min_answers"
@@ -795,7 +805,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_22_151439) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at", precision: nil
-    t.integer "trust_level"
     t.boolean "developer"
     t.string "cid"
     t.string "discord"

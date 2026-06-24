@@ -38,6 +38,10 @@ every 7.days, at: '05:00' do
   runner 'scripts/run_user_stats.rb'
 end
 
+every 7.days, at: '04:00' do
+  runner 'scripts/data_dump.rb'
+end
+
 every 6.hours do
   runner 'scripts/recalc_abilities.rb'
 end

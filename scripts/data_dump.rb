@@ -1,0 +1,1 @@
+DataDumpJob.perform_now
