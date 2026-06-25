@@ -226,6 +226,7 @@ Rails.application.routes.draw do
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
     post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
     get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
+    get    '/:id/mod/pii',              to: 'moderator#pii_correlation', as: :mod_pii_correlation
   end
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications

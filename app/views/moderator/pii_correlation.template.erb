@@ -1,0 +1,132 @@
+<h3>Comparing with <%= user_link @target %></h3>
+
+<h4>Email address</h4>
+<table class="table is-full-width is-striped is-with-hover">
+  <thead>
+  <tr>
+    <th></th>
+    <th>Handle</th>
+    <th>Domain</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><strong><%= @user.rtl_safe_username %></strong></td>
+    <% user_handle = Digest::SHA2.hexdigest(@user.email.split('@')[0]) %>
+    <% target_handle = Digest::SHA2.hexdigest(@target.email.split('@')[0]) %>
+    <% user_domain = Digest::SHA2.hexdigest(@user.email.split('@')[1]) %>
+    <% target_domain = Digest::SHA2.hexdigest(@target.email.split('@')[1]) %>
+    <td>
+      <code class="<%= 'has-background-color-red' if user_handle == target_handle %>">
+        <%= user_handle[0..7] %>
+      </code>
+    </td>
+    <td>
+      <code class="<%= 'has-background-color-red' if user_domain == target_domain %>">
+        <%= user_domain[0..7] %>
+      </code><br/>
+      <% domain_users = Rails.cache.hget 'user_email_domains', @user.email.split('@')[1] %>
+      <% if domain_users.nil? %>
+        (unknown number of users)
+      <% else %>
+        Used by <%= pluralize(domain_users, 'user') %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <td><strong><%= @target.rtl_safe_username %></strong></td>
+    <td>
+      <code class="<%= 'has-background-color-red' if user_handle == target_handle %>">
+        <%= target_handle[0..7] %>
+      </code>
+    </td>
+    <td>
+      <code class="<%= 'has-background-color-red' if user_domain == target_domain %>">
+        <%= target_domain[0..7] %>
+      </code><br/>
+      <% domain_users = Rails.cache.hget 'user_email_domains', @target.email.split('@')[1] %>
+      <% if domain_users.nil? %>
+        (unknown number of users)
+      <% else %>
+        Used by <%= pluralize(domain_users, 'user') %>
+      <% end %>
+    </td>
+  </tr>
+  </tbody>
+</table><br/>
+
+<h4>IP addresses</h4>
+
+<% user_current_family, user_current_ip = split_hash_ip(@user.current_sign_in_ip, @user) %>
+<% user_joiner = user_current_family == 'IPv4' ? '.' : ':' %>
+<% target_current_family, target_current_ip = split_hash_ip(@target.current_sign_in_ip, @user) %>
+<% target_joiner = target_current_family == 'IPv4' ? '.' : ':' %>
+<strong>Current sign-in</strong><br/>
+<table class="table is-striped is-with-hover">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Family</th>
+      <th>Address</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= @user.rtl_safe_username %></td>
+      <td><%= user_current_family %></td>
+      <td>
+        <% user_current_ip.map.with_index do |p, i| %>
+          <code class="<%= 'has-background-color-red' if p == target_current_ip[i] %>">
+            <%= p[0..3] %></code><%= user_joiner if i < user_current_ip.length - 1 %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td><%= @target.rtl_safe_username %></td>
+      <td><%= target_current_family %></td>
+      <td>
+        <% target_current_ip.map.with_index do |p, i| %>
+          <code class="<%= 'has-background-color-red' if p == user_current_ip[i] %>">
+            <%= p[0..3] %></code><%= target_joiner if i < target_current_ip.length - 1 %>
+        <% end %>
+      </td>
+    </tr>
+  </tbody>
+</table><br/>
+
+<% user_last_family, user_last_ip = split_hash_ip(@user.last_sign_in_ip, @user) %>
+<% user_joiner = user_last_family == 'IPv4' ? '.' : ':' %>
+<% target_last_family, target_last_ip = split_hash_ip(@target.last_sign_in_ip, @user) %>
+<% target_joiner = target_last_family == 'IPv4' ? '.' : ':' %>
+<strong>Last sign-in</strong><br/>
+<table class="table is-striped is-with-hover">
+  <thead>
+  <tr>
+    <th>User</th>
+    <th>Family</th>
+    <th>Address</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><%= @user.rtl_safe_username %></td>
+    <td><%= user_last_family %></td>
+    <td>
+      <% user_last_ip.map.with_index do |p, i| %>
+        <code class="<%= 'has-background-color-red' if p == target_last_ip[i] %>">
+          <%= p[0..3] %></code><%= user_joiner if i < user_last_ip.length - 1 %>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <td><%= @target.rtl_safe_username %></td>
+    <td><%= target_last_family %></td>
+    <td>
+      <% target_last_ip.map.with_index do |p, i| %>
+        <code class="<%= 'has-background-color-red' if p == user_last_ip[i] %>">
+          <%= p[0..3] %></code><%= target_joiner if i < target_last_ip.length - 1 %>
+      <% end %>
+    </td>
+  </tr>
+  </tbody>
+</table>

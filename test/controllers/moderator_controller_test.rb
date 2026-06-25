@@ -224,4 +224,28 @@ class ModeratorControllerTest < ActionController::TestCase
     assert_redirected_to mod_spammers_path
     assert_equal true, spammer.deleted
   end
+
+  test 'pii correlation should be accessible' do
+    sign_in users(:moderator)
+    get :pii_correlation, params: { id: users(:standard_user).id }
+    assert_response(:success)
+  end
+
+  test 'pii correlation should not be accessible to non-moderators' do
+    sign_in users(:standard_user)
+    get :pii_correlation, params: { id: users(:standard_user).id }
+    assert_response(:not_found)
+  end
+
+  test 'pii correlation should not be accessible without sign-in' do
+    get :pii_correlation, params: { id: users(:standard_user).id }
+    assert_response(:not_found)
+  end
+
+  test 'pii correlation template should work' do
+    sign_in users(:moderator)
+    get :pii_correlation, params: { id: users(:standard_user).id, format: 'template',
+                                    target_id: users(:spammer).id }
+    assert_response(:success)
+  end
 end
