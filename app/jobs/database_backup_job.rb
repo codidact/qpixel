@@ -1,7 +1,7 @@
 class DatabaseBackupJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
+  def perform(*_args)
     storage = backup_storage
 
     return unless backup_storage
@@ -24,13 +24,11 @@ class DatabaseBackupJob < ApplicationJob
   private
 
   def backup_storage
-    begin
-      registry = ActiveStorage::Blob.services
-      registry.fetch :db_backup
-    rescue KeyError
-      logger.fatal 'Database backup storage is not configured. Add a :db_backup configuration to config/storage.yml.'
-      nil
-    end
+    registry = ActiveStorage::Blob.services
+    registry.fetch :db_backup
+  rescue KeyError
+    logger.fatal 'Database backup storage is not configured. Add a :db_backup configuration to config/storage.yml.'
+    nil
   end
 
   def build_command(cmd, *args)
