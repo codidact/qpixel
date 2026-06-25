@@ -17,7 +17,7 @@ RUN apt-get update && \
 WORKDIR /code
 COPY . /code
 
-RUN gem install bundler:2.4.13
+RUN gem install bundler:2.7.2
 RUN bundle install
 
 # cherry pick only what we really need to run Node.js
