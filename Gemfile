@@ -88,7 +88,7 @@ gem 'stripe', '~> 5.55'
 gem 'premailer-rails', '~> 1.11'
 
 group :test do
-  gem 'minitest', '~> 5.16.0'
+  gem 'minitest', '~> 5.25.2'
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'simplecov', '~> 0.21'

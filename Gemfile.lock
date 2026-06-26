@@ -264,7 +264,7 @@ GEM
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
-    minitest (5.16.3)
+    minitest (5.25.5)
     minitest-ci (3.4.0)
       minitest (>= 5.0.6)
     mize (0.6.1)
@@ -572,7 +572,7 @@ DEPENDENCIES
   maintenance_tasks (~> 2.2)
   memory_profiler (~> 1.0)
   mime-types (~> 3.7)
-  minitest (~> 5.16.0)
+  minitest (~> 5.25.2)
   minitest-ci (~> 3.4.0)
   msgpack (~> 1.8)
   mutex_m (~> 0.3)
