@@ -6,9 +6,14 @@ local:
   service: Disk
   root: <%= Rails.root.join('storage') %>
 
-s3:
+s3: &s3
   service: S3
   access_key_id: ""
   secret_access_key: ""
   region: us-east-1
   bucket: ""
+
+db_backup:
+  <<: *s3
+  bucket: ""
+  test_data: 'something'
