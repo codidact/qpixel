@@ -3,7 +3,7 @@
 # you can just copy this file. If you are using an S3 bucket, copy this
 # file and then edit the settings.
 
-test:
+test: &test
   service: Disk
   root: <%= Rails.root.join('tmp/storage') %>
 
@@ -22,3 +22,6 @@ db_backup:
   <<: *s3
   bucket: ""
   test_data: 'something'
+
+db_backup_test:
+  <<: *test
