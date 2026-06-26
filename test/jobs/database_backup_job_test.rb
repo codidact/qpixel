@@ -4,7 +4,7 @@ class DatabaseBackupJobTest < ActiveJob::TestCase
   setup do
     base_path = backup_dirname
     AppConfig.server_settings['db_backups_path'] = base_path
-    Dir.mkdir(base_path) unless Dir.exist?(base_path)
+    FileUtils.mkdir_p(base_path)
     File.delete(*backup_basenames.map { |basename| base_path.join(basename) })
   end
 
