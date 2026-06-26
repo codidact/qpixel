@@ -2,8 +2,10 @@ require 'test_helper'
 
 class DatabaseBackupJobTest < ActiveJob::TestCase
   setup do
-    AppConfig.server_settings['db_backups_path'] = backup_dirname
-    File.delete(*backup_basenames.map { |basename| backup_dirname.join(basename) })
+    base_path = backup_dirname
+    AppConfig.server_settings['db_backups_path'] = base_path
+    Dir.mkdir(base_path) unless Dir.exist?(base_path)
+    File.delete(*backup_basenames.map { |basename| base_path.join(basename) })
   end
 
   test 'job runs successfully' do
