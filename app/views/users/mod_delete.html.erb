@@ -9,33 +9,26 @@
     <h1>Delete Community Profile</h1>
 
     <p>
-      Some users are just blatant spammers or trolls and some users are just unwilling to follow site rules, even after
-      repeated warnings and suspensions. As a moderator, you may delete the user account in these cases.
+      If a user is being disruptive or violating site rules, try to take the smallest action that stops the bad
+      behavior. You can <%= link_to 'revoke or suspend individual abilities', user_privileges_path(@user) %> or
+      <%= link_to 'suspend a user', new_mod_warning_path(@user) %>. If the user has done nothing but spam, you can use
+      the <%= link_to 'spam profiles mod tool', mod_spammers_path %>.
+    </p>
+
+    <p>
+      If other actions have not worked and the disruptions are severe, you can delete the profile on this community.
     </p>
 
     <div class="notice is-danger">
       <p>
-        <strong>Take care!</strong> These actions may not be reversible and you will not be asked to confirm after
-        initiating an action.
+        <strong>Take care!</strong> You will not be able to reverse this action and you will not be asked to confirm.
       </p>
     </div>
 
-    <div class="widget">
-      <div class="widget--body">
-        <h4>Delete Community Profile</h4>
-
-        <p>
-          Delete the community profile of users who are unwilling to follow the rules of this site, even after repeated
-          warnings and suspensions. Choose this option if a user has requested deletion of their profile on one site,
-          once you have confirmed their identity and request.
-        </p>
-
-        <%= link_to 'Delete community profile',
-                    soft_delete_user_path(@user.id, type: 'profile'),
-                    remote: true,
-                    method: :delete,
-                    class: 'js-soft-delete button is-danger is-filled' %>
-      </div>
-    </div>
+    <%= link_to 'Delete community profile',
+                soft_delete_user_path(@user.id, type: 'profile'),
+                remote: true,
+                method: :delete,
+                class: 'js-soft-delete button is-danger is-filled' %>
   </div>
 </div>
