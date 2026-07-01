@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 ruby '>= 3.3', '< 3.5'
 
 # Essential gems: servers, adapters, Rails + Rails requirements
+gem 'bcrypt', '~> 3.1'
 gem 'coffee-rails', '~> 5.0.0'
 gem 'connection_pool', '< 3.0' # mperham/connection_pool#210
 gem 'counter_culture', '~> 3.2'
@@ -38,6 +39,7 @@ gem 'groupdate', '~> 6.1'
 
 # View stuff.
 gem 'diffy', '~> 3.4'
+gem 'ipaddress', '~> 0.8'
 gem 'jbuilder', '~> 2.11'
 gem 'rqrcode', '~> 2.1'
 gem 'will_paginate', '~> 3.3'

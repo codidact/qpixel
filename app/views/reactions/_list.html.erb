@@ -58,7 +58,7 @@
                                     <%= raw(sanitize(render_markdown(r.comment.content),
                                                      scrubber: CommentScrubber.new)) %>
                                     <% else %>
-                                    <%= raw(sanitize(render_markdown(r.comment.content[0..150] + "..."),
+                                    <%= raw(sanitize(render_markdown(r.comment.content&.truncate(150)),
                                                      scrubber: CommentScrubber.new)) %>
                                     <% end %>
                                 </div>

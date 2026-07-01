@@ -250,10 +250,13 @@ module ApplicationHelper
 
   ##
   # Split a string after a specified number of characters, only breaking at word boundaries.
+  # @deprecated Use {String#truncate}[https://www.rubydoc.info/gems/activesupport/String#truncate-instance_method].
   # @param text [String] The text to split.
   # @param max_length [Integer] The maximum number of characters to leave in the resulting strings.
   # @return [Array<String>]
   def split_words_max_length(text, max_length)
+    logger.warn 'ApplicationHelper#split_words_max_length is deprecated. Use String#truncate instead.'
+    logger.warn caller[0]
     words = text.split
     splat = [[]]
     words.each do |word|

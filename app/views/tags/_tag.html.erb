@@ -17,11 +17,7 @@
   <% end %>
   <% if tag.excerpt.present? %>
     <p class="has-font-size-caption has-color-tertiary-900">
-      <% splat = split_words_max_length(tag.excerpt, 120) %>
-      <%= splat[0] %>
-      <% if splat.size > 1 %>
-        ...
-      <% end %>
+      <%= tag.excerpt&.truncate(120, separator: ' ') %>
     </p>
   <% end %>
 </div>

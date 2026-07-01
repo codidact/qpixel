@@ -1,5 +1,10 @@
+require_relative 'redis_cache_hash_methods'
+
 module QPixel
   class NamespacedEnvCache < ActiveSupport::Cache::Store
+    include RedisCacheHashMethods
+    attr_reader :underlying
+
     def initialize(underlying)
       @underlying = underlying
       @getters = {}
@@ -142,6 +147,14 @@ module QPixel
     # we only use the redis cache (by activesupport) for QPixel.
     def self.supports_cache_versioning?
       true
+    end
+
+    def method_missing(name, *args, **opts, &block)
+      @underlying.send(name, *args, **opts, &block)
+    end
+
+    def respond_to_missing?(name, *)
+      @underlying.respond_to?(name)
     end
 
     private
