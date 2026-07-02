@@ -12,8 +12,7 @@ gem 'jquery-rails', '~> 4.5.0'
 gem 'mime-types', '~> 3.7'
 gem 'mutex_m', '~> 0.3'
 gem 'mysql2', '~> 0.5.4'
-gem 'ostruct', '~> 0.6.1'
-gem 'puma', '~> 5.6'
+gem 'puma', '~> 7.2'
 gem 'rails', '~> 8.1'
 gem 'rails-html-sanitizer', '~> 1.6'
 gem 'redis', '~> 4.8'
@@ -25,7 +24,7 @@ gem 'terser', '~> 1.1'
 gem 'tzinfo-data', '~> 1.2022.3'
 
 # Sign in
-gem 'devise', '~> 5.0.0'
+gem 'devise', '~> 5.0'
 gem 'devise_saml_authenticatable', '~> 1.9'
 gem 'msgpack', '~> 1.8' # required for ActiveSupport::MessageEncryptor
 gem 'omniauth', '~> 2.1'
