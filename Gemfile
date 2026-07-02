@@ -13,7 +13,7 @@ gem 'mime-types', '~> 3.7'
 gem 'mutex_m', '~> 0.3'
 gem 'mysql2', '~> 0.5.4'
 gem 'puma', '~> 7.2'
-gem 'rails', '~> 7.2'
+gem 'rails', '~> 8.1'
 gem 'rails-html-sanitizer', '~> 1.6'
 gem 'redis', '~> 4.8'
 gem 'rotp', '~> 6.2'
@@ -46,9 +46,10 @@ gem 'will_paginate', '~> 3.3'
 gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
+gem 'aws-actionmailer-ses', '~> 1'
+gem 'aws-sdk-rails', '~> 5'
 gem 'aws-sdk-s3', '~> 1.208', require: false
 gem 'aws-sdk-sns', '~> 1.72'
-gem 'aws-ses-v4', require: 'aws/ses'
 
 # Task scheduling & maintenance.
 gem 'maintenance_tasks', '~> 2.2'
@@ -87,7 +88,7 @@ gem 'stripe', '~> 5.55'
 gem 'premailer-rails', '~> 1.11'
 
 group :test do
-  gem 'minitest', '~> 5.16.0'
+  gem 'minitest', '~> 5.25.2'
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'simplecov', '~> 0.21'
