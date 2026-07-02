@@ -116,7 +116,6 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.3.0)
     bcrypt (3.1.22)
-    benchmark (0.5.0)
     bigdecimal (4.1.2)
     bindex (0.8.1)
     builder (3.3.0)
@@ -130,7 +129,6 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
-    cgi (0.5.2)
     chartkick (4.2.1)
     childprocess (5.1.0)
       logger (~> 1.5)
@@ -312,7 +310,6 @@ GEM
       rack (>= 2.2.3)
       rack-protection
     orm_adapter (0.5.0)
-    ostruct (0.6.3)
     parallel (2.1.0)
     parser (3.3.11.1)
       ast (~> 2.4.1)
@@ -330,9 +327,6 @@ GEM
       premailer (~> 1.7, >= 1.7.9)
     prettyprint (0.2.0)
     prism (1.9.0)
-    psych (5.4.0)
-      date
-      stringio
     public_suffix (7.0.5)
     puma (7.2.1)
       nio4r (~> 2.0)
@@ -587,7 +581,6 @@ DEPENDENCIES
   net-smtp (~> 0.3)
   octokit (~> 10.0)
   omniauth (~> 2.1)
-  ostruct (~> 0.6.1)
   premailer-rails (~> 1.11)
   puma (~> 7.2)
   rack-mini-profiler (~> 3.0)
