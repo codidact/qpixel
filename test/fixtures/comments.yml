@@ -90,3 +90,13 @@ without_activity:
   comment_thread: normal
   created_at: 2020-01-01T00:00:00.000000Z
   updated_at: 2020-01-01T00:00:00.000000Z
+
+deleted_invalid:
+  user: standard_user
+  post: question_one
+  content: ABCDEF
+  deleted: true
+  community: sample
+  comment_thread: normal
+  created_at: 2020-01-01T00:00:00.000000Z
+  updated_at: 2021-01-01T00:00:00.000000Z

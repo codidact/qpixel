@@ -6,7 +6,7 @@ class CommentsControllerTest < ActionController::TestCase
   include CommentsControllerTestHelpers
 
   test 'should correctly undelete comments' do
-    sign_in users(:standard_user)
+    sign_in users(:moderator)
     try_undelete_comment(comments(:deleted), format: :json)
 
     assert_response(:success)
@@ -31,24 +31,14 @@ class CommentsControllerTest < ActionController::TestCase
   test 'should not allow non-moderator users to undelete comments' do
     sign_in users(:editor)
     try_undelete_comment(comments(:deleted))
-    assert_response(:forbidden)
+    assert_response(:not_found)
   end
 
   test 'comment undeletion should correctly handle validation' do
     sign_in users(:moderator)
-
-    comment = comments(:deleted)
-
-    # this is a bit cursed, but IIRC the easiest way to test this
-    comment.stub(:update, false) do
-      Comment.stub(:unscoped, Comment) do
-        Comment.stub(:find, comment) do
-          try_undelete_comment(comment, format: :json)
-
-          assert_response(:internal_server_error)
-        end
-      end
-    end
+    comment = comments(:deleted_invalid)
+    try_undelete_comment(comment, format: :json)
+    assert_response(:internal_server_error)
   end
 
   test 'only mods or admins should be able to undelete threads deleted by one of them' do

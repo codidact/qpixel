@@ -360,7 +360,8 @@ class CommentsController < ApplicationController
 
   def set_comment
     scope = current_user&.at_least_moderator? ? Comment.all : Comment.undeleted
-    @comment = scope.find(params[:id])
+    @comment = scope.find_by(id: params[:id])
+    not_found! if @comment.nil?
   end
 
   def set_post
