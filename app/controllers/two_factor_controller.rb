@@ -18,7 +18,8 @@ class TwoFactorController < ApplicationController
                           backup_2fa_code: SecureRandom.alphanumeric(24))
       base_domain = AppConfig.server_settings['network_base_domain']
       totp = ROTP::TOTP.new(@secret, issuer: base_domain)
-      uri = totp.provisioning_uri("#{current_user.id}@users-2fa.#{base_domain}")
+      @app_name = "#{current_user.id}@users-2fa.#{base_domain}"
+      uri = totp.provisioning_uri(@app_name)
       qr_svg = RQRCode::QRCode.new(uri).as_svg
       @qr_uri = "data:image/svg+xml;base64,#{Base64.encode64(qr_svg)}"
     when 'email'
