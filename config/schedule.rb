@@ -49,3 +49,8 @@ end
 every 30.minutes do
   runner 'scripts/run_summary_mailer.rb'
 end
+
+# If you want to use the built-in database backup script, uncomment this:
+# every 1.day, at: '16:00' do
+#   runner 'scripts/database_backup.rb'
+# end

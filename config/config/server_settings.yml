@@ -1,2 +1,3 @@
 registration_rate_limit: 300
 user_sudo_duration: 30
+db_backups_path: /var/sql-backups

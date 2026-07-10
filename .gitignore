@@ -37,6 +37,7 @@ coverage/*
 
 .idea
 .vscode
+.ruby-version
 
 test/reports
 

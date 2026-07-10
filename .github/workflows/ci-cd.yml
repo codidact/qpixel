@@ -196,6 +196,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

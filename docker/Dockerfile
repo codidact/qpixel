@@ -1,4 +1,4 @@
-FROM ruby:3.3.11-trixie AS ruby
+FROM ruby:3.4.5-bullseye AS ruby
 FROM node:12.18.3-slim AS node
 
 FROM ruby AS build
@@ -17,7 +17,7 @@ RUN apt-get update && \
 WORKDIR /code
 COPY . /code
 
-RUN gem install bundler:2.4.13
+RUN gem install bundler:2.7.2
 RUN bundle install
 
 # cherry pick only what we really need to run Node.js

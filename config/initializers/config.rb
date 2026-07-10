@@ -1,3 +1,5 @@
+require 'ostruct'
+
 AppConfig ||= OpenStruct.new
 
 Dir.glob(Rails.root.join('config/config/*.yml')).each do |f|
