@@ -16,8 +16,9 @@ class TwoFactorController < ApplicationController
       @secret = ROTP::Base32.random
       current_user.update(two_factor_token: @secret, two_factor_method: 'app',
                           backup_2fa_code: SecureRandom.alphanumeric(24))
-      totp = ROTP::TOTP.new(@secret, issuer: 'codidact.com')
-      uri = totp.provisioning_uri("#{current_user.id}@users-2fa.codidact.com")
+      base_domain = AppConfig.server_settings['network_base_domain']
+      totp = ROTP::TOTP.new(@secret, issuer: base_domain)
+      uri = totp.provisioning_uri("#{current_user.id}@users-2fa.#{base_domain}")
       qr_svg = RQRCode::QRCode.new(uri).as_svg
       @qr_uri = "data:image/svg+xml;base64,#{Base64.encode64(qr_svg)}"
     when 'email'
