@@ -76,9 +76,7 @@ class FlagsController < ApplicationController
   end
 
   def resolve
-    if @flag.update(status: params[:result], message: params[:message], handled_by: current_user,
-                    handled_at: DateTime.now)
-      AbilityQueue.add(@flag.user, "Flag Handled ##{@flag.id}")
+    if @flag.resolve(status: params[:result], message: params[:message], handled_by: current_user)
       render json: { status: 'success' }
     else
       render json: { status: 'failed', message: 'Failed to save new status.' }, status: :internal_server_error
