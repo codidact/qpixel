@@ -2,6 +2,7 @@
 class Flag < ApplicationRecord
   include CommunityRelated
   include Timestamped
+  include Routing
 
   belongs_to :post, polymorphic: true
   belongs_to :user
@@ -60,10 +61,10 @@ class Flag < ApplicationRecord
   def resolve(status:, message:, handled_by:, handled_at: nil)
     transaction do
       update!(status: status, message: message, handled_by: handled_by, handled_at: handled_at || DateTime.now)
-      AbilityQueue.add!(@flag.user, "Flag Handled ##{@flag.id}")
+      AbilityQueue.add!(user, "Flag Handled ##{id}")
       unless message.blank?
-        @flag.user.create_notification('A moderator has written a response to your flag. Check your flag history page.',
-                                       helpers.flag_history_url(@flag.user))
+        user.create_notification('A moderator has written a response to your flag. Check your flag history page.',
+                                 flag_history_url(user))
       end
     end
   rescue ActiveRecord::ActiveRecordError
