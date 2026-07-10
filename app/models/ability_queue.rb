@@ -16,6 +16,7 @@ class AbilityQueue < ApplicationRecord
   # @param comment [String] comment to add to queue entry
   def self.add(user, comment)
     return if AbilityQueue.pending_for?(user)
+
     AbilityQueue.create(community_user: user.community_user, comment: comment, completed: false)
   end
 
@@ -26,6 +27,7 @@ class AbilityQueue < ApplicationRecord
   # @param comment [String] comment to add to queue entry
   def self.add!(user, comment)
     return if AbilityQueue.pending_for?(user)
+
     AbilityQueue.create!(community_user: user.community_user, comment: comment, completed: false)
   end
 end
