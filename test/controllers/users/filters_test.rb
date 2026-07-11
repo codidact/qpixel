@@ -1,4 +1,3 @@
-
 require 'test_helper'
 
 class UsersControllerTest < ActionController::TestCase
@@ -10,10 +9,31 @@ class UsersControllerTest < ActionController::TestCase
     try_delete_filter
     assert_json_failure(:bad_request)
 
-    # 400 on missing name, status: failed
-    # if system and global_admin? -> 200 success
-    # if system and not admin -> 400
-    # else 200 , status: success,
+    try_delete_filter(name: 'non-existent')
+    assert_json_failure(:not_found)
+
+    try_delete_filter(name: filters(:one).name)
+    assert_json_success
+  end
+
+  test 'only global admins should be able to delete system filters' do
+    filter = filters(:system)
+
+    users.each do |user|
+      sign_in user
+
+      name = "system_#{user.name}"
+      Filter.create!(filter.dup.attributes.merge({ name: name,
+                                                   user: User.system }))
+
+      try_delete_filter(name: name, system: true)
+
+      if user.global_admin?
+        assert_json_success
+      else
+        assert_json_failure(:bad_request)
+      end
+    end
   end
 
   test 'set_filter should correctly save valid filters' do
@@ -69,7 +89,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   def try_delete_filter(**opts)
-    post :delete_filter, params: {
+    delete :delete_filter, params: {
       name: '',
       system: false
     }.merge(opts)
