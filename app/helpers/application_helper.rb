@@ -408,6 +408,7 @@ module ApplicationHelper
       current_page?(mod_warning_log_url(user)) ||
       current_page?(new_mod_warning_url(user)) ||
       current_page?(mod_delete_url(user)) ||
+      current_page?(mod_pii_correlation_url(user)) ||
       current_page?(mod_delete_network_account_url(user)) ||
       current_page?(mod_failban_url(user)) ||
       current_page?(start_impersonating_url(user))
