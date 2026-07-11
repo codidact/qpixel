@@ -253,7 +253,9 @@ class User < ApplicationRecord
   # Checks if one of the persisted changes affects trust_level
   # @return [Boolean] check result
   def saved_change_affects_trust_level?
-    ['staff'].any? { |attr| saved_change_to_attribute?(attr) }
+    ['is_global_admin', 'is_global_moderator', 'staff'].any? do |attr|
+      saved_change_to_attribute?(attr)
+    end
   end
 
   def metric(key)
