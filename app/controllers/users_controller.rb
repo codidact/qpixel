@@ -180,6 +180,12 @@ class UsersController < ApplicationController
     end
 
     filter = Filter.find_by(user: as_user, name: params[:name])
+
+    unless filter.present?
+      return render json: { status: 'failed', success: false, errors: ['Filter not found'] },
+                    status: :not_found
+    end
+
     if filter.destroy
       render json: { status: 'success', success: true, filters: filters_json }
     else
