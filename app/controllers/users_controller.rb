@@ -170,9 +170,9 @@ class UsersController < ApplicationController
 
     as_user = current_user
 
-    if params[:system] == true
+    if params[:system] == 'true'
       if current_user&.global_admin?
-        as_user = User.find(-1)
+        as_user = helpers.system_user
       else
         return render json: { status: 'failed', success: false, errors: ['You do not have permission to delete'] },
                       status: 400
