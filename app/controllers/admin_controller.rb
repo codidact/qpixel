@@ -110,7 +110,7 @@ class AdminController < ApplicationController
     @log_types = AuditLog.unscoped.select(:log_type).distinct.map(&:log_type) - ['user_annotation', 'user_history']
     @event_types = AuditLog.unscoped.select(:event_type).distinct.map(&:event_type)
 
-    @logs = if current_user.is_global_admin
+    @logs = if current_user.global_admin?
               AuditLog.unscoped.where.not(log_type: ['user_annotation', 'user_history'])
             else
               AuditLog.where.not(log_type: ['block_log', 'user_annotation', 'user_history'])
