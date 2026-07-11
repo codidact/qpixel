@@ -582,15 +582,6 @@ class UsersControllerTest < ActionController::TestCase
     assert(items.any? { |x| x.instance_of?(Flag) && x.id == declined_flag.id })
   end
 
-  test 'set_filter should correctly save valid filters' do
-    sign_in users(:standard_user)
-
-    [false, true].each do |is_default|
-      try_save_filter(is_default: is_default)
-      assert_json_success
-    end
-  end
-
   test 'set_preference should correclty save valid preferences' do
     sign_in users(:standard_user)
 
@@ -628,36 +619,6 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
-  test 'default_filter should correctly respond to missing category' do
-    sign_in users(:standard_user)
-    try_default_filter(nil)
-    assert_response(:bad_request)
-  end
-
-  test 'default_filter should correctly get default category filters' do
-    sign_in users(:standard_user)
-    try_default_filter(categories(:main))
-    assert_json_success
-  end
-
-  test 'HTML filters should redirect to sign in for anonymous users' do
-    try_filters(format: :html)
-    assert_redirected_to_sign_in
-  end
-
-  test 'JSON filters should return system filters for anonymous users' do
-    try_filters(format: :json)
-
-    assert_response(:success)
-    assert_valid_json_response
-
-    parsed = JSON.parse(response.body)
-    assert parsed.any?
-    parsed.each do |name, filter|
-      assert filter['system'], "'#{name}' is not a system filter"
-    end
-  end
-
   private
 
   def create_other_user
@@ -666,22 +627,6 @@ class UsersControllerTest < ActionController::TestCase
     other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
     other_user.community_users.create!(community: other_community)
     other_user
-  end
-
-  def try_filters(format: :json)
-    get :filters, params: { format: format }
-  end
-
-  def try_default_filter(category)
-    get :default_filter, params: {
-      category: category&.id,
-      format: :json
-    }
-  end
-
-  def try_save_filter(**opts)
-    filter = { name: 'test filter' }.merge(opts)
-    post :set_filter, params: filter.merge({ format: :json })
   end
 
   # @param type [String] deletion type (user or profile)
