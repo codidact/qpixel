@@ -2,6 +2,7 @@
 class Flag < ApplicationRecord
   include CommunityRelated
   include Timestamped
+  include Routing
 
   belongs_to :post, polymorphic: true
   belongs_to :user
@@ -48,5 +49,25 @@ class Flag < ApplicationRecord
     if reason.length > [max_len, 1000].min
       errors.add(:reason, "can't be more than #{max_len} characters")
     end
+  end
+
+  ##
+  # Resolve a flag and run associated ability and notification actions.
+  # @param status [String, ActionController::Parameters] new status of the flag
+  # @param message [String, ActionController::Parameters] custom response to the flag
+  # @param handled_by [User] user who handled the flag
+  # @param handled_at [DateTime, nil] time the flag was handled (defaults to current time)
+  # @return [Boolean] result
+  def resolve(status:, message:, handled_by:, handled_at: nil)
+    transaction do
+      update!(status: status, message: message, handled_by: handled_by, handled_at: handled_at || DateTime.now)
+      AbilityQueue.add!(user, "Flag Handled ##{id}")
+      unless message.blank?
+        user.create_notification('A moderator has written a response to your flag. Check your flag history page.',
+                                 flag_history_url(user))
+      end
+    end
+  rescue ActiveRecord::ActiveRecordError
+    false
   end
 end

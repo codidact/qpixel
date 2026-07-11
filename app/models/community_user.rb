@@ -12,6 +12,7 @@ class CommunityUser < ApplicationRecord
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
 
   after_create :prevent_ulysses_case
+  after_update :recalc_trust_level, if: :saved_change_affects_trust_level?
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
@@ -170,6 +171,12 @@ class CommunityUser < ApplicationRecord
   # @return [Boolean] check result
   def at_least_moderator?
     moderator? || admin?
+  end
+
+  # Checks if one of the persisted changes affects trust_level
+  # @return [Boolean] check result
+  def saved_change_affects_trust_level?
+    ['is_admin', 'is_moderator'].any? { |attr| saved_change_to_attribute?(attr) }
   end
 
   def recalc_trust_level

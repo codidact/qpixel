@@ -39,9 +39,11 @@ class User < ApplicationRecord
   has_many :assigned_complaints, class_name: 'Complaint', foreign_key: 'assignee_id', dependent: :nullify
   accepts_nested_attributes_for :user_websites
 
+  after_update :recalc_trust_level, if: :saved_change_affects_trust_level?
+
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user, allow_nil: true
+  delegate :recalc_trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user, allow_nil: true
 
   alias_attribute :name, :username
 
@@ -246,6 +248,14 @@ class User < ApplicationRecord
 
     post_privilege?('edit_posts', post) || at_least_moderator? ||
       (post_type.is_freely_editable && privilege?('unrestricted'))
+  end
+
+  # Checks if one of the persisted changes affects trust_level
+  # @return [Boolean] check result
+  def saved_change_affects_trust_level?
+    ['is_global_admin', 'is_global_moderator', 'staff'].any? do |attr|
+      saved_change_to_attribute?(attr)
+    end
   end
 
   def metric(key)
