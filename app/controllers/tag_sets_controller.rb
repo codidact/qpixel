@@ -37,6 +37,6 @@ class TagSetsController < ApplicationController
   private
 
   def set_tag_set
-    @tag_set = (current_user&.is_global_admin ? TagSet.unscoped : TagSet).find(params[:id])
+    @tag_set = (current_user&.global_admin? ? TagSet.unscoped : TagSet).find(params[:id])
   end
 end

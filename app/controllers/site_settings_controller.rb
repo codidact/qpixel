@@ -9,7 +9,7 @@ class SiteSettingsController < ApplicationController
   # @param community_id [String, nil] id of the community to check access on
   # @return [Boolean] Check result
   def access?(user, community_id)
-    community_id.present? || user.is_global_admin
+    community_id.present? || user.global_admin?
   end
 
   def index

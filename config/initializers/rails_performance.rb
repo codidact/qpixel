@@ -1,5 +1,11 @@
 RailsPerformance.setup do |config|
-  config.redis    = Redis.new(url: ENV["REDIS_URL"].presence || "redis://127.0.0.1:6379/0")
+  processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
+  config.redis = Redis.new(
+    YAML.safe_load(processed,
+                   permitted_classes: [],
+                   permitted_symbols: [],
+                   aliases: true)["redis_#{Rails.env}"].deep_symbolize_keys)
+
   # or Redis::Namespace.new("rails-performance", redis: Redis.new), see below in README
   config.duration = 4.hours
 
