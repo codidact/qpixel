@@ -163,7 +163,7 @@ class UsersController < ApplicationController
   end
 
   def delete_filter
-    unless params[:name]
+    unless params[:name].present?
       return render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
                     status: 400
     end
