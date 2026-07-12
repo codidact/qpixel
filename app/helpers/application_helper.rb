@@ -412,7 +412,7 @@ module ApplicationHelper
       method(:mod_pii_correlation_url),
       method(:mod_delete_network_account_url),
       method(:mod_failban_url),
-      method(:start_impersonating_url),
+      method(:start_impersonating_url)
     ]
 
     methods.any? { |method| current_page?(method.call(user)) }
