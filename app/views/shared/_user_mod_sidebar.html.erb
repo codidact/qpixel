@@ -61,15 +61,15 @@
         <% end %>
 
         <div class="menu--heading">Account</div>
-        <%= link_to mod_delete_path(user),
-                    class: "menu--item #{current_page?(mod_delete_path(user)) ? 'is-active' : ''}" do %>
-          <i class="fas fa-trash fa-fw"></i>
-          Delete Community Profile
-        <% end %>
         <%= link_to mod_pii_correlation_path(user),
                     class: "menu--item #{current_page?(mod_pii_correlation_path(user)) ? 'is-active' : ''}" do %>
           <i class="fas fa-users fa-fw"></i>
           Compare PII
+        <% end %>
+        <%= link_to mod_delete_path(user),
+                    class: "menu--item #{current_page?(mod_delete_path(user)) ? 'is-active' : ''}" do %>
+          <i class="fas fa-trash fa-fw"></i>
+          Delete Community Profile
         <% end %>
 
         <% if current_user.at_least_global_moderator? %>
