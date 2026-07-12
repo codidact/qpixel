@@ -164,16 +164,16 @@ class UsersController < ApplicationController
   end
 
   def delete_filter
-    unless params[:name]
+    unless params[:name].present?
       return render json: { status: 'failed', success: false, errors: ['Filter name is required'] },
                     status: 400
     end
 
     as_user = current_user
 
-    if params[:system] == true
+    if params[:system] == 'true'
       if current_user&.global_admin?
-        as_user = User.find(-1)
+        as_user = helpers.system_user
       else
         return render json: { status: 'failed', success: false, errors: ['You do not have permission to delete'] },
                       status: 400
@@ -181,6 +181,12 @@ class UsersController < ApplicationController
     end
 
     filter = Filter.find_by(user: as_user, name: params[:name])
+
+    unless filter.present?
+      return render json: { status: 'failed', success: false, errors: ['Filter not found'] },
+                    status: :not_found
+    end
+
     if filter.destroy
       render json: { status: 'success', success: true, filters: filters_json }
     else
