@@ -400,17 +400,21 @@ module ApplicationHelper
   # @param user [User] user whose page is being viewed
   # @return [Boolean]
   def user_mod_tools_tab_active?(user)
-    current_page?(mod_user_url(user)) ||
-      current_page?(full_user_log_url(user)) ||
-      current_page?(user_annotations_url(user)) ||
-      current_page?(mod_vote_summary_url(user)) ||
-      current_page?(user_privileges_url(user)) ||
-      current_page?(mod_warning_log_url(user)) ||
-      current_page?(new_mod_warning_url(user)) ||
-      current_page?(mod_delete_url(user)) ||
-      current_page?(mod_pii_correlation_url(user)) ||
-      current_page?(mod_delete_network_account_url(user)) ||
-      current_page?(mod_failban_url(user)) ||
-      current_page?(start_impersonating_url(user))
+    methods = [
+      method(:mod_user_url),
+      method(:full_user_log_url),
+      method(:user_annotations_url),
+      method(:mod_vote_summary_url),
+      method(:user_privileges_url),
+      method(:mod_warning_log_url),
+      method(:new_mod_warning_url),
+      method(:mod_delete_url),
+      method(:mod_pii_correlation_url),
+      method(:mod_delete_network_account_url),
+      method(:mod_failban_url),
+      method(:start_impersonating_url),
+    ]
+
+    methods.any? { |method| current_page?(method.call(user)) }
   end
 end
