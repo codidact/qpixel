@@ -7,7 +7,7 @@ RailsPerformance.setup do |config|
                    aliases: true)["redis_#{Rails.env}"].deep_symbolize_keys)
 
   # or Redis::Namespace.new("rails-performance", redis: Redis.new), see below in README
-  config.duration = 4.hours
+  config.duration = 24.hours
 
   config.debug    = false
   config.enabled  = true
@@ -43,13 +43,14 @@ RailsPerformance.setup do |config|
   config.ignored_paths = ['/rails/performance']
 
   # store custom data for the request
-  # config.custom_data_proc = proc do |env|
-  #   request = Rack::Request.new(env)
-  #   {
-  #     email: request.env['warden'].user&.email, # if you are using Devise for example
-  #     user_agent: request.env['HTTP_USER_AGENT']
-  #   }
-  # end
+  config.custom_data_proc = proc do |env|
+    request = Rack::Request.new(env)
+    user = request.env['warden'].user
+    {
+      user: "#{user&.username} (##{user&.id})",
+      user_agent: request.env['HTTP_USER_AGENT']
+    }
+  end
 
   # config home button link
   config.home_link = '/'
