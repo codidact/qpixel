@@ -76,7 +76,7 @@ class Flag < ApplicationRecord
       unless message.blank?
         # TODO: create_notification actually behaves like a bang method
         user.create_notification('A moderator has written a response to your flag. Check your flag history page.',
-                                 flag_history_url(user))
+                                 flag_history_url(user, { host: community.host }))
       end
     end
 
