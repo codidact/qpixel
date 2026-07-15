@@ -59,15 +59,27 @@ class Flag < ApplicationRecord
   # @param handled_at [DateTime, nil] time the flag was handled (defaults to current time)
   # @return [Boolean] result
   def resolve(status:, message:, handled_by:, handled_at: nil)
+    resolve_status = false
+
     transaction do
-      update!(status: status, message: message, handled_by: handled_by, handled_at: handled_at || DateTime.now)
-      AbilityQueue.add!(user, "Flag Handled ##{id}")
+      resolve_status = update(status: status,
+                              message: message,
+                              handled_by: handled_by,
+                              handled_at: handled_at || DateTime.now)
+
+      resolve_status &&= AbilityQueue.add(user, "Flag Handled ##{id}")
+
+      unless resolve_status
+        raise ActiveRecord::Rollback
+      end
+
       unless message.blank?
+        # TODO: create_notification actually behaves like a bang method
         user.create_notification('A moderator has written a response to your flag. Check your flag history page.',
-                                 flag_history_url(user))
+                                 flag_history_url(user, { host: community.host }))
       end
     end
-  rescue ActiveRecord::ActiveRecordError
-    false
+
+    resolve_status
   end
 end

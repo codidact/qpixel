@@ -14,8 +14,9 @@ class AbilityQueue < ApplicationRecord
   # Adds a new ability queue entry for a user if one does not already exist.
   # @param user [User] user to add queue entry for
   # @param comment [String] comment to add to queue entry
+  # @return [Boolean] whether the scheduling succeeded
   def self.add(user, comment)
-    return if AbilityQueue.pending_for?(user)
+    return true if AbilityQueue.pending_for?(user)
 
     AbilityQueue.create(community_user: user.community_user, comment: comment, completed: false)
   end
