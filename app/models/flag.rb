@@ -59,17 +59,17 @@ class Flag < ApplicationRecord
   # @param handled_at [DateTime, nil] time the flag was handled (defaults to current time)
   # @return [Boolean] result
   def resolve(status:, message:, handled_by:, handled_at: nil)
-    status = false
+    resolve_status = false
 
     transaction do
-      status = update(status: status,
-                      message: message,
-                      handled_by: handled_by,
-                      handled_at: handled_at || DateTime.now)
+      resolve_status = update(status: status,
+                              message: message,
+                              handled_by: handled_by,
+                              handled_at: handled_at || DateTime.now)
 
-      status = status && AbilityQueue.add(user, "Flag Handled ##{id}")
+      resolve_status &&= AbilityQueue.add(user, "Flag Handled ##{id}")
 
-      unless status
+      unless resolve_status
         raise ActiveRecord::Rollback
       end
 
@@ -80,6 +80,6 @@ class Flag < ApplicationRecord
       end
     end
 
-    status
+    resolve_status
   end
 end
