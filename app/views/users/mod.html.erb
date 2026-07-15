@@ -26,8 +26,13 @@
     <p><strong>Take care!</strong> Actions in this section may not be reversible, and you will not be asked to confirm
       after initiating an action.</p>
     <div class="delete-actions">
-      <%= link_to 'Delete community profile', soft_delete_user_path(@user.id, type: 'profile'), remote: true,
-                  method: :delete, class: 'js-soft-delete button is-danger is-filled', role: 'button' %>
+      <% is_deleted = @user.community_user&.deleted? || false %>
+      <%= link_to "#{is_deleted ? 'Undelete' : 'Delete'} community profile",
+                  is_deleted ? undelete_user_path(@user.id) : soft_delete_user_path(@user.id, type: 'profile'),
+                  remote: true,
+                  method: is_deleted ? :post : :delete,
+                  class: 'js-soft-delete button is-danger is-filled',
+                  role: 'button' %>
       <% if current_user.is_global_moderator || current_user.is_global_admin %>
         <%= link_to 'Delete user network-wide', soft_delete_user_path(@user.id, type: 'user'), remote: true,
                     method: :delete, class: 'js-soft-delete button is-danger is-filled', role: 'button' %>

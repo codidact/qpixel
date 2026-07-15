@@ -12,9 +12,9 @@ class UsersController < ApplicationController
 
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :role_toggle, :full_log,
+  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :undelete, :role_toggle, :full_log,
                                           :annotate, :annotations, :mod_privileges, :mod_privilege_action]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :posts, :role_toggle, :full_log, :activity,
+  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :undelete, :posts, :role_toggle, :full_log, :activity,
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary, :network, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
@@ -353,6 +353,18 @@ class UsersController < ApplicationController
     end
 
     render json: { status: 'success', user: @user.id }
+  end
+
+  def undelete
+    status = @user.community_user&.undelete(current_user)
+
+    if status
+      render json: { status: 'success', user: @user.id }
+    else
+      render json: { status: 'failed',
+                     message: 'Failed to undelete user profile',
+                     user: @user.id }
+    end
   end
 
   def edit_profile

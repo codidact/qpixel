@@ -203,4 +203,18 @@ class CommunityUser < ApplicationRecord
 
     update(deleted: true, deleted_by: attribute_to, deleted_at: DateTime.now)
   end
+
+  # Undeletes the community user if it's soft-deleted
+  # @param attribute_to [User] user to attribute the action to
+  # @return [Boolean] whether the community user has been undeleted
+  def undelete(attribute_to)
+    return true unless deleted?
+
+    AuditLog.moderator_audit(event_type: 'profile_undelete',
+                             related: self,
+                             user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+
+    update(deleted: false, deleted_by: nil, deleted_at: nil)
+  end
 end

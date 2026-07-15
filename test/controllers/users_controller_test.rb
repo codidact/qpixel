@@ -98,6 +98,29 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  test 'should require authentication to undelete user profiles' do
+    del_usr = users(:deleted_profile)
+
+    try_undelete_user(del_usr)
+
+    assert_json_failure(:not_found)
+  end
+
+  test 'moderators and higher should be able to undelete user profiles' do
+    del_usr = users(:deleted_profile)
+
+    users.select(&:at_least_moderator?).each do |user|
+      sign_in(user)
+
+      try_undelete_user(del_usr)
+      @user = assigns(:user)
+
+      assert_json_success
+      assert_not_nil @user
+      assert_not @user.community_user.deleted?
+    end
+  end
+
   test 'should soft-delete user' do
     sign_in users(:global_admin)
 
@@ -635,6 +658,11 @@ class UsersControllerTest < ActionController::TestCase
     delete :soft_delete, params: { id: user.id,
                                    type: type,
                                    format: :json }
+  end
+  # @param user [User] user to undelete
+  def try_undelete_user(user)
+    post :undelete, params: { id: user.id,
+                             format: :json }
   end
 
   def try_save_preference(name, value, community: nil)
