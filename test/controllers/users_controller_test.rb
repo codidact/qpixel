@@ -659,6 +659,7 @@ class UsersControllerTest < ActionController::TestCase
                                    type: type,
                                    format: :json }
   end
+
   # @param user [User] user to undelete
   def try_undelete_user(user)
     post :undelete, params: { id: user.id,
