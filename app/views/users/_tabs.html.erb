@@ -1,31 +1,31 @@
 <div class="tabs is-classic-tabs">
-  <%= link_to user_path(user), class: "tabs--item #{current_page?(user_path(user)) ? 'is-active' : ''}" do %>
+  <%= link_to user_path(user), class: "tabs--item #{active_tab == "profile" ? 'is-active' : ''}" do %>
     <i class="fas fa-user"></i> Profile
   <% end %>
-  <%= link_to user_activity_path(user), class: "tabs--item #{current_page?(user_activity_path(user)) ? 'is-active' : ''}" do %>
+  <%= link_to user_activity_path(user), class: "tabs--item #{active_tab == "activity" ? 'is-active' : ''}" do %>
     Activity
   <% end %>
-  <%= link_to vote_summary_path(user), class: "tabs--item #{current_page?(vote_summary_path(user)) ? 'is-active' : ''}" do %>
+  <%= link_to vote_summary_path(user), class: "tabs--item #{active_tab == "vote summary" ? 'is-active' : ''}" do %>
     Vote Summary
   <% end %>
   <% if user == current_user %>
-    <%= link_to edit_user_registration_path, class: "tabs--item #{current_page?(edit_user_registration_path) ? 'is-active' : ''}" do %>
+    <%= link_to edit_user_registration_path, class: "tabs--item #{active_tab == "account" ? 'is-active' : ''}" do %>
       Account
     <% end %>
-    <%= link_to edit_user_profile_path, class: "tabs--item #{current_page?(edit_user_profile_path) ? 'is-active' : ''}" do %>
+    <%= link_to edit_user_profile_path, class: "tabs--item #{active_tab == "edit" ? 'is-active' : ''}" do %>
       Edit
     <% end %>
-    <%= link_to user_preferences_path, class: "tabs--item #{current_page?(user_preferences_path) ? 'is-active' : ''}" do %>
+    <%= link_to user_preferences_path, class: "tabs--item #{active_tab == "preferences" ? 'is-active' : ''}" do %>
       Preferences
     <% end %>
-    <%= link_to user_filters_path, class: "tabs--item #{current_page?(user_filters_path) ? 'is-active' : ''}" do %>
+    <%= link_to user_filters_path, class: "tabs--item #{active_tab == "filters" ? 'is-active' : ''}" do %>
       Filters
     <% end %>
-    <%= link_to notifications_path, class: "tabs--item #{current_page?(notifications_path) ? 'is-active' : ''}" do %>
+    <%= link_to notifications_path, class: "tabs--item #{active_tab == "notifications" ? 'is-active' : ''}" do %>
       Notifications
     <% end %>
   <% end %>
-  <%= link_to network_path(user), class: "tabs--item #{current_page?(network_path(user)) ? 'is-active' : ''}" do %>
+  <%= link_to network_path(user), class: "tabs--item #{active_tab == "all communities" ? 'is-active' : ''}" do %>
   All Communities
   <% end %>
 </div>
