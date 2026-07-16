@@ -395,6 +395,8 @@ class UsersController < ApplicationController
     if params[:user][:profile_markdown].present?
       profile_rendered = helpers.rendered_post(:user, :profile_markdown)
       profile_params = profile_params.merge(profile: profile_rendered)
+    elsif params[:user][:profile_markdown] && params[:user][:profile_markdown].empty?
+      profile_params = profile_params.merge(profile: '')
     end
 
     status = @user.update(profile_params)

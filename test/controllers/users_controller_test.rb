@@ -167,12 +167,19 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal users(:standard_user).id, assigns(:user).id
   end
 
-  test 'should update profile text' do
+  test 'should correctly update profile text' do
     sign_in users(:standard_user)
-    patch :update_profile, params: {
-      user: { profile_markdown: 'ABCDEF GHIJKL' }
-    }
-    assert_equal assigns(:user).profile.strip, '<p>ABCDEF GHIJKL</p>'
+
+    ['Non-empty profile text', ''].each do |text|
+      patch :update_profile, params: {
+        user: { profile_markdown: text }
+      }
+
+      @user = assigns(:user)
+      assert_not_nil @user
+
+      assert_equal @user.profile.strip, text.present? ? "<p>#{text}</p>" : ''
+    end
   end
 
   test 'should update websites' do
