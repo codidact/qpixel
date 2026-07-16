@@ -1,12 +1,12 @@
 <div class="tabs is-classic-tabs">
   <%= link_to user_path(user), class: "tabs--item #{active_tab == 'profile' ? 'is-active' : ''}" do %>
-    <i class="fas fa-user"></i> Profile
+    Profile
   <% end %>
   <%= link_to user_activity_path(user), class: "tabs--item #{active_tab == 'activity' ? 'is-active' : ''}" do %>
     Activity
   <% end %>
   <%= link_to vote_summary_path(user), class: "tabs--item #{active_tab == 'votes' ? 'is-active' : ''}" do %>
-    Vote Summary
+    Votes
   <% end %>
   <% if user == current_user %>
     <%= link_to edit_user_registration_path, class: "tabs--item #{active_tab == 'account' ? 'is-active' : ''}" do %>
@@ -29,6 +29,6 @@
     <% end %>
   <% end %>
   <%= link_to network_path(user), class: "tabs--item #{active_tab == 'communities' ? 'is-active' : ''}" do %>
-  All Communities
+  Communities
   <% end %>
 </div>
