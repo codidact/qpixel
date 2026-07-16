@@ -21,14 +21,14 @@
     <%= link_to user_filters_path, class: "tabs--item #{active_tab == 'filters' ? 'is-active' : ''}" do %>
       Filters
     <% end %>
-    <%= link_to notifications_path, class: "tabs--item #{active_tab == 'notifications' ? 'is-active' : ''}" do %>
+    <%= link_to notifications_path, class: "tabs--item #{active_tab == 'inbox' ? 'is-active' : ''}" do %>
       Inbox
     <% end %>
-    <%= link_to subscriptions_path, class: "tabs--item #{active_tab == 'subscriptions' ? 'is-active' : ''}" do %>
+    <%= link_to subscriptions_path, class: "tabs--item #{active_tab == 'email' ? 'is-active' : ''}" do %>
       Email
     <% end %>
   <% end %>
-  <%= link_to network_path(user), class: "tabs--item #{active_tab == 'communities' ? 'is-active' : ''}" do %>
+  <%= link_to network_path(user), class: "tabs--item #{active_tab == 'network' ? 'is-active' : ''}" do %>
     Network
   <% end %>
 </div>
