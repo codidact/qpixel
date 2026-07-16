@@ -24,6 +24,9 @@
     <%= link_to notifications_path, class: "tabs--item #{active_tab == 'notifications' ? 'is-active' : ''}" do %>
       Notifications
     <% end %>
+    <%= link_to subscriptions_path, class: "tabs--item #{active_tab == 'subscriptions' ? 'is-active' : ''}" do %>
+      Subscriptions
+    <% end %>
   <% end %>
   <%= link_to network_path(user), class: "tabs--item #{active_tab == 'communities' ? 'is-active' : ''}" do %>
   All Communities
