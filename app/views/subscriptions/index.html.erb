@@ -4,7 +4,7 @@
 
 <% content_for :title, title %>
 
-<%= render 'users/tabs', user: current_user %>
+<%= render 'users/tabs', user: current_user, active_tab: 'email' %>
 
 <h1><%= title %></h1>
 <p>
@@ -17,7 +17,7 @@
     [
       sub.created_at,
       [sub.name.present? ? sub.name : "#{type.capitalize} subscription #{index + 1}",sub]
-    ] 
+    ]
   end
 end.sort_by { |a| a }.map { |_, v| v }.each do |name, sub| %>
   <details data-sub-id="<%= sub.id %>">
