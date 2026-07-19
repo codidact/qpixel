@@ -18,10 +18,7 @@
     <ul>
       <li>Improve clarity or fix errors like broken links.</li>
       <li>Do not drastically change the post or add content the author would reasonably object to.</li>
-      <li>
-        Do not change the style unnecessarily (for example, do not change spelling that is valid in other English
-        dialects).
-      </li>
+      <li>Do not change the style unnecessarily (for example, do not change spelling that is valid in other English dialects).</li>
     </ul>
   </div>
 <% end %>
@@ -29,7 +26,7 @@
 <form class="widget">
   <div class="widget--body h-bg-tertiary-050">
     <div class="h-f-r">
-      <a class="button is-muted is-outlined" href="<%= generic_share_link(post) %>">View post</a>
+      <a class="button is-muted is-outlined" href="<%= generic_share_link(post)  %>">View post</a>
     </div>
     <% if @edit.pending? %>
       <p class="h-m-0"><strong class="h-c-tertiary-700">Pending.</strong><br>This suggested edit is pending review.</p>
@@ -83,10 +80,7 @@
   </div>
   <% if @edit.active? && may_decide %>
     <div class="widget--footer">
-      <button class="button is-filled is-medium js-suggested-edit-approve"
-              data-suggested-edit-approve="<%= @edit.id %>">
-        Approve
-      </button>
+      <button class="button is-filled is-medium js-suggested-edit-approve" data-suggested-edit-approve="<%= @edit.id %>">Approve</button>
       <button class="button is-filled is-medium js-suggested-edit-reject">Reject (with optional reason)</button>
 
       <div class="widget js-suggested-edit-reject-dialog is-hidden">
