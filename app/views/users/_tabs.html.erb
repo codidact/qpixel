@@ -1,34 +1,34 @@
 <div class="tabs is-classic-tabs">
-  <%= link_to user_path(user), class: "tabs--item #{active_tab == 'profile' ? 'is-active' : ''}" do %>
+  <%= link_to user_path(user), class: "tabs--item #{'is-active' if active_tab == 'profile'}" do %>
     Profile
   <% end %>
-  <%= link_to user_activity_path(user), class: "tabs--item #{active_tab == 'activity' ? 'is-active' : ''}" do %>
+  <%= link_to user_activity_path(user), class: "tabs--item #{'is-active' if active_tab == 'activity'}" do %>
     Activity
   <% end %>
-  <%= link_to vote_summary_path(user), class: "tabs--item #{active_tab == 'votes' ? 'is-active' : ''}" do %>
+  <%= link_to vote_summary_path(user), class: "tabs--item #{'is-active' if active_tab == 'votes'}" do %>
     Votes
   <% end %>
   <% if user == current_user %>
-    <%= link_to edit_user_registration_path, class: "tabs--item #{active_tab == 'account' ? 'is-active' : ''}" do %>
+    <%= link_to edit_user_registration_path, class: "tabs--item #{'is-active' if active_tab == 'account'}" do %>
       Account
     <% end %>
-    <%= link_to edit_user_profile_path, class: "tabs--item #{active_tab == 'edit' ? 'is-active' : ''}" do %>
+    <%= link_to edit_user_profile_path, class: "tabs--item #{'is-active' if active_tab == 'edit'}" do %>
       Edit
     <% end %>
-    <%= link_to user_preferences_path, class: "tabs--item #{active_tab == 'preferences' ? 'is-active' : ''}" do %>
+    <%= link_to user_preferences_path, class: "tabs--item #{'is-active' if active_tab == 'preferences'}" do %>
       Preferences
     <% end %>
-    <%= link_to user_filters_path, class: "tabs--item #{active_tab == 'filters' ? 'is-active' : ''}" do %>
+    <%= link_to user_filters_path, class: "tabs--item #{'is-active' if active_tab == 'filters'}" do %>
       Filters
     <% end %>
-    <%= link_to notifications_path, class: "tabs--item #{active_tab == 'inbox' ? 'is-active' : ''}" do %>
+    <%= link_to notifications_path, class: "tabs--item #{'is-active' if active_tab == 'inbox'}" do %>
       Inbox
     <% end %>
-    <%= link_to subscriptions_path, class: "tabs--item #{active_tab == 'email' ? 'is-active' : ''}" do %>
+    <%= link_to subscriptions_path, class: "tabs--item #{'is-active' if active_tab == 'email'}" do %>
       Email
     <% end %>
   <% end %>
-  <%= link_to network_path(user), class: "tabs--item #{active_tab == 'network' ? 'is-active' : ''}" do %>
+  <%= link_to network_path(user), class: "tabs--item #{'is-active' if active_tab == 'network'}" do %>
     Network
   <% end %>
 </div>
