@@ -170,7 +170,7 @@ class UsersControllerTest < ActionController::TestCase
   test 'should correctly update profile text' do
     sign_in users(:standard_user)
 
-    ['Non-empty profile text', ''].each do |text|
+    ['Non-empty profile text', '', 'Empty and whitespace-only changes should be separated', '    '].each do |text|
       patch :update_profile, params: {
         user: { profile_markdown: text }
       }
