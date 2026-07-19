@@ -121,6 +121,20 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  test 'users that are deleted network-wide should not be undeletable' do
+    del_usr = users(:deleted_account)
+
+    users.select(&:at_least_moderator?).each do |user|
+      sign_in(user)
+
+      try_undelete_user(del_usr)
+      del_usr.reload
+
+      assert_json_failure(:not_found)
+      assert del_usr.community_user.deleted?
+    end
+  end
+
   test 'should soft-delete user' do
     sign_in users(:global_admin)
 

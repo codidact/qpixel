@@ -19,6 +19,7 @@ class UsersController < ApplicationController
                                   :annotate, :annotations, :mod_privileges, :mod_privilege_action,
                                   :vote_summary, :network, :avatar]
   before_action :check_deleted, only: [:show, :posts, :activity]
+  before_action :verify_user_not_deleted, only: [:undelete]
 
   def index
     @sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -711,6 +712,12 @@ class UsersController < ApplicationController
     if deleted && go_to_not_found
       not_found!
     end
+  end
+
+  # Explicitly checks that the requested used is not deleted
+  # NOTE: This guard is not enough to guarantee that the user is not deleted on the current community
+  def verify_user_not_deleted
+    not_found! if @user.deleted?
   end
 end
 # rubocop:enable Metrics/ClassLength
