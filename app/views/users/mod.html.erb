@@ -32,6 +32,8 @@
                   remote: true,
                   method: is_deleted ? :post : :delete,
                   class: 'js-soft-delete button is-danger is-filled',
+                  disabled: @user.deleted?,
+                  title: @user.deleted? ? 'The user is deleted network-wide' : '',
                   role: 'button' %>
       <% if current_user.at_least_global_moderator? %>
         <%= link_to 'Delete user network-wide',
