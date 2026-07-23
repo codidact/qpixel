@@ -1,5 +1,17 @@
 en:
   mod:
+    actions:
+      profile_delete: >
+        Delete community profile
+      profile_undelete: >
+        Undelete community profile
+      user_delete: >
+        Delete user network-wide
+      errors:
+        profile_already_deleted: >
+          The user's profile is already deleted
+        user_already_deleted: >
+          The user is already deleted network-wide
     tools:
       pinned_links: 'Featured Links'
       pinned_links_blurb: >

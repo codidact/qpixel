@@ -27,22 +27,22 @@
       after initiating an action.</p>
     <div class="delete-actions">
       <% is_deleted = @user.community_user&.deleted? || false %>
-      <%= link_to "#{is_deleted ? 'Undelete' : 'Delete'} community profile",
+      <%= link_to t("mod.actions.profile_#{is_deleted ? 'undelete' : 'delete'}"),
                   is_deleted ? undelete_user_path(@user.id) : soft_delete_user_path(@user.id, type: 'profile'),
                   remote: true,
                   method: is_deleted ? :post : :delete,
                   class: 'js-soft-delete button is-danger is-filled',
                   disabled: @user.deleted?,
-                  title: @user.deleted? ? 'The user is deleted network-wide' : '',
+                  title: @user.deleted? ? t('mod.actions.errors.profile_already_deleted') : '',
                   role: 'button' %>
       <% if current_user.at_least_global_moderator? %>
-        <%= link_to 'Delete user network-wide',
+        <%= link_to t('mod.actions.user_delete'),
                     soft_delete_user_path(@user.id, type: 'user'),
                     remote: true,
                     method: :delete,
                     class: 'js-soft-delete button is-danger is-filled',
                     disabled: @user.deleted?,
-                    title: @user.deleted? ? 'The user is already deleted' : '',
+                    title: @user.deleted? ? t('mod.actions.errors.user_already_deleted') : '',
                     role: 'button' %>
       <% end %>
       <% if current_user.is_global_admin %>
