@@ -11,6 +11,12 @@ class VotesController < ApplicationController
       return
     end
 
+    if !current_user.privilege?('unrestricted') && !current_user.owns_post_or_parent?(post)
+      render(json: { status: 'failed', message: 'You must have the Participate Everywhere ability to vote on this post.' },
+             status: :forbidden)
+      return
+    end
+
     recent_votes = current_user.recent_votes_count
     max_votes_per_day = current_user.max_votes_per_day
 
