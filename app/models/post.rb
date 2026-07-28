@@ -31,7 +31,8 @@ class Post < ApplicationRecord
 
   serialize :tags_cache, coder: YAML, type: Array
 
-  validates :body, presence: true, length: { maximum: 30_000 }
+  validates :body, presence: true, length: { maximum: 65_535 }
+  validates :body_markdown, presence: true, length: { maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id], case_sensitive: false }, if: -> { doc_slug.present? }
   validates :title, presence: true, if: -> { post_type.is_top_level? }
   validates :tags_cache, presence: true, if: -> { post_type.has_tags }
