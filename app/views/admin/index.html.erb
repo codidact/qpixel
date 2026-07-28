@@ -8,7 +8,7 @@
 <p><%= t('admin.dashboard.blurb') %></p>
 
 <div class="grid">
-  <% if current_user.is_global_admin %>
+  <% if current_user.global_admin? %>
     <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
       <div class="widget">
         <div class="widget--body">
@@ -129,7 +129,7 @@
     </div>
   </div>
 
-  <% if current_user.is_global_admin %>
+  <% if current_user.global_admin? %>
     <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
       <div class="widget">
         <div class="widget--body">

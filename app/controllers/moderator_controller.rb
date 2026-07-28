@@ -69,6 +69,7 @@ class ModeratorController < ApplicationController
         total: Vote.for(@user).count
       )
     )
+    render layout: 'without_sidebar'
   end
 
   def spammy_users
@@ -92,7 +93,9 @@ class ModeratorController < ApplicationController
   def pii_correlation
     @user = User.find(params[:id])
     respond_to do |format|
-      format.html
+      format.html do
+        render layout: 'without_sidebar'
+      end
       format.template do
         @target = User.find_by(id: params[:target_id])
       end
