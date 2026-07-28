@@ -7,12 +7,13 @@ class VotesController < ApplicationController
     post = Post.find(params[:post_id])
 
     if post.user == current_user && !SiteSetting['AllowSelfVotes']
-      render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: :forbidden)
+      render(json: { status: 'failed', message: I18n.t('votes.limits.own_post') },
+             status: :forbidden)
       return
     end
 
     if !current_user.privilege?('unrestricted') && !current_user.owns_post_or_parent?(post)
-      render(json: { status: 'failed', message: 'You must have the Participate Everywhere ability to vote on this post.' },
+      render(json: { status: 'failed', message: I18n.t('votes.limits.restricted_ability') },
              status: :forbidden)
       return
     end
