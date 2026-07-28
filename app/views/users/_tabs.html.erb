@@ -31,4 +31,13 @@
   <%= link_to network_path(user), class: "tabs--item #{'is-active' if active_tab == 'network'}" do %>
     Network
   <% end %>
+  <div class="tabs--push"></div>
+  <% if current_user&.moderator? %>
+    <%= link_to mod_user_path(user), class: "tabs--item #{'is-active' if active_tab == 'mod_tools'}" do %>
+      <i class="fas fa-shield-alt"></i> Moderator Tools
+      <% if user&.community_user&.mod_warnings&.size&.positive? %>
+        (<%= pluralize(user.community_user.mod_warnings.count, 'message') %>)
+      <% end %>
+    <% end %>
+  <% end %>
 </div>

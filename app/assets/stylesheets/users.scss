@@ -241,3 +241,56 @@ $sizes: (16, 32, 40, 48, 64, 128, 256);
     }
   }
 }
+
+.modtools--usercard {
+  padding: 0.5rem;
+}
+
+.modtools-tbl-noborder {
+  th {
+    border-bottom-width: 1px !important;
+    width: 150px;
+  }
+}
+
+.mod-warnings-clear-form { display: inline; }
+
+.modtools--sidebar {
+  margin-right: 1rem;
+}
+
+.modtools--sidebar {
+  > .widget--header {
+    display: none;
+  }
+
+  label {
+    display: block;
+  }
+
+  #mobile-mod-tools-toggle {
+    + .widget--body {
+      display: none;
+    }
+
+    &:checked + .widget--body {
+      display: block;
+    }
+  }
+}
+
+@media screen and (min-width: $mod-tools-medium-to-large-breakpoint) {
+  .modtools--sidebar {
+    > .widget--header {
+      display: block;
+    }
+
+    label {
+      display: none;
+    }
+
+    #mobile-mod-tools-toggle + .widget--body {
+      display: block;
+    }
+  }
+}
