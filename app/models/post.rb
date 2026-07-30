@@ -4,6 +4,7 @@ class Post < ApplicationRecord
   include PostValidations
   include SoftDeletable
   include Timestamped
+  include UserSortable
 
   belongs_to :user, optional: true
   belongs_to :post_type
