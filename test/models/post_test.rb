@@ -100,7 +100,9 @@ class PostTest < ActiveSupport::TestCase
       ['# Heading', '<h1>Heading</h1>', true],
       ['a' * 30_000, 'a' * 65_535, true],
       ['a' * 30_001, '<p>body_markdown is too long</p>', false],
-      ['body is too long', 'a' * 65_536, false]
+      ['body is too long', 'a' * 65_536, false],
+      ["a\r\n" * 15_000, '<p>body_markdown is too long before converting newlines to \n</p>', true],
+      ["#{"a\r\n" * 15_000}a", '<p>body_markdown is too long even after converting newlines to \n</p>', false]
     ].each do |test_case|
       post = Post.new(shared_params.merge({ body_markdown: test_case.first,
                                             body: test_case.second }))
