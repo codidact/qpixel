@@ -31,7 +31,7 @@ class Post < ApplicationRecord
 
   serialize :tags_cache, coder: YAML, type: Array
 
-  normalizes :body_markdown, with: -> body_markdown {
+  normalizes :body_markdown, with: lambda { |body_markdown|
     body_markdown.encode(body_markdown.encoding, universal_newline: true)
   }
 
