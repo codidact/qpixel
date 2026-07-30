@@ -67,7 +67,7 @@
           Compare PII
         <% end %>
         <%= link_to mod_delete_path(user),
-                    class: "menu--item #{current_page?(mod_delete_path(user)) ? 'is-active' : ''}" do %>
+                    class: "menu--item #{current_page?(mod_delete_path(user)) ? 'is-active' : 'is-red'}" do %>
           <i class="fas fa-trash fa-fw"></i>
           Delete Community Profile
         <% end %>
@@ -75,12 +75,12 @@
         <% if current_user.at_least_global_moderator? %>
         <div class="menu--heading">Global Mod Tools</div>
         <%= link_to mod_delete_network_account_path(user),
-                    class: "menu--item #{current_page?(mod_delete_network_account_path(user)) ? 'is-active' : ''}" do %>
+                    class: "menu--item #{current_page?(mod_delete_network_account_path(user)) ? 'is-active' : 'is-red'}" do %>
           <i class="fas fa-skull fa-fw"></i>
           Delete Network Account
         <% end %>
         <%= link_to mod_failban_path(user),
-                    class: "menu--item #{current_page?(mod_failban_path(user)) ? 'is-active' : ''}" do %>
+                    class: "menu--item #{current_page?(mod_failban_path(user)) ? 'is-active' : 'is-red'}" do %>
           <i class="fas fa-eye-slash fa-fw"></i>
           Feed to STAT
         <% end %>
