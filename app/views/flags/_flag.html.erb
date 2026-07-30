@@ -5,7 +5,7 @@
       flag : the flag to display
       controls : boolean, whether or not to display handling controls - true by default
       escalation : boolean, if true will display escalation comment - false by default
-"%>
+" %>
 
 <% controls ||= defined?(controls) && !controls.nil? ? controls : true %>
 <% escalation ||= defined?(escalation) && !escalation.nil? ? escalation : false %>
@@ -16,7 +16,10 @@
       <%= render 'posts/type_agnostic', show_type_tag: true, show_category_tag: true, post: flag.post %>
     </div>
   <% elsif flag.post_type == 'Comment' %>
-    <%= render 'comments/comment', comment: flag.post, with_post_link: true, pingable: flag.post.comment_thread.pingable %>
+    <%= render 'comments/comment',
+               comment: flag.post,
+               with_post_link: true,
+               pingable: flag.post.comment_thread.pingable %>
   <% end %>
   <div class="widget--body">
     <p>

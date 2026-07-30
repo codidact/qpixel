@@ -13,7 +13,7 @@
 <p class="is-lead"><%= blurb %></p>
 
 <div class="grid has-margin-bottom-4">
-    <% if current_user.is_global_moderator %>
+    <% if current_user.global_moderator? %>
     <div class="grid--cell">
         <div class="button-list is-gutterless">
             <%= link_to "current community", query_url(global: '0', filter: params[:filter] || 'active'),
@@ -68,7 +68,7 @@
         <th>begins</th>
         <th>ends</th>
         <th>active?</th>
-        <% if current_user.is_global_moderator %>
+        <% if current_user.global_moderator? %>
             <th>community</th>
         <% end %>
         <th>actions</th>
@@ -103,7 +103,7 @@
             <td>
                 <%= pl.active ? raw('<strong>yes</strong>') : 'no' %>
             </td>
-            <% if current_user.is_global_moderator %>
+            <% if current_user.global_moderator? %>
                 <td><%= pl.community.nil? ? 'global' : pl.community.name %></td>
             <% end %>
             <td>

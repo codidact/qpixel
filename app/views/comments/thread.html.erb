@@ -8,10 +8,12 @@
     Instance variables:
       @comment_thread : CommentThread to display
       @post           : Post the thread belongs to
-"%>
+" %>
 
 <h1>Comments on
-  <a href="<%= generic_share_link(@post) %>"><%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %></a>
+  <a href="<%= generic_share_link(@post) %>">
+    <%= @post.title.blank? && @post.parent.present? ? @post.parent.title : @post.title %>
+  </a>
 </h1>
 
 <% if @post.parent.present? %>
@@ -31,4 +33,3 @@
                                         show_deleted: params[:show_deleted_comments] == '1',
                                         thread: @comment_thread %>
 </div>
-

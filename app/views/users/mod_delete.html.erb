@@ -1,0 +1,34 @@
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
+
+<%= render 'tabs', user: @user, active_tab: 'mod_tools' %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9-lg is-12">
+    <h1>Delete Community Profile</h1>
+
+    <p>
+      If a user is being disruptive or violating site rules, try to take the smallest action that stops the bad
+      behavior. You can <%= link_to 'revoke or suspend individual abilities', user_privileges_path(@user) %> or
+      <%= link_to 'suspend a user', new_mod_warning_path(@user) %>. If the user has done nothing but spam, you can use
+      the <%= link_to 'spam profiles mod tool', mod_spammers_path %>.
+    </p>
+
+    <p>
+      If other actions have not worked and the disruptions are severe, you can delete the profile on this community.
+    </p>
+
+    <div class="notice is-danger">
+      <p>
+        <strong>Take care!</strong> You will not be able to reverse this action and you will not be asked to confirm.
+      </p>
+    </div>
+
+    <%= link_to 'Delete community profile',
+                soft_delete_user_path(@user.id, type: 'profile'),
+                remote: true,
+                method: :delete,
+                class: 'js-soft-delete button is-danger is-filled' %>
+  </div>
+</div>
