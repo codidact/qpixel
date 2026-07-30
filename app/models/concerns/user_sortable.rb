@@ -6,7 +6,7 @@ module UserSortable
     # SQL injection safe.
     # @param term_opts Hash of search term options
     # @param field_mappings Hash of user-selectable values to column names: +{ age: :created_at, rep: :threshold }+
-    # @option term_opts :term [String] A user-provided search term to apply - usually from +params+, e.g. +params[:sort]+.
+    # @option term_opts :term [String] A user-provided search term - usually from +params+, e.g. +params[:sort]+.
     #   Should be one of the keys in +field_mappings+.
     # @option term_opts :default [Symbol] A column name to apply as the default sort ordering.
     # @return [ActiveRecord::Relation] A relation of the current type, with the sort ordering applied.

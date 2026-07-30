@@ -1,4 +1,3 @@
-# rubocop:disable Style/OneClassPerFile
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
