@@ -31,6 +31,10 @@ class Post < ApplicationRecord
 
   serialize :tags_cache, coder: YAML, type: Array
 
+  normalizes :body_markdown, with: -> body_markdown {
+    body_markdown.encode(body_markdown.encoding, universal_newline: true)
+  }
+
   validates :body, presence: true, length: { maximum: 65_535 }
   validates :body_markdown, presence: true, length: { maximum: 30_000 }
   validates :doc_slug, uniqueness: { scope: [:community_id], case_sensitive: false }, if: -> { doc_slug.present? }
