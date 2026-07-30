@@ -77,6 +77,38 @@ class PostTest < ActiveSupport::TestCase
     assert_equal post_type.id, post.post_type_id
   end
 
+  test 'should validate body and body_markdown length' do
+    category = categories(:main)
+    license = licenses(:cc_by_sa)
+    post_type = post_types(:question)
+    user = users(:standard_user)
+
+    category.min_body_length = 1 # stops min length errors from interfering
+
+    shared_params = { title: 'Title of the post to test',
+                      category: category,
+                      license: license,
+                      post_type: post_type,
+                      tags_cache: ['support'],
+                      score: 0,
+                      user: user }
+
+    [
+      ['', '', false],
+      ['', '<p></p>', false],
+      ['  ', '<p>  </p>', false],
+      ['# Heading', '<h1>Heading</h1>', true],
+      ['a' * 30_000, 'a' * 65_535, true],
+      ['a' * 30_001, '<p>body_markdown is too long</p>', false],
+      ['body is too long', 'a' * 65_536, false]
+    ].each do |test_case|
+      post = Post.new(shared_params.merge({ body_markdown: test_case.first,
+                                            body: test_case.second }))
+
+      assert_equal test_case.third, post.valid?, post.errors.full_messages.inspect
+    end
+  end
+
   test 'should not allow unspecified post types in a category' do
     category = categories(:main)
     post_type = post_types(:help_doc)
