@@ -40,6 +40,35 @@ question_two:
   upvote_count: 0
   downvote_count: 0
 
+question_three:
+  post_type: question
+  title: Q3 - This is test question number three
+  body: |
+      <p>This is the body of test question three.</p>
+      <p>Note that there are newlines for testing purposes.</p>
+      <p>This is important.</p>
+  body_markdown: |
+      This is the body of test question three.
+
+      Note that there are newlines for testing purposes.
+
+      This is important.
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 new_user_question:
   post_type: question
   title: Q1 - This is test question number one
