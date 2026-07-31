@@ -16,10 +16,6 @@ class SuggestedEdit < ApplicationRecord
   has_one :post_type, through: :post
   has_one :category, through: :post
 
-  normalizes :body_markdown, with: lambda { |body_markdown|
-    body_markdown.encode(body_markdown.encoding, universal_newline: true)
-  }
-
   after_save :clear_pending_cache, if: proc { saved_change_to_attribute?(:active) }
 
   scope :approved, -> { where(active: false, accepted: true) }
