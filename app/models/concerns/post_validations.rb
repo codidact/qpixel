@@ -3,8 +3,8 @@ module PostValidations
   extend ActiveSupport::Concern
 
   included do
-    normalizes :body_markdown, with: lambda { |body_markdown|
-      body_markdown.encode(body_markdown.encoding, universal_newline: true)
+    normalizes :body_markdown, with: lambda { |text|
+      text.encode(text.encoding, universal_newline: true)
     }
 
     validate :tags_in_tag_set, if: -> { post_type.has_tags }
