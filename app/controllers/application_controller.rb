@@ -446,7 +446,7 @@ class ApplicationController < ActionController::Base
   end
 
   def normalize_if_string(maybe_string)
-    return maybe_string unless maybe_string.is_a? String
+    return maybe_string unless maybe_string.is_a?(String)
 
     maybe_string.encode(maybe_string.encoding, universal_newline: true).strip
   end
