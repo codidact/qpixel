@@ -712,14 +712,6 @@ class PostsController < ApplicationController
 
   private
 
-  def normalize_if_string(potential_string)
-    if potential_string.is_a? String
-      potential_string.encode(potential_string.encoding, universal_newline: true).strip
-    else
-      potential_string
-    end
-  end
-
   def permitted
     [:post_type_id, :category_id, :parent_id, :title, :body_markdown, :license_id,
      :doc_slug, :help_category, :help_ordering]
