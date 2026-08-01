@@ -445,11 +445,11 @@ class ApplicationController < ActionController::Base
     super << csrf_token_storage_strategy.fetch(request)
   end
 
-  def normalize_if_string(potential_string)
-    if potential_string.is_a? String
-      potential_string.encode(potential_string.encoding, universal_newline: true).strip
+  def normalize_if_string(maybe_string)
+    if maybe_string.is_a? String
+      maybe_string.encode(maybe_string.encoding, universal_newline: true).strip
     else
-      potential_string
+      maybe_string
     end
   end
 end
