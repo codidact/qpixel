@@ -444,4 +444,10 @@ class ApplicationController < ActionController::Base
   def request_authenticity_tokens
     super << csrf_token_storage_strategy.fetch(request)
   end
+
+  def normalize(maybe_string)
+    return maybe_string unless maybe_string.is_a?(String)
+
+    maybe_string.encode(maybe_string.encoding, universal_newline: true).strip
+  end
 end

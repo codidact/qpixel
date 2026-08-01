@@ -219,7 +219,7 @@ class PostsController < ApplicationController
     body_rendered = helpers.rendered_post(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
-    if edit_post_params.to_h.all? { |k, v| @post.send(k) == v }
+    if edit_post_params.to_h.all? { |k, v| normalize(@post.send(k)) == normalize(v) }
       flash[:danger] = helpers.i18ns('posts.no_edit_changes')
       return redirect_to post_path(@post)
     end
