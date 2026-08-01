@@ -219,7 +219,7 @@ class PostsController < ApplicationController
     body_rendered = helpers.rendered_post(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
-    if edit_post_params.to_h.all? { |k, v| @post.send(k) == v }
+    if edit_post_params.to_h.all? { |k, v| normalize_if_string(@post.send(k)) == normalize_if_string(v) }
       flash[:danger] = helpers.i18ns('posts.no_edit_changes')
       return redirect_to post_path(@post)
     end
@@ -711,6 +711,14 @@ class PostsController < ApplicationController
   end
 
   private
+
+  def normalize_if_string(potential_string)
+    if potential_string.is_a? String
+      potential_string.encode(potential_string.encoding, universal_newline: true).strip()
+    else
+      potential_string
+    end
+  end
 
   def permitted
     [:post_type_id, :category_id, :parent_id, :title, :body_markdown, :license_id,
