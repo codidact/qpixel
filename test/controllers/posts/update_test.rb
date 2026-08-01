@@ -72,6 +72,26 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on no-change update'
   end
 
+  test 'update rejects edit with no change apart from line ending style' do
+    sign_in users(:standard_user)
+    post = posts(:question_three)
+    before_history = PostHistory.where(post: post).count
+    bm = post.body_markdown
+    body_markdown_with_crlf = bm.encode(bm.encoding, normalize_newlines: true).split("\n").join("\r\n")
+    patch :update, params: { id: post.id,
+                             post: { title: post.title,
+                                     body_markdown: body_markdown_with_crlf,
+                                     tags_cache: post.tags_cache } }
+    after_history = PostHistory.where(post: post).count
+    assert_response(:found)
+    assert_redirected_to post_path(post)
+    assert_not_nil assigns(:post)
+    assert_not_nil flash[:danger]
+    assert_equal before_history,
+                 after_history,
+                 'PostHistory event incorrectly created on line-ending-change-only update'
+  end
+
   test 'cannot update locked post' do
     sign_in users(:standard_user)
     before_history = PostHistory.where(post: posts(:locked)).count
