@@ -714,7 +714,7 @@ class PostsController < ApplicationController
 
   def normalize_if_string(potential_string)
     if potential_string.is_a? String
-      potential_string.encode(potential_string.encoding, universal_newline: true).strip()
+      potential_string.encode(potential_string.encoding, universal_newline: true).strip
     else
       potential_string
     end

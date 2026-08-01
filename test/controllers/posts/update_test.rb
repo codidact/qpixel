@@ -77,10 +77,10 @@ class PostsControllerTest < ActionController::TestCase
     post = posts(:question_three)
     before_history = PostHistory.where(post: post).count
     bm = post.body_markdown
-    body_markdown_with_CRLF = bm.encode(bm.encoding, normalize_newlines: true).split("\n").join("\r\n")
+    body_markdown_with_crlf = bm.encode(bm.encoding, normalize_newlines: true).split("\n").join("\r\n")
     patch :update, params: { id: post.id,
                              post: { title: post.title,
-                                     body_markdown: body_markdown_with_CRLF,
+                                     body_markdown: body_markdown_with_crlf,
                                      tags_cache: post.tags_cache } }
     after_history = PostHistory.where(post: post).count
     assert_response(:found)
