@@ -107,7 +107,7 @@ class User < ApplicationRecord
   def can_vote_on?(post)
     privilege?('unrestricted') || owns_post_or_parent?(post)
   end
-  
+
   # Can the user rename a given comment thread?
   # @param thread [CommentThread] thread to rename
   # @return [Boolean] check result
