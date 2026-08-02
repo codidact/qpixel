@@ -99,6 +99,15 @@ class User < ApplicationRecord
     post.user == self || privilege?(name)
   end
 
+  # Can the user vote on this post?
+  # This post does not check for the 'AllowSelfVotes' site setting, only
+  # whether this user has the ability to vote on this post.
+  # @param post [Post] to check
+  # @return [Boolean] check result
+  def can_vote_on?(post)
+    privilege?('unrestricted') || owns_post_or_parent?(post)
+  end
+  
   # Can the user rename a given comment thread?
   # @param thread [CommentThread] thread to rename
   # @return [Boolean] check result

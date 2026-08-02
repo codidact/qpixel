@@ -12,7 +12,7 @@ class VotesController < ApplicationController
       return
     end
 
-    if !current_user.privilege?('unrestricted') && !current_user.owns_post_or_parent?(post)
+    if !current_user.can_vote_on?(post)
       render(json: { status: 'failed', message: I18n.t('votes.limits.restricted_ability') },
              status: :forbidden)
       return
