@@ -41,7 +41,7 @@ module QPixel
     ##
     # Get multiple hash values.
     # @param hash_key [String] The name of the hash
-    # @param *keys [String] Keys within the hash to retrieve
+    # @param keys [Array<String>] Keys to retrieve
     # @return [Hash] Keys and values from the hash
     def hmget(hash_key, *keys)
       with_redis do |rd|
@@ -63,7 +63,7 @@ module QPixel
     ##
     # Delete a hash value, or the entire hash.
     # @param hash_key [String] The name of the hash
-    # @param *keys [String] Keys within the hash to delete. If none are provided, the entire hash is deleted.
+    # @param keys [Array<String>] Keys to delete. If none are provided, the entire hash is deleted.
     # @return [Integer] The number of keys that were removed from the hash
     def hdel(hash_key, *keys)
       with_redis do |rd|

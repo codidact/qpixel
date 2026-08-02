@@ -93,7 +93,7 @@ module QPixel
     # no selects or joins applied.
     # @param name [String] cache key name
     # @param opts [Hash] options hash - any unlisted options will be passed to the underlying cache
-    # @options opts [Boolean] :include_community whether to include the community ID in the cache key
+    # @option opts [Boolean] :include_community whether to include the community ID in the cache key
     # @return [ActiveRecord::Relation, nil]
     def read_collection(name, **opts)
       namespaced = construct_ns_key(name, include_community: include_community(opts))

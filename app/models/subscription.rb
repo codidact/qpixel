@@ -48,7 +48,6 @@ class Subscription < ApplicationRecord
   end
 
   # Is the subscription's type qualified (bound to an entity)?
-  # @param type [String] type to check
   # @return [Boolean] check result
   def qualified?
     QUALIFIED_TYPES.include?(type)
