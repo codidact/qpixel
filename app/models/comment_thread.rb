@@ -19,7 +19,7 @@ class CommentThread < ApplicationRecord
 
   # Gets threads appropriately scoped for a given user & post
   # @param user [User, nil] user to check
-  # @para post [Post] post to check
+  # @param post [Post] post to check
   # @return [ActiveRecord::Relation<CommentThread>]
   def self.accessible_to(user, post)
     if user&.at_least_moderator? || user&.post_privilege?('flag_curate', post)
