@@ -1,7 +1,9 @@
 <div class="diff">
   <% if before.present? && after.present? %>
     <% if before.is_a?(String) && after.is_a?(String) %>
-      <% diff = Diffy::SplitDiff.new(before, after, format: :html, ignore_crlf: true) %>
+      <% before = before.encode(before.encoding, universal_newline: true).strip %>
+      <% after = after.encode(after.encoding, universal_newline: true).strip %>
+      <% diff = Diffy::SplitDiff.new(before, after, format: :html) %>
       <div class="diff-section">
         <div class="diff-old is-changed raw-markdown">
           <%= raw(diff.left) %>
