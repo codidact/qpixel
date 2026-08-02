@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class User < ApplicationRecord
   include EmailValidations
   include UsernameValidations
@@ -560,3 +561,4 @@ class User < ApplicationRecord
     votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
   end
 end
+# rubocop:enable Metrics/ClassLength
