@@ -1,4 +1,4 @@
-module LineEndingNormalization
+module PostNormalizations
   extend ActiveSupport::Concern
 
   def normalize_newlines(text)

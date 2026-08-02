@@ -1,5 +1,5 @@
 class PostHistory < ApplicationRecord
-  include LineEndingNormalization
+  include PostNormalizations
   include PostRelated
   include EditsValidations
 
