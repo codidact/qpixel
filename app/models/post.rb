@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   include CommunityRelated
+  include LineEndingNormalization
   include Lockable
   include PostValidations
   include SoftDeletable
