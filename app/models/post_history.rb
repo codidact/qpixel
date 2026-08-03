@@ -1,4 +1,5 @@
 class PostHistory < ApplicationRecord
+  include PostNormalizations
   include PostRelated
   include EditsValidations
 
@@ -11,11 +12,7 @@ class PostHistory < ApplicationRecord
   scope :of_type, ->(name) { joins(:post_history_type).where(post_history_types: { name: name }) }
   scope :on_undeleted, -> { joins(:post).where(posts: { deleted: false }) }
 
-  normalize_newlines = lambda { |text|
-    text.encode(text.encoding, universal_newline: true)
-  }
-  normalizes :before_state, with: normalize_newlines
-  normalizes :after_state, with: normalize_newlines
+  normalizes :before_state, :after_state, with: ->(text) { normalize_newlines(text) }
 
   def before_tags
     tags.where(post_history_tags: { relationship: 'before' })

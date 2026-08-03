@@ -77,7 +77,7 @@ class PostsControllerTest < ActionController::TestCase
     post = posts(:question_three)
     before_history = PostHistory.where(post: post).count
     bm = post.body_markdown
-    body_markdown_with_crlf = bm.encode(bm.encoding, normalize_newlines: true).split("\n").join("\r\n")
+    body_markdown_with_crlf = bm.encode(bm.encoding, universal_newline: true).split("\n").join("\r\n")
     patch :update, params: { id: post.id,
                              post: { title: post.title,
                                      body_markdown: body_markdown_with_crlf,
