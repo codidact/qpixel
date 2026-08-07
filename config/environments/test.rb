@@ -58,8 +58,8 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
-  config.action_mailer.default_url_options = { 
-    host: 'test.host',
+  config.action_mailer.default_url_options = {
+    host: ENV['MAILER_HOST'] || 'test.host',
     protocol: ENV['MAILER_PROTOCOL'] || 'https'
   }
 

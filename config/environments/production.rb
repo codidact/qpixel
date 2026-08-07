@@ -94,8 +94,8 @@ Rails.application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
   config.action_mailer.delivery_method = :ses
-  config.action_mailer.default_url_options = { 
-    host: 'meta.codidact.com',
+  config.action_mailer.default_url_options = {
+    host: ENV['MAILER_HOST'] || 'meta.codidact.com',
     protocol: ENV['MAILER_PROTOCOL'] || 'https'
   }
   config.action_mailer.asset_host = 'https://meta.codidact.com'
