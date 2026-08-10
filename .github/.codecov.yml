@@ -39,3 +39,7 @@ component_management:
       name: tasks
       paths:
         - app/tasks/**
+    - component_id: module_scripts
+      name: scripts
+      paths:
+        - app/scripts/**
