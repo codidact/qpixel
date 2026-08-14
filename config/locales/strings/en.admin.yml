@@ -6,10 +6,6 @@ en:
         This page serves as a repository of links to the various tools you have access to as an administrative user. While
         you use these, remember that the data in them is usually admin- or moderator-only, and should likely not be shared
         with anyone outside of those teams.
-    categories_blurb: >
-      By default there is a Q&A category, and a Meta category for questions about how the community works.
-      By default, the Q&A category is the homepage, but you can change this to any other category.
-      For each category, you can choose a colour, the allowed post types, and a tag set (which can be shared with other categories if you wish).
     email_being_sent: 'Your email is being sent.'
     email_moderators_blurb: >
       This tool allows you to send to the moderators' email distribution list, which will reach any current moderator
@@ -30,6 +26,7 @@ en:
       abilities: 'Abilities'
       admin_email_query: 'User Lookup by Email'
       audit_logs: 'Audit Log'
+      categories: 'Categories'
       close_reasons: 'Close Reasons'
       email_moderators: 'Email Moderators'
       email_all: 'Email All Users'

@@ -18,12 +18,12 @@
 
   <%= render 'action_card', icon: 'cogs', action: 'site_settings' %>
   <%= render 'action_card', icon: 'tags', action: 'tag_sets' %>
+  <%= render 'action_card', icon: 'briefcase', action: 'categories' %>
   <%= render 'action_card', icon: 'sliders-h', action: 'admin_privileges', label_key: 'abilities' %>
   <%= render 'action_card', icon: 'exclamation-triangle', action: 'admin_error_reports', label_key: 'error_reports' %>
   <%= render 'action_card', icon: 'hand-paper', action: 'close_reasons' %>
   <%= render 'action_card', icon: 'balance-scale', action: 'licenses' %>
   <%= render 'action_card', icon: 'user-secret', action: 'audit_logs' %>
-  <%= render 'action_card', icon: 'folder-plus', action: 'new_category' %>
 
   <% if current_user.global_admin? %>
     <%= render 'action_card', icon: 'user-plus', action: 'new_site' %>
