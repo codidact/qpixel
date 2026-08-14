@@ -140,3 +140,11 @@ profile_spammer_everyone:
 profile_spammer_unrestricted:
   community_user: sample_profile_spammer
   ability: unrestricted
+
+hrs_eo:
+  community_user: high_rep_spammer
+  ability: everyone
+
+hrs_ur:
+  community_user: high_rep_spammer
+  ability: unrestricted
