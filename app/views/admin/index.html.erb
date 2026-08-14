@@ -9,143 +9,25 @@
 
 <div class="grid">
   <% if current_user.global_admin? %>
-    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-      <div class="widget">
-        <div class="widget--body">
-          <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-cogs"></i>
-          <%= link_to t('admin.tools.g_site_settings'), global_settings_path, 'data-ckb-item-link' => '' %>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-      <div class="widget">
-        <div class="widget--body">
-          <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-tags"></i>
-          <%= link_to t('admin.tools.g_tag_sets'), global_tag_sets_path, 'data-ckb-item-link' => '' %>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-      <div class="widget">
-        <div class="widget--body">
-          <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-mail-bulk"></i>
-          <%= link_to t('admin.tools.post_types'), post_types_path, 'data-ckb-item-link' => '' %>
-        </div>
-      </div>
-    </div>
-
-    <% if current_user.developer? %>
-      <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-        <div class="widget">
-          <div class="widget--body">
-            <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-folder-plus"></i>
-            <%= link_to 'Email All Users', email_all_path, 'data-ckb-item-link' => '' %>
-          </div>
-        </div>
-      </div>
-    <% end %>
-
-    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-      <div class="widget">
-        <div class="widget--body">
-          <i class="fas fa-globe has-color-red-700"></i> <i class="fas fa-envelope"></i>
-          <%= link_to t('admin.tools.email_moderators'), moderator_email_path, 'data-ckb-item-link' => '' %>
-        </div>
-      </div>
-    </div>
+    <%= render 'action_card', icon: 'cogs', action: 'global_settings', label_key: 'g_site_settings', is_global: true %>
+    <%= render 'action_card', icon: 'tags', action: 'global_tag_sets', label_key: 'g_tag_sets', is_global: true %>
+    <%= render 'action_card', icon: 'mail-bulk', action: 'post_types', is_global: true %>
+    <%= render 'action_card', icon: 'folder-plus', action: 'email_all', is_global: true %>
+    <%= render 'action_card', icon: 'envelope', action: 'moderator_email', label_key: 'email_moderators', is_global: true %>
   <% end %>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-cogs"></i>
-        <%= link_to t('admin.tools.site_settings'), site_settings_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-tags"></i>
-        <%= link_to t('admin.tools.tag_sets'), tag_sets_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-sliders-h"></i>
-        <%= link_to 'Abilities', admin_privileges_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-exclamation-triangle"></i>
-        <%= link_to t('admin.tools.error_reports'), admin_error_reports_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-hand-paper"></i>
-        <%= link_to t('admin.tools.close_reasons'), close_reasons_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-balance-scale"></i>
-        <%= link_to t('admin.tools.licenses'), licenses_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-user-secret"></i>
-        <%= link_to t('admin.tools.audit_logs'), audit_logs_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-folder-plus"></i>
-        <%= link_to 'Create Category', new_category_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
+  <%= render 'action_card', icon: 'cogs', action: 'site_settings' %>
+  <%= render 'action_card', icon: 'tags', action: 'tag_sets' %>
+  <%= render 'action_card', icon: 'sliders-h', action: 'admin_privileges', label_key: 'abilities' %>
+  <%= render 'action_card', icon: 'exclamation-triangle', action: 'admin_error_reports', label_key: 'error_reports' %>
+  <%= render 'action_card', icon: 'hand-paper', action: 'close_reasons' %>
+  <%= render 'action_card', icon: 'balance-scale', action: 'licenses' %>
+  <%= render 'action_card', icon: 'user-secret', action: 'audit_logs' %>
+  <%= render 'action_card', icon: 'folder-plus', action: 'new_category' %>
 
   <% if current_user.global_admin? %>
-    <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-      <div class="widget">
-        <div class="widget--body">
-          <i class="fas fa-user-plus"></i>
-          <%= link_to 'New Site', new_site_path, 'data-ckb-item-link' => '' %>
-        </div>
-      </div>
-    </div>
+    <%= render 'action_card', icon: 'user-plus', action: 'new_site' %>
   <% end %>
 
-  <div class="grid--cell is-4-lg is-6-md is-12-sm" data-ckb-list-item data-ckb-item-type="link">
-    <div class="widget">
-      <div class="widget--body">
-        <i class="fas fa-user"></i>
-        <%= link_to 'User Lookup by Email', admin_email_query_path, 'data-ckb-item-link' => '' %>
-      </div>
-    </div>
-  </div>
+  <%= render 'action_card', icon: 'user', action: 'admin_email_query' %>
 </div>

@@ -1,0 +1,31 @@
+<%#
+    "Renders a card representing an admin-only action
+
+     Variables:
+     ! icon      : icon to show on the card
+     ! action    : action identifier (used for path lookup)
+     ? label_key : locale string key to use for label lookup (defaults to action)
+     ? is_global : whether the action is global (default false)
+" %>
+
+<%
+  #defaults
+  is_global ||= (defined?(is_global) ? is_global : false)
+  label_key ||= (defined?(label_key) && label_key.present? ? label_key : action)
+%>
+
+<div class="grid--cell is-4-lg is-6-md is-12-sm"
+     data-ckb-list-item
+     data-ckb-item-type="link">
+  <div class="widget">
+    <div class="widget--body">
+      <% if is_global %>
+        <i class="fas fa-globe has-color-red-700"></i>
+      <% end %>
+      <i class="fas fa-<%= icon %>"></i>
+      <%= link_to t("admin.tools.#{label_key}"),
+          send("#{action}_path"),
+          'data-ckb-item-link' => '' %>
+    </div>
+  </div>
+</div>
