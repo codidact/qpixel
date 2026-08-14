@@ -9,8 +9,6 @@ class DeleteUserJob < ApplicationJob
   # @param attribute_to [User] the user performing the deletion
   # @param perform_spam_check [Boolean] whether to perform the spam check
   def perform(user, attribute_to, perform_spam_check: true)
-    user.soft_delete(attribute_to)
-
     if perform_spam_check
       # Can't use model helper methods very easily here, because we want network-wide flags and that doesn't play
       # nicely with default scopes.
@@ -24,5 +22,7 @@ class DeleteUserJob < ApplicationJob
         user.block('automatic block from spam check during deletion')
       end
     end
+
+    user.soft_delete(attribute_to)
   end
 end

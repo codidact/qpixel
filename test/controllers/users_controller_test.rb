@@ -1,12 +1,10 @@
 require 'test_helper'
-require_relative 'concerns/users/users_abilities_test'
-require_relative 'concerns/users/user_mod_tools_test'
+require_relative 'concerns/users/user_test_helpers'
 
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
   include ApplicationHelper
-  include UsersAbilitiesTest
-  include UserModToolsTest
+  include UserTestHelpers
 
   test 'should get index' do
     [:html, :json].each do |format|
@@ -403,34 +401,5 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal 'failed', parsed_body['status']
       assert_not_nil parsed_body['message']
     end
-  end
-
-  private
-
-  def create_other_user
-    other_community = Community.create(host: 'other.qpixel.com', name: 'Other')
-    RequestContext.redis.hset('network/community_registrations', 'other@example.com', other_community.id)
-    other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
-    other_user.community_users.create!(community: other_community)
-    other_user
-  end
-
-  # @param type [String] deletion type (user or profile)
-  # @param user [User] user to soft delete
-  def try_soft_delete_user(type, user)
-    perform_enqueued_jobs do
-      delete :soft_delete, params: { id: user.id,
-                                     type: type,
-                                     format: :json }
-    end
-  end
-
-  def try_save_preference(name, value, community: nil)
-    post :set_preference, params: {
-      community: community,
-      name: name,
-      value: value,
-      format: :json
-    }
   end
 end
