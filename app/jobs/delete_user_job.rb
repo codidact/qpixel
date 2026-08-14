@@ -1,6 +1,13 @@
 class DeleteUserJob < ApplicationJob
   queue_as :default
 
+  ##
+  # Perform a network-wide soft-deletion of a user account. Also optionally checks for helpful spam flags against
+  # the target user and applies a spam block if found. The caller is responsible for managing thresholds for this spam
+  # check.
+  # @param user [User] user to soft-delete
+  # @param attribute_to [User] the user performing the deletion
+  # @param perform_spam_check [Boolean] whether to perform the spam check
   def perform(user, attribute_to, perform_spam_check: true)
     user.soft_delete(attribute_to)
 
