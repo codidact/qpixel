@@ -341,7 +341,10 @@ class UsersController < ApplicationController
         return
       end
 
-      @user.soft_delete(current_user)
+      max_rep = @user.community_users.maximum(:reputation)
+      check_threshold = AppConfig.spam_protection['deletion_block_max_rep']
+      DeleteUserJob.with(user: @user, attribute_to: current_user, perform_spam_check: max_rep < check_threshold)
+                   .perform_later
     else
       render json: { status: 'failed', message: 'Unrecognised deletion type.' }, status: 400
       return

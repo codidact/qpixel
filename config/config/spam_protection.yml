@@ -1,0 +1,3 @@
+# When a user is deleted, helpful spam flags against the user's post will additionally cause the user to be fail-banned.
+# Users with equal to or more than this reputation value in any community are exempt from this check.
+deletion_block_max_rep: 100

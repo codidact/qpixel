@@ -52,3 +52,11 @@ helpful_on_spam_question:
   user: standard_user
   community: sample
   status: helpful
+
+helpful_on_high_rep_spam:
+  reason: It's obviously spam
+  post: deleted_high_rep_spam (Post)
+  post_flag_type: spam
+  user: standard_user
+  community: sample
+  status: helpful

@@ -154,3 +154,10 @@ sample_merge_target:
   is_admin: false
   is_moderator: false
   reputation: 24
+
+high_rep_spammer:
+  user: high_rep_spammer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1000
