@@ -86,6 +86,22 @@ def no_initial_revision?(post)
              .none?
 end
 
+# a map of community_id to whether it has any categories.
+# Facilitates lookup cache
+$no_categories_map = {}
+
+# Checks if no category exists on a given community
+# @param [Community] community to check
+# @return [Boolean] check result
+def no_categories?(community)
+  if $no_categories_map[community.id].nil?
+    $no_categories_map[community.id] = Category.unscoped
+                                               .where(community_id: community.id)
+                                               .none?
+  end
+  $no_categories_map[community.id]
+end
+
 # @param user [User] user to assign changes to
 # @param community [Community] community to create the post on
 # @param seed [Hash] initialized seed
@@ -144,10 +160,19 @@ def seed_objects(type, seed)
   seeds = expand_communities(type, seed)
   seeds = expand_ids(type, seeds)
 
+  # a separate counter is needed as we still treat errors as "skipped"
+  skipped_existing = 0
+  if type == Category
+    # only create categories if none are present (clean setup)
+    filtered = seeds.select { |s| no_categories?(s[:community]) }
+    skipped_existing += (seeds.size - filtered.size)
+    seeds = filtered
+  end
+
   # Actually create the objects and count successes
   objs = type.create(seeds)
 
-  skipped = objs.select { |o| o.errors.any? }.size
+  skipped = objs.select { |o| o.errors.any? }.size + skipped_existing
   created = objs.reject { |o| o.errors.any? }.size
 
   # Post type cache must be manually cleared \
