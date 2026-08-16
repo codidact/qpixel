@@ -106,6 +106,20 @@ class UsersControllerTest < ActionController::TestCase
     assert_json_failure(:not_found)
   end
 
+  test 'normal users should not be able to undelete user profiles' do
+    del_usr = users(:deleted_profile)
+
+    users.reject(&:at_least_moderator?).each do |user|
+      sign_in(user)
+
+      try_undelete_user(del_usr)
+
+      assert_json_failure(:not_found)
+      res_body = JSON.parse(response.body)
+      assert_includes res_body['errors'], 'not_found'
+    end
+  end
+
   test 'moderators and higher should be able to undelete user profiles' do
     del_usr = users(:deleted_profile)
 

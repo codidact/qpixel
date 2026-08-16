@@ -15,11 +15,11 @@ class UsersController < ApplicationController
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
   before_action :verify_moderator, only: [:annotate, :annotations, :full_log, :mod, :mod_delete, :mod_privilege_action,
-                                          :mod_privileges, :role_toggle, :soft_delete]
+                                          :mod_privileges, :role_toggle, :soft_delete, :undelete]
   before_action :verify_global_moderator, only: [:mod_delete_network_account, :mod_failban]
   before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :full_log, :mod, :mod_delete,
                                   :mod_delete_network_account, :mod_failban, :mod_privilege_action, :mod_privileges,
-                                  :network, :posts, :role_toggle, :show, :soft_delete, :vote_summary]
+                                  :network, :posts, :role_toggle, :show, :soft_delete, :undelete, :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
   before_action :verify_user_not_deleted, only: [:undelete]
 
