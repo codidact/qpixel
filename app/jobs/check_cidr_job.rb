@@ -19,12 +19,14 @@ class CheckCIDRJob < ApplicationJob
       network = IPAddress.parse(cidr.value)
       relevant_ips.each do |ip|
         ip = IPAddress.parse(ip)
+        # rubocop:disable Style/Next
         if network.include?(ip)
           create_flag cidr
           # rubocop:disable Lint/NonLocalExitFromIterator
           return
           # rubocop:enable Lint/NonLocalExitFromIterator
         end
+        # rubocop:enable Style/Next
       end
     end
   end
