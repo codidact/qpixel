@@ -1,6 +1,7 @@
 module PostCreationValidations
   extend ActiveSupport::Concern
 
+  # rubocop:disable Metrics/BlockLength
   included do
     validate :no_mathjax_in_title, on: :create
     validate :post_type_requires_parent, on: :create
@@ -18,19 +19,19 @@ module PostCreationValidations
 
     def post_type_requires_parent
       if post_type.has_parent? && parent.nil?
-        errors.add(:base, helpers.i18ns('posts.type_requires_parent', type: post_type.name))
+        errors.add(:base, ApplicationRecord.helpers.i18ns('posts.type_requires_parent', type: post_type.name))
       end
     end
 
     def post_type_has_category
       if post_type.has_category? && category.nil? && parent.nil?
-        errors.add(:base, helpers.i18ns('posts.type_requires_category', type: post_type.name))
+        errors.add(:base, ApplicationRecord.helpers.i18ns('posts.type_requires_category', type: post_type.name))
       end
     end
 
     def can_post_in_category
       if category.present? && !user.can_post_in?(category)
-        errors.add(:base, helpers.i18ns('posts.category_low_trust_level', name: category.name))
+        errors.add(:base, ApplicationRecord.helpers.i18ns('posts.category_low_trust_level', name: category.name))
       end
     end
 
@@ -45,4 +46,5 @@ module PostCreationValidations
       end
     end
   end
+  # rubocop:enable Metrics/BlockLength
 end
