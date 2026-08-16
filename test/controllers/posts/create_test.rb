@@ -144,8 +144,23 @@ class PostsControllerTest < ActionController::TestCase
     user = users(:spammer)
     previous_post = posts(:non_deleted_spam_question)
     sign_in user
+
     sample_post = sample(body_markdown: previous_post.body_markdown)
     try_create_post(sample_post: sample_post)
+
+    assert_response(:bad_request)
+    assert_not_nil assigns(:post)
+    assert_include_any assigns(:post).errors.full_messages,
+                       ApplicationRecord.useful_err_msg,
+                       "Expected post errors to include a 'useful' error message."
+  end
+
+  test 'should block posting from user with active spam flag' do
+    user = users(:high_rep_spammer)
+    sign_in user
+
+    try_create_post
+
     assert_response(:bad_request)
     assert_not_nil assigns(:post)
     assert_include_any assigns(:post).errors.full_messages,
