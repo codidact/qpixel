@@ -10,6 +10,8 @@ module PostCreationValidations
     validate :identical_post_spam, on: :create
     validate :no_active_spam_flags, on: :create
 
+    after_create :escalate_suspicious_cidr
+
     private
 
     def no_mathjax_in_title
@@ -69,6 +71,10 @@ module PostCreationValidations
           errors.add(:base, ApplicationRecord.useful_err_msg.sample)
         end
       end
+    end
+
+    def escalate_suspicious_cidr
+      CheckCIDRJob.perform_later(self)
     end
   end
   # rubocop:enable Metrics/BlockLength

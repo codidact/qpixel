@@ -148,3 +148,19 @@ hrs_eo:
 hrs_ur:
   community_user: high_rep_spammer
   ability: unrestricted
+
+bip_eo:
+  community_user: bad_ip_prefix
+  ability: everyone
+
+bip_ur:
+  community_user: bad_ip_prefix
+  ability: unrestricted
+
+bic_eo:
+  community_user: bad_ip_cidr
+  ability: everyone
+
+bic_ur:
+  community_user: bad_ip_cidr
+  ability: unrestricted

@@ -168,6 +168,30 @@ class PostsControllerTest < ActionController::TestCase
                        "Expected post errors to include a 'useful' error message."
   end
 
+  test 'should allow posting but flag from blocked IP prefix' do
+    user = users(:bad_ip_prefix)
+    sign_in user
+
+    before_flags = Flag.count
+    assert_performed_jobs 1 do
+      try_create_post
+    end
+    after_flags = Flag.count
+    assert_equal before_flags + 1, after_flags, 'Expected a flag to be created'
+  end
+
+  test 'should allow posting but flag from blocked IP CIDR' do
+    user = users(:bad_ip_cidr)
+    sign_in user
+
+    before_flags = Flag.count
+    assert_performed_jobs 1 do
+      try_create_post
+    end
+    after_flags = Flag.count
+    assert_equal before_flags + 1, after_flags, 'Expected a flag to be created'
+  end
+
   private
 
   # Attempts to create a post

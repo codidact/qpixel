@@ -189,6 +189,40 @@ high_rep_spammer:
   is_global_moderator: false
   confirmed_at: 2020-01-01T00:00:00.000000Z
 
+bad_ip_prefix:
+  email: bad-ip-prefix@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  profile: >
+    Find the best spam on the network <a href="https://example.com">here</a>!
+    The yummiest spam you've ever tasted.
+  profile_markdown: >
+    Find the best spam on the network [here](https://example.com)!
+    The yummiest spam you've ever tasted.
+  sign_in_count: 1
+  username: IPSpam
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+  current_sign_in_ip: '2407:f8:200:abcd::1'
+  last_sign_in_ip: '2407:f8:200:abcd::1'
+
+bad_ip_cidr:
+  email: bad-ip-cidr@example.com
+  encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
+  profile: >
+    Find the best spam on the network <a href="https://example.com">here</a>!
+    The yummiest spam you've ever tasted.
+  profile_markdown: >
+    Find the best spam on the network [here](https://example.com)!
+    The yummiest spam you've ever tasted.
+  sign_in_count: 1
+  username: CIDRSpam
+  is_global_admin: false
+  is_global_moderator: false
+  confirmed_at: 2020-01-01T00:00:00.000000Z
+  current_sign_in_ip: '2407:f8:300:abcd::1'
+  last_sign_in_ip: '2407:f8:300:abcd::1'
+
 profile_spammer:
   email: profile-spammer@example.com
   encrypted_password: '$2a$11$roUHXKxecjyQ72Qn7DWs3.9eRCCoRn176kX/UNb/xiue3aGqf7xEW'
