@@ -569,7 +569,7 @@ non_deleted_spam_question:
     - discussion
   tags:
     - discussion
-  user: spammer
+  user: high_rep_spammer
   community: sample
   category: main
   license: cc_by_sa
