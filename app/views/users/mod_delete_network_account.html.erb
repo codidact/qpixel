@@ -28,8 +28,10 @@
 
             <%= link_to 'Delete user network-wide',
                         soft_delete_user_path(@user.id, type: 'user'),
+                        title: @user.deleted? ? t('mod.actions.errors.user_already_deleted') : '',
                         remote: true,
                         method: :delete,
+                        disabled: @user.deleted?,
                         class: 'js-soft-delete button is-danger is-filled' %>
         </div>
     </div>
