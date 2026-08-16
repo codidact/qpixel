@@ -19,6 +19,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   driven_by :selenium, using: DRIVER, screen_size: [1920, 1080]
 
   setup do
+    Devise.sign_out_all_scopes
     Community.first.update(host: root_url.gsub(/https?:\/\//, '').gsub('/', ''))
   end
 

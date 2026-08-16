@@ -6,7 +6,8 @@ class PostsTest < ApplicationSystemTestCase
   # -------------------------------------------------------
 
   test 'Not-signed in user cannot create a post' do
-    visit root_url
+    category = categories(:main)
+    visit category_path(category)
     click_on 'Create Post'
 
     assert_current_path new_user_session_url

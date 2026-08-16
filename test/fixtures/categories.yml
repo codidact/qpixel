@@ -59,3 +59,13 @@ moderator_tags:
   license: cc_by_sa
   moderator_tags:
     - feature-request
+
+homepage:
+  community: sample
+  name: Home
+  short_wiki: Home sweet home
+  display_post_types:
+    - <%= Question.post_type_id %>
+  is_homepage: true
+  tag_set: main
+  license: cc_by_sa

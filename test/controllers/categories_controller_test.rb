@@ -9,7 +9,7 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:categories)
   end
 
-  test ':index should  correctly search categories' do
+  test ':index should correctly search categories' do
     get :index
     assert_response(:success)
     @all_categories = assigns(:categories)
@@ -136,6 +136,11 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:category).id
     assert_equal false, assigns(:category).errors.any?
     assert_redirected_to category_path(assigns(:category))
+  end
+
+  test 'should require authentication to get post types' do
+    get :post_types, params: { id: categories(:main) }
+    assert_redirected_to_sign_in
   end
 
   private

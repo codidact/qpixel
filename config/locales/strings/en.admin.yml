@@ -23,19 +23,24 @@ en:
       This tool allows you to query for a user by their email address. If a user is found, you will be shown a list of
       their profiles on communities on which you are an admin.
     tools:
-      g_site_settings: 'Global Site Settings'
-      g_tag_sets: 'Global Tag Sets'
+      abilities: 'Abilities'
+      admin_email_query: 'User Lookup by Email'
+      audit_logs: 'Audit Log'
+      categories: 'Categories'
+      close_reasons: 'Close Reasons'
       email_moderators: 'Email Moderators'
       email_all: 'Email All Users'
       error_reports: 'Error Reports'
+      email_query: 'User Lookup by Email'
+      g_site_settings: 'Global Site Settings'
+      g_tag_sets: 'Global Tag Sets'
+      licenses: 'Licenses'
+      new_category: 'Create Category'
+      new_site: 'New Site'
+      post_types: 'Post Types'
+      privileges: 'Privileges'
       site_settings: 'Site Settings'
       tag_sets: 'Tag Sets'
-      privileges: 'Privileges'
-      close_reasons: 'Close Reasons'
-      licenses: 'Licenses'
-      audit_logs: 'Audit Log'
-      post_types: 'Post Types'
-      email_query: 'User Lookup by Email'
     user_fed_stat: 'User fed to STAT.'
     errors:
       email_query_not_found:
