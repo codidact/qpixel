@@ -21,7 +21,9 @@ class CheckCIDRJob < ApplicationJob
         ip = IPAddress.parse(ip)
         if network.include?(ip)
           create_flag cidr
+          # rubocop:disable Lint/NonLocalExitFromIterator
           return
+          # rubocop:enable Lint/NonLocalExitFromIterator
         end
       end
     end
