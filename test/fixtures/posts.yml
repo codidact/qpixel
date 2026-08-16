@@ -560,6 +560,20 @@ imported_question:
   category: main
   license: cc_by_sa
 
+non_deleted_spam_question:
+  post_type: question
+  title: Best spam in the neighborhood! Call 555-55-55
+  body: Find the best spam in your neighborhood on Spam Central
+  body_markdown: <p>Find the best spam in your neighborhood on <a href="https://example.com/spam">Spam Central</a></p>
+  tags_cache:
+    - discussion
+  tags:
+    - discussion
+  user: spammer
+  community: sample
+  category: main
+  license: cc_by_sa
+
 deleted_spam_question:
   post_type: question
   title: Best spam in the neighborhood! Call 555-55-55

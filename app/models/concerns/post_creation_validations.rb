@@ -6,6 +6,7 @@ module PostCreationValidations
     validate :post_type_requires_parent, on: :create
     validate :post_type_has_category, on: :create
     validate :can_post_in_category, on: :create
+    validate :identical_post_spam, on: :create
 
     private
 
@@ -28,8 +29,19 @@ module PostCreationValidations
     end
 
     def can_post_in_category
-      if category.present? && !current_user.can_post_in?(category)
+      if category.present? && !user.can_post_in?(category)
         errors.add(:base, helpers.i18ns('posts.category_low_trust_level', name: category.name))
+      end
+    end
+
+    def identical_post_spam
+      threshold = AppConfig.spam_protection['identical_post_spam_threshold']
+      prev_non_deleted_count = Post.unscoped.where(user: user, deleted: false).count
+      unless prev_non_deleted_count >= threshold
+        identical_posts = Post.unscoped.where(user: user, body_markdown: body_markdown).where.not(id: id)
+        if identical_posts.any?
+          errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+        end
       end
     end
   end

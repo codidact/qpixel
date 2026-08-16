@@ -142,6 +142,19 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 1, NewThreadFollower.where(['post_id = ? AND user_id = ?', assigns(:post), user]).count
   end
 
+  test 'should block identical post spam from low-activity user' do
+    user = users(:spammer)
+    previous_post = posts(:non_deleted_spam_question)
+    sign_in user
+    sample_post = sample(body_markdown: previous_post.body_markdown)
+    try_create_post(sample_post: sample_post)
+    assert_response(:bad_request)
+    assert_not_nil assigns(:post)
+    assert_include_any assigns(:post).errors.full_messages,
+                       ApplicationRecord.useful_err_msg,
+                       "Expected post errors to include a 'useful' error message."
+  end
+
   private
 
   # Attempts to create a post
@@ -152,16 +165,18 @@ class PostsControllerTest < ActionController::TestCase
   def try_create_post(post_type: post_types(:question),
                       category: categories(:main),
                       parent: nil,
-                      license: licenses(:cc_by_sa))
+                      license: licenses(:cc_by_sa),
+                      sample_post: nil)
+    sample_post ||= sample
     post :create, params: { post_type: post_type.id,
                             parent: parent&.id,
                             category: category&.id,
                             post: { post_type_id: post_type.id,
-                                    title: sample.title,
-                                    body_markdown: sample.body_markdown,
+                                    title: sample_post.title,
+                                    body_markdown: sample_post.body_markdown,
                                     category_id: category&.id,
                                     parent_id: parent&.id,
-                                    tags_cache: sample.tags_cache,
+                                    tags_cache: sample_post.tags_cache,
                                     license_id: license.id } }
   end
 end
