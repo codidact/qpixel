@@ -1,25 +1,36 @@
-<h2>PII correlation for <%= user_link @user %></h2>
-<p>
-  This tool displays correlations between personally-identifying information across user accounts. This includes email
-  address and IP addresses. Please select a user against whom to compare.
-</p>
+<% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
 
-<noscript>JavaScript is required to use this tool.</noscript>
-<form id="pii-correlation-form" action="#" class="form-horizontal">
-  <div class="form-group-horizontal">
-    <div class="form-group">
-      <label for="target-id" class="form-element">Target user ID</label>
-      <input type="number" id="target-id" name="target_id" class="form-element" required />
-    </div>
-    <div class="actions">
-      <button type="submit" class="button is-primary is-filled">Compare</button>
-    </div>
+<%= render 'users/tabs', user: @user, active_tab: 'mod_tools' %>
+
+<div class="grid">
+  <%= render 'shared/user_mod_sidebar', user: @user %>
+
+  <div class="grid--cell is-9-lg is-12">
+    <h1>PII correlation for <%= user_link @user %></h1>
+
+    <p>
+      This tool displays correlations between personally-identifying information across user accounts. This includes email
+      address and IP addresses. Please select a user against whom to compare.
+    </p>
+
+    <noscript>JavaScript is required to use this tool.</noscript>
+    <form id="pii-correlation-form" action="#" class="form-horizontal">
+      <div class="form-group-horizontal">
+        <div class="form-group">
+          <label for="target-id" class="form-element">Target user ID</label>
+          <input type="number" id="target-id" name="target_id" class="form-element" required />
+        </div>
+        <div class="actions">
+          <button type="submit" class="button is-primary is-filled">Compare</button>
+        </div>
+      </div>
+    </form>
+
+    <p>
+      Information is hashed to protect users' privacy.
+      Text <span class="has-background-color-red">highlighted in red</span> indicates matching data.
+    </p>
+
+    <div class="js-correlation-container"></div>
   </div>
-</form>
-
-<p>
-  Information is hashed to protect users' privacy.
-  Text <span class="has-background-color-red">highlighted in red</span> indicates matching data.
-</p>
-
-<div class="js-correlation-container"></div>
+</div>

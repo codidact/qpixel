@@ -1,6 +1,6 @@
 module AbilitiesHelper
   # Gets a maybe_ability to the specified ability
-  # @param ability [Ability, String] ability or its internal id to link to
+  # @param maybe_ability [Ability, String] ability or its internal id to link to
   # @return [ActiveSupport::SafeBuffer]
   def ability_link(maybe_ability)
     ability = maybe_ability.is_a?(String) ? Ability.find_by(internal_id: maybe_ability) : maybe_ability

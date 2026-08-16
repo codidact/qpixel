@@ -124,6 +124,10 @@ class CommunityUser < ApplicationRecord
     # If not sandbox mode, create new privilege entry
     grant_privilege!(internal_id) unless sandbox
     recalc_trust_level unless sandbox
+
+    AuditLog.admin_audit(event_type: 'ability_grant', related: user,
+                         user: User.system,
+                         comment: priv.name)
     true
   end
 

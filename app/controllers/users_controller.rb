@@ -2,6 +2,8 @@ require 'net/http'
 
 # rubocop:disable Metrics/ClassLength
 class UsersController < ApplicationController
+  layout 'without_sidebar'
+
   include Devise::Controllers::Rememberable
 
   before_action :authenticate_user!, only: [:edit_profile, :update_profile, :stack_redirect,
@@ -12,12 +14,12 @@ class UsersController < ApplicationController
 
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
-  before_action :verify_moderator, only: [:mod, :destroy, :soft_delete, :undelete, :role_toggle, :full_log,
-                                          :annotate, :annotations, :mod_privileges, :mod_privilege_action]
-  before_action :set_user, only: [:show, :mod, :destroy, :soft_delete, :undelete, :posts,
-                                  :role_toggle, :full_log, :activity,
-                                  :annotate, :annotations, :mod_privileges, :mod_privilege_action,
-                                  :vote_summary, :network, :avatar]
+  before_action :verify_moderator, only: [:annotate, :annotations, :full_log, :mod, :mod_delete, :mod_privilege_action,
+                                          :mod_privileges, :role_toggle, :soft_delete]
+  before_action :verify_global_moderator, only: [:mod_delete_network_account, :mod_failban]
+  before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :full_log, :mod, :mod_delete,
+                                  :mod_delete_network_account, :mod_failban, :mod_privilege_action, :mod_privileges,
+                                  :network, :posts, :role_toggle, :show, :soft_delete, :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
   before_action :verify_user_not_deleted, only: [:undelete]
 
@@ -38,7 +40,9 @@ class UsersController < ApplicationController
     @post_counts = Post.where(user_id: @users.pluck(:id).uniq).group(:user_id).count
 
     respond_to do |format|
-      format.html
+      format.html do
+        render layout: 'application'
+      end
       format.json do
         render json: @users
       end
@@ -62,7 +66,6 @@ class UsersController < ApplicationController
                               .count
                         end
     @posts = @posts.first(@limit)
-    render layout: 'without_sidebar'
   end
 
   def me
@@ -94,7 +97,6 @@ class UsersController < ApplicationController
         prefs = current_user.preferences
         @preferences = prefs[:global]
         @community_prefs = prefs[:community]
-        render layout: 'without_sidebar'
       end
       format.json do
         render json: current_user.preferences
@@ -137,9 +139,7 @@ class UsersController < ApplicationController
 
   def filters
     respond_to do |format|
-      format.html do
-        render layout: 'without_sidebar'
-      end
+      format.html
       format.json do
         render json: filters_json
       end
@@ -233,7 +233,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render :posts
+        render :posts, layout: 'application'
       end
       format.json do
         render json: @posts
@@ -247,7 +247,6 @@ class UsersController < ApplicationController
 
   def network
     @communities = Community.all
-    render layout: 'without_sidebar'
   end
 
   def my_activity
@@ -280,10 +279,7 @@ class UsersController < ApplicationController
             end
 
     @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
-    render layout: 'without_sidebar'
   end
-
-  def mod; end
 
   def full_log
     @posts = Post.by(@user).count
@@ -323,8 +319,6 @@ class UsersController < ApplicationController
                   SuggestedEdit.by(@user).all + PostHistory.by(@user).all +
                   ModWarning.to(@user).all
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
-
-    render layout: 'without_sidebar'
   end
 
   def mod_privileges
@@ -406,9 +400,13 @@ class UsersController < ApplicationController
       end
     end
 
-    if params[:user][:profile_markdown].present?
+    new_profile_markdown = params[:user][:profile_markdown]&.strip
+
+    if new_profile_markdown.present?
       profile_rendered = helpers.rendered_post(:user, :profile_markdown)
       profile_params = profile_params.merge(profile: profile_rendered)
+    elsif new_profile_markdown && new_profile_markdown.empty?
+      profile_params = profile_params.merge(profile: '')
     end
 
     status = @user.update(profile_params)
@@ -593,7 +591,6 @@ class UsersController < ApplicationController
     @logs = AuditLog.where(log_type: 'user_annotation', related: @user)
                     .newest_first
                     .paginate(page: params[:page], per_page: 20)
-    render layout: 'without_sidebar'
   end
 
   def annotate
@@ -623,8 +620,6 @@ class UsersController < ApplicationController
                      [k, vl.group_by(&:post), vl.sum { |v| v.vote_type * v.vote_count }]
                    end
                    .paginate(page: params[:page], per_page: 15)
-
-    render layout: 'without_sidebar'
   end
 
   def avatar
@@ -644,10 +639,6 @@ class UsersController < ApplicationController
                   type: 'image/png', disposition: 'inline'
       end
     end
-  end
-
-  def disconnect_sso
-    render layout: 'without_sidebar'
   end
 
   def confirm_disconnect_sso

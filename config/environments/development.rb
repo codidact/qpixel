@@ -51,7 +51,8 @@ Rails.application.configure do
   delivery_method = ENV['MAILER_DELIVERY_METHOD']
   config.action_mailer.delivery_method = delivery_method&.to_sym || :letter_opener_web
   config.action_mailer.default_url_options = {
-    host: 'meta.codidact.com', protocol: ENV['MAILER_PROTOCOL'] || 'https'
+    host: ENV['MAILER_HOST'] || 'meta.codidact.com',
+    protocol: ENV['MAILER_PROTOCOL'] || 'https'
   }
 
   # Print deprecation notices to the Rails logger.

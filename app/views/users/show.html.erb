@@ -1,4 +1,4 @@
-<%= render 'tabs', user: @user %>
+<%= render 'tabs', user: @user, active_tab: 'profile' %>
 
 <% content_for :title, "User #{rtl_safe_username(@user)}" %>
 
@@ -20,7 +20,9 @@
 
         <% effective_profile = raw(sanitize(@user.profile&.strip || '', scrubber: scrubber)) %>
         <% if effective_profile.blank? %>
-          <p class="is-lead">A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.</p>
+          <p class="is-lead">
+            A quiet enigma. We don't know anything about <span dir="ltr"><%= rtl_safe_username(@user) %></span> yet.
+          </p>
         <% elsif !user_signed_in? && !@user.community_user.privilege?('unrestricted') %>
           <%= sanitize(effective_profile, attributes: %w()) %>
         <% else %>
@@ -60,32 +62,12 @@
 
       <div class="button-list h-p-2">
         <% if user_signed_in? %>
-          <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path), class: "button is-outlined is-small" do %>
+          <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path),
+                      class: "button is-outlined is-small" do %>
             <i class="fas fa-envelope"></i> Subscribe to user
           <% end %>
         <% end %>
-        <% if current_user&.at_least_moderator? %>
-          <a href="<%= mod_user_path(@user) %>" class="button is-danger is-outlined is-small" data-drop="#mod-tools-drop"><i class="fas fa-shield-alt"></i> Moderator Tools <% if @user.community_user.mod_warnings&.size.positive? %> (<%= pluralize(@user.community_user.mod_warnings.count, 'message') %>) <% end %></a>
-          <div class="droppanel" id="mod-tools-drop">
-            <div class="droppanel--header">quick actions</div>
-            <div class="droppanel--menu">
-              <a href="/users/<%= @user.id %>/mod/activity-log">full activity log</a>
-              <a href="/users/<%= @user.id %>/mod/annotations">annotations on user</a>
-              <a href="/users/<%= @user.id %>/mod/privileges">privileges</a>
-              <a href="/warning/log/<%= @user.id %>">warnings and suspensions sent to user
-                <% if @user.community_user.suspended? %>
-                  <em>(includes lifting the suspension)</em>
-                <% elsif @user.community_user.mod_warnings&.size.positive? %>
-                  (latest <%= time_ago_in_words(@user.community_user.latest_warning) %> ago)
-                <% end %></a>
-              <a href="/warning/new/<%= @user.id %>">warn or suspend user</a>
-            </div>
-            <div class="h-m-t-6">
-              <a href="<%= mod_user_path(@user) %>" class="button is-filled">Show all tools</a>
-            </div>
-          </div>
-        <% end %>
-        <% if current_user&.same_as?(@user) %>
+        <% if is_me %>
           <%= link_to qr_login_code_path, class: 'button is-outlined is-small' do %>
             <i class="fas fa-mobile-alt"></i> Mobile Sign In
           <% end %>
@@ -95,7 +77,9 @@
       <div class="user-profile-heading-container">
         <h2 class="user-profile-heading">Posts</h2>
         <% if @posts.size > 0 %>
-          <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
+          <%= link_to user_posts_path(@user),
+                      class: "button is-muted",
+                      'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
             See all <%= @total_post_count %> &raquo;
           <% end %>
         <% end %>
@@ -108,7 +92,9 @@
             <%= render 'posts/type_agnostic', post: a, show_type_tag: true, show_category_tag: true %>
           <% end %>
         </div>
-        <%= link_to user_posts_path(@user), class: "button is-muted", 'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
+        <%= link_to user_posts_path(@user),
+                    class: "button is-muted",
+                    'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
           See all <%= @total_post_count %> &raquo;
         <% end %>
       <% end %>
@@ -117,18 +103,20 @@
   <div class="grid--cell is-3-lg is-12">
     <div class="widget is-tertiary">
       <div class="widget--body user-profile--image">
-        <img alt="user avatar" src="<%= avatar_url(@user, 256) %>" class="avatar-256" />
+        <img alt="user avatar" src="<%= avatar_url(@user, 256) %>" class="avatar-256">
       </div>
       <% if @user.staff? %>
         <div class="widget--body h-ta-center" title="This user is an official Staff member.">
           <i class="fas fa-users-cog"></i> Staff
         </div>
       <% elsif @user.admin? %>
-        <div class="widget--body h-ta-center" title="This user is an administrator of the <%= SiteSetting['SiteName'] %> community.">
+        <div class="widget--body h-ta-center"
+             title="This user is an administrator of the <%= SiteSetting['SiteName'] %> community.">
           <i class="fas fa-<%= SiteSetting['AdminBadgeCharacter'] %>"></i> Administrator
         </div>
       <% elsif @user.at_least_moderator? %>
-        <div class="widget--body h-ta-center" title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">
+        <div class="widget--body h-ta-center"
+             title="This user is a moderator of the <%= SiteSetting['SiteName'] %> community.">
           <i class="fas fa-<%= SiteSetting['ModBadgeCharacter'] %>"></i> Moderator
         </div>
       <% end %>

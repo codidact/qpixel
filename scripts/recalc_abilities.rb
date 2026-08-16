@@ -12,4 +12,4 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-RecalcAbilitiesJob.perform_now(options)
+RecalcAbilitiesJob.perform_now(**options)
