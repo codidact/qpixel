@@ -82,10 +82,9 @@ class PostsControllerTest < ActionController::TestCase
 
     try_create_post(category: nil)
 
-    assert_response(:found)
-    assert_redirected_to root_path
-    assert_not_nil flash[:danger]
+    assert_response(:bad_request)
     assert_nil assigns(:post).id
+    assert_not_empty assigns(:post).errors.full_messages
   end
 
   test 'category post type checks required trust level' do
@@ -93,7 +92,7 @@ class PostsControllerTest < ActionController::TestCase
 
     try_create_post(category: categories(:high_trust))
 
-    assert_response(:forbidden)
+    assert_response(:bad_request)
     assert_nil assigns(:post).id
     assert_not_empty assigns(:post).errors.full_messages
   end
@@ -103,10 +102,9 @@ class PostsControllerTest < ActionController::TestCase
 
     try_create_post(post_type: post_types(:answer))
 
-    assert_response(:found)
-    assert_redirected_to root_path
-    assert_not_nil flash[:danger]
+    assert_response(:bad_request)
     assert_nil assigns(:post).id
+    assert_not_empty assigns(:post).errors.full_messages
   end
 
   test 'create ensures community user is created' do
