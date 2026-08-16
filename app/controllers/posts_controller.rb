@@ -30,7 +30,7 @@ class PostsController < ApplicationController
     end
 
     if @post_type.system?
-      check_permissions
+      check_permissions!
       # return # uncomment if you add more code after this
     end
   end
@@ -60,31 +60,8 @@ class PostsController < ApplicationController
     @post = Post.new(post_params.merge(user: current_user, body: helpers.rendered_post(:post, :body_markdown),
                                        category: @category, post_type: @post_type, parent: @parent))
 
-    if @post.title? && (@post.title.include? '$$')
-      flash[:danger] = I18n.t 'posts.no_block_mathjax_title'
-      render :new, status: :bad_request
-      return
-    end
-
-    if @post_type.has_parent? && @parent.nil?
-      flash[:danger] = helpers.i18ns('posts.type_requires_parent', type: @post_type.name)
-      redirect_back fallback_location: root_path
-      return
-    end
-
-    if @post_type.has_category? && @category.nil? && @parent.nil?
-      flash[:danger] = helpers.i18ns('posts.type_requires_category', type: @post_type.name)
-      redirect_back fallback_location: root_path
-      return
-    end
-
-    if @category.present? && !current_user.can_post_in?(@category)
-      @post.errors.add(:base, helpers.i18ns('posts.category_low_trust_level', name: @category.name))
-      render :new, status: :forbidden
-      return
-    end
-
-    if @post_type.system? && !check_permissions
+    # Not a validation: check_permissions! calls verify_* methods in turn, which render/redirect.
+    if @post_type.system? && !check_permissions!
       return
     end
 
@@ -738,7 +715,7 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
   end
 
-  def check_permissions
+  def check_permissions!
     if @post.post_type_id == HelpDoc.post_type_id
       verify_moderator
     elsif @post.post_type_id == PolicyDoc.post_type_id

@@ -3,6 +3,7 @@ class Post < ApplicationRecord
   include Lockable
   include PostNormalizations
   include PostValidations
+  include PostCreationValidations
   include SoftDeletable
   include Timestamped
   include UserSortable
