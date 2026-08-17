@@ -15,12 +15,13 @@ class UsersController < ApplicationController
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
 
   before_action :verify_moderator, only: [:annotate, :annotations, :full_log, :mod, :mod_delete, :mod_privilege_action,
-                                          :mod_privileges, :role_toggle, :soft_delete]
+                                          :mod_privileges, :role_toggle, :soft_delete, :undelete]
   before_action :verify_global_moderator, only: [:mod_delete_network_account, :mod_failban]
   before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :full_log, :mod, :mod_delete,
                                   :mod_delete_network_account, :mod_failban, :mod_privilege_action, :mod_privileges,
-                                  :network, :posts, :role_toggle, :show, :soft_delete, :vote_summary]
+                                  :network, :posts, :role_toggle, :show, :soft_delete, :undelete, :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
+  before_action :verify_user_not_deleted, only: [:undelete]
 
   def index
     @sort_param = { reputation: :reputation, age: :created_at }[params[:sort]&.to_sym] || :reputation
@@ -350,6 +351,22 @@ class UsersController < ApplicationController
     end
 
     render json: { status: 'success', user: @user.id }
+  end
+
+  def undelete
+    status = @user.community_user&.undelete(current_user)
+
+    if status
+      render json: { status: 'success', user: @user.id }
+    else
+      render json: { status: 'failed',
+                     message: 'Failed to undelete user profile',
+                     user: @user.id }
+    end
+  end
+
+  def edit_profile
+    render layout: 'without_sidebar'
   end
 
   def cleaned_profile_websites(profile_params)
@@ -688,6 +705,12 @@ class UsersController < ApplicationController
     if deleted && go_to_not_found
       not_found!
     end
+  end
+
+  # Explicitly checks that the requested used is not deleted
+  # NOTE: This guard is not enough to guarantee that the user is not deleted on the current community
+  def verify_user_not_deleted
+    not_found! if @user.deleted?
   end
 end
 # rubocop:enable Metrics/ClassLength
