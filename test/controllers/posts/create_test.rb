@@ -150,9 +150,7 @@ class PostsControllerTest < ActionController::TestCase
 
     assert_response(:bad_request)
     assert_not_nil assigns(:post)
-    assert_include_any assigns(:post).errors.full_messages,
-                       ApplicationRecord.useful_err_msg,
-                       "Expected post errors to include a 'useful' error message."
+    assert assigns(:post).errors.full_messages.include?(I18n.t('posts.spam_blocked'))
   end
 
   test 'should block posting from user with active spam flag' do
@@ -163,9 +161,7 @@ class PostsControllerTest < ActionController::TestCase
 
     assert_response(:bad_request)
     assert_not_nil assigns(:post)
-    assert_include_any assigns(:post).errors.full_messages,
-                       ApplicationRecord.useful_err_msg,
-                       "Expected post errors to include a 'useful' error message."
+    assert assigns(:post).errors.full_messages.include?(I18n.t('posts.spam_blocked'))
   end
 
   test 'should allow posting but flag from blocked IP prefix' do
