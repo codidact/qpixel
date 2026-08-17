@@ -30,5 +30,11 @@ module UserTestHelpers
         format: :json
       }
     end
+
+    # @param user [User] user to undelete
+    def try_undelete_user(user)
+      post :undelete, params: { id: user.id,
+                                format: :json }
+    end
   end
 end
