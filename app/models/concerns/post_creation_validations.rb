@@ -44,7 +44,7 @@ module PostCreationValidations
       unless prev_non_deleted_count >= threshold
         identical_posts = Post.unscoped.where(user: user, body_markdown: body_markdown).where.not(id: id)
         if identical_posts.any?
-          errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+          errors.add(:base, I18n.t('posts.spam_blocked'))
         end
       end
     end
@@ -68,7 +68,7 @@ module PostCreationValidations
                              posts: { user_id: user.id })
                       .where('flags.created_at <= ?', time_threshold.days.ago)
         if active.any? || helpful.any?
-          errors.add(:base, ApplicationRecord.useful_err_msg.sample)
+          errors.add(:base, I18n.t('posts.spam_blocked'))
         end
       end
     end
