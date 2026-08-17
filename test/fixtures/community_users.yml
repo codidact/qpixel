@@ -87,6 +87,9 @@ sample_deleted_account:
   community: sample
   is_admin: false
   is_moderator: false
+  deleted: true
+  deleted_at: 2020-01-02T00:00:00.000000Z
+  deleted_by: global_admin
   reputation: 1
 
 sample_deleted_profile:

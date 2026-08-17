@@ -25,10 +25,18 @@
       </p>
     </div>
 
-    <%= link_to 'Delete community profile',
-                soft_delete_user_path(@user.id, type: 'profile'),
+    <%
+        is_deleted = @user.community_user&.deleted? || false
+        action_path = is_deleted ?
+                        undelete_user_path(@user.id) :
+                        soft_delete_user_path(@user.id, type: 'profile')
+    %>
+    <%= link_to t("mod.actions.profile_#{is_deleted ? 'undelete' : 'delete'}"),
+                action_path,
                 remote: true,
-                method: :delete,
+                method: is_deleted ? :post : :delete,
+                disabled: @user.deleted?,
+                title: @user.deleted? ? t('mod.actions.errors.profile_already_deleted') : '',
                 class: 'js-soft-delete button is-danger is-filled' %>
   </div>
 </div>

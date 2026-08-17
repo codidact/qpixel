@@ -35,6 +35,7 @@ Rails.application.routes.draw do
     post   'settings/:name',               to: 'site_settings#update', as: :update_site_setting
 
     delete 'users/delete/:id',             to: 'users#soft_delete', as: :soft_delete_user
+    post   'users/undelete/:id',           to: 'users#undelete', as: :undelete_user
 
     get    'privileges',                   to: 'admin#privileges', as: :admin_privileges
     get    'privileges/:name',             to: 'admin#show_privilege', as: :admin_privilege

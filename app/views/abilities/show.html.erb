@@ -24,7 +24,7 @@
           <%= @user.username %> has not yet earned this ability.
         <% end %>
 
-        <% if @user.community_user.privilege? 'mod' %>
+        <% if @user.at_least_moderator? %>
           <% if @user.id == current_user&.id %>
             However, as a moderator you still have all abilities.
           <% else %>
