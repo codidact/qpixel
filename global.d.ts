@@ -32,6 +32,10 @@ interface DelegatedListener {
 
 type ClassWatcherCallback = (element: HTMLElement) => void;
 
+interface MarkdownAction {
+  apply($field: JQuery<HTMLTextAreaElement | HTMLInputElement>): void
+}
+
 interface QPixelDOM {
   // private properties
   _delegatedListeners?: DelegatedListener[];

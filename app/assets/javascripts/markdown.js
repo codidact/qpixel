@@ -1,7 +1,5 @@
 $(() => {
-  /** @typedef {{apply: function(JQuery<HTMLTextAreaElement | HTMLInputElement>): void}} Action */
-
-  /** @implements {Action} */
+  /** @implements {MarkdownAction} */
   class InlineAction {
     constructor(start, end = '') {
       this.start = start;
@@ -20,7 +18,7 @@ $(() => {
     }
   }
 
-  /** @implements {Action} */
+  /** @implements {MarkdownAction} */
   class BlockAction {
     /**
      * @param {function(string, number): string} callback
@@ -78,7 +76,7 @@ $(() => {
   }
 
   /**
-   * @type {{[key: string]: Action}}
+   * @type {{[key: string]: MarkdownAction}}
    */
   const actions = {
     bold: new InlineAction('**', '**'),
