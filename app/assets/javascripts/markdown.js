@@ -1,6 +1,13 @@
 $(() => {
-  /** @implements {MarkdownAction} */
+  /**
+   * A markdown action which places markings before and after the current selection
+   * @implements {MarkdownAction}
+   */
   class InlineAction {
+    /**
+     * @param {string} start Text to place before the selection
+     * @param {string} end Text to place after the selection
+     */
     constructor(start, end = '') {
       this.start = start;
       this.end = end;
@@ -18,11 +25,14 @@ $(() => {
     }
   }
 
-  /** @implements {MarkdownAction} */
+  /**
+   * A markdown action which edits a range of complete lines
+   * @implements {MarkdownAction}
+   */
   class BlockAction {
     /**
-     * @param {function(string, number): string} callback
-     * @param {boolean} skip_blanks
+     * @param {function(string, number): string} callback Function to map each line
+     * @param {boolean} skip_blanks Whether to skip blank lines (this affects indexing)
      */
     constructor(callback, skip_blanks) {
       this.callback = callback;
@@ -49,8 +59,11 @@ $(() => {
 
 
     /**
+     * Returns the range covering all lines touched by the field's selection.
+     * The returned range is an expansion of the initial selection, snapped to
+     * the line start of the initial line and line end of the final line.
      * @param {JQuery<HTMLTextAreaElement | HTMLInputElement>} $field 
-     * @returns {[number, number]} 
+     * @returns {[start: number, end: number]} Start and end offsets of the block.
      */
     #getBlockSelection($field) {
       const preSelectionStart = $field[0].selectionStart;
