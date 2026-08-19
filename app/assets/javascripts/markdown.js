@@ -64,10 +64,12 @@ $(() => {
       for (const line of val.split('\n')) {
         const begin = idx;
         const end = begin + line.length;
-        if (begin <= preSelectionStart && preSelectionStart <= end)
+        if (begin <= preSelectionStart && preSelectionStart <= end) {
           startPos = begin;
-        if (begin <= preSelectionEnd && preSelectionEnd <= end)
+        }
+        if (begin <= preSelectionEnd && preSelectionEnd <= end) {
           endPos = end;
+        }
         // include newline
         idx = end + 1;
       }
