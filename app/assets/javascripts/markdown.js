@@ -107,15 +107,13 @@ $(() => {
   $(document).on('click', '.js-markdown-tool', (ev) => {
     const $tgt = $(ev.target);
     const $button = $tgt.is('a') ? $tgt : $tgt.parents('a');
-    const action = $button.attr('data-action');
+    const action = /** @type {string} */ ($button.attr('data-action'));
 
     /** @type {JQuery<HTMLTextAreaElement | HTMLInputElement>} */
     const $field = $('.js-post-field');
 
-    if (action && action in actions) {
-      actions[action].apply($field);
-      $field.trigger("focus");
-    }
+    actions[action].apply($field);
+    $field.trigger("focus");
   });
 
   QPixel.DOM?.addSelectorListener('keypress', '#markdown-link-name, #markdown-link-url', (ev) => {
