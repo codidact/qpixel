@@ -7,6 +7,7 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.5.32",
+    "@types/jqueryui": "1.12.24",
     "@types/prettier": "2.7.3",
     "@types/select2": "^4.0.63",
     "dompurify": "3.4.13",
