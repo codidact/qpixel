@@ -253,6 +253,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderToolsMenu();
         QPixel.Keyboard.state = 'tools';
       }
+    } else if (e.key === 's') {
+      window.location.href = '/posts/search';
     } else if (e.key === 'a') {
       const cl = /** @type {HTMLTextAreaElement} */(document.getElementById('post_body_markdown'));
       cl.scrollIntoView({ behavior: 'smooth' });
