@@ -14,7 +14,14 @@ class Community < ApplicationRecord
                        .split(',')
                        .map(&:to_i)
 
-      in_order_of(:id, user_order, filter: false)
+      # For some reason, even though we pass in filter: false,
+      # if user_order is empty, in_order_of still returns an empty array.
+      # Therefore we have to special case this
+      if user_order.empty?
+        all
+      else
+        in_order_of(:id, user_order, filter: false)
+      end
     end
   }
 end
