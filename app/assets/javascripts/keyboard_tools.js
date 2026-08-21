@@ -254,8 +254,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         QPixel.Keyboard.state = 'tools';
       }
     } else if (e.key === 'a') {
-      const cl = $('#answer_body_markdown');
-      cl[0].scrollIntoView({ behavior: 'smooth' });
+      const cl = /** @type {HTMLTextAreaElement} */(document.getElementById('post_body_markdown'));
+      cl.scrollIntoView({ behavior: 'smooth' });
       cl.focus();
       QPixel.Keyboard.dialogClose();
     } else if (e.key === 'Enter') {
