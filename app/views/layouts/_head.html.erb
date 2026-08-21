@@ -34,7 +34,7 @@
 <%= stylesheet_link_tag 'application', media: 'all' %>
 
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/jquery@2.2.2/dist/jquery.min.js" %>
-<%= javascript_include_tag "https://cdn.jsdelivr.net/npm/jquery-ui@1.14.2/dist/jquery-ui.min.js" %>
+<%= javascript_include_tag "https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js" %>
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/moment@2.13.0/min/moment.min.js" %>
 <%= javascript_include_tag "https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js" %>
 <% if SiteSetting['DonationsEnabled'] && (SiteSetting['LoadStripeEverywhere'] || controller_name == 'donations') %>
