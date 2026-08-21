@@ -1,27 +1,58 @@
 <% prefs.each do |name, value| %>
   <% pref_config = AppConfig.preferences[name] %>
-  <label class="user-pref">
-    <div class="user-pref--meta">
-      <strong><%= name.humanize %></strong><br/>
-      <span class="desc"><%= pref_config['description'] %></span>
-    </div>
-    <div class="user-pref--value">
-      <% case pref_config['type'] %>
-      <% when 'boolean' %>
-        <input class="js-user-pref" type="checkbox" data-pref="<%= name %>" <%= 'checked' if value == 'true' %>
-               data-community="<%= community %>" />
-      <% when 'choice' %>
-        <%= select_tag nil,
-                       options_for_select(preference_choice(pref_config), selected: value),
-                       class: 'js-user-pref form-element',
-                       data: { pref: name, community: community } %>
-      <% when 'integer' %>
-        <input class="js-user-pref form-element" type="number" data-pref="<%= name %>" value="<%= value %>"
-               data-community="<%= community %>" />
-      <% when 'string' %>
-        <input class="js-user-pref form-element" type="text" data-pref="<%= name %>" value="<%= value %>"
-               data-community="<%= community %>" />
-      <% end %>
-    </div>
-  </label>
+  <% case pref_config['type'] %>
+  <% when 'boolean' %>
+    <%= render 'prefs_inline', name: name, pref_config: pref_config do %>
+      <input class="js-user-pref" type="checkbox" data-pref="<%= name %>" <%= 'checked' if value == 'true' %>
+              data-community="<%= community %>" />
+    <% end %>
+  <% when 'choice' %>
+    <%= render 'prefs_inline', name: name, pref_config: pref_config do %>
+      <%= select_tag nil,
+                      options_for_select(preference_choice(pref_config), selected: value),
+                      class: 'js-user-pref form-element',
+                      data: { pref: name, community: community } %>
+    <% end %>
+  <% when 'integer' %>
+    <%= render 'prefs_inline', name: name, pref_config: pref_config do %>
+      <input class="js-user-pref form-element" type="number" data-pref="<%= name %>" value="<%= value %>"
+              data-community="<%= community %>" />
+    <% end %>
+  <% when 'string' %>
+    <%= render 'prefs_inline', name: name, pref_config: pref_config do %>
+      <input class="js-user-pref form-element" type="text" data-pref="<%= name %>" value="<%= value %>"
+              data-community="<%= community %>" />
+    <% end %>
+  <% when 'community_order' %>
+    <%= render 'prefs_block', name: name, pref_config: pref_config do %>
+      <div class="user-pref--value community-sortable">
+        <details>
+          <summary>Reorder</summary>
+          <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
+          <ol class="sortable">
+            <% Community.where(hidden: false).each do |c| %>
+              <li class="community-sortable-list-item" data-community="<%= c.id %>">
+                <i class="fas fa-grip-vertical"></i>
+                <% logo_setting = logo_paths[c.id] %>
+                <% if logo_setting.present? %>
+                  <div class="img">
+                    <img loading="lazy" src="<%= logo_setting %>" alt="<%= c.name %>" class="community-header-list-image">
+                  </div>
+                <% end %>
+                <div class="label">
+                  <%= c.name %>
+                </div>
+              </li>
+            <% end %>
+          </ol>
+          <input type="hidden"
+                 class="js-user-pref form-element"
+                 type="text"
+                 data-pref="<%= name %>"
+                 value="<%= value %>"
+                 data-community="false" />
+        </details>
+      </div>
+    <% end %>
+  <% end %>
 <% end %>

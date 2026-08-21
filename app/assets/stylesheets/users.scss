@@ -187,6 +187,30 @@ img {
   }
 }
 
+.user-pref.user-block-pref {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.community-sortable {
+  .community-sortable-list-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: grab;
+    img {
+      max-height: 1.5rem;
+    }
+    .img {
+      width: 100px;
+      padding: 10px;
+    }
+    .label {
+      flex-grow: 1;
+    }
+  }
+}
+
 $sizes: (16, 32, 40, 48, 64, 128, 256);
 
 @each $size in $sizes {
