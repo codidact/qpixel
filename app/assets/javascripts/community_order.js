@@ -1,19 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const pref = $(".community-sortable");
-  const sortable = pref.find(".sortable");
+  const pref = /** @type {HTMLElement} */(document.querySelector(".community-sortable"));
+  const sortable = /** @type {HTMLElement} */(pref.querySelector(".sortable"));
+  const input = /** @type {HTMLInputElement} */(pref.querySelector(".js-user-pref"));
 
-  const input = pref.find(".js-user-pref");
-
-  sortable.sortable({
-    appendTo: pref,
-    update: () => {
-      const val = sortable.children()
-        .map((_, el) => el.dataset['community'])
-        .toArray()
+  Sortable.create(sortable, {
+    onSort: () => {
+      const val = [...sortable.children]
+        .map(el => /** @type {HTMLElement} */(el).dataset['community'])
         .join(',');
 
-      input.val(val);
-      input.trigger("change");
+      input.value = val;
+      input.dispatchEvent(new Event("change"));
     }
   });
 });
