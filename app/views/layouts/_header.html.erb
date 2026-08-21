@@ -135,7 +135,7 @@
   <h3 class="h-m-t-1">Communities</h3>
   <div class="community-header-list">
     <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
-    <% Community.where(hidden: false).each do |c| %>
+    <% Community.where(hidden: false).user_preferred_order(current_user).each do |c| %>
       <div class="community-header-list-entry">
         <% logo_setting = logo_paths[c.id] %>
         <%= link_to "//#{c.host}" do %>

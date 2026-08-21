@@ -30,7 +30,7 @@
           <summary>Reorder</summary>
           <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
           <ol class="sortable">
-            <% Community.where(hidden: false).each do |c| %>
+            <% Community.where(hidden: false).user_preferred_order(current_user).each do |c| %>
               <li class="community-sortable-list-item" data-community="<%= c.id %>">
                 <i class="fas fa-grip-vertical"></i>
                 <% logo_setting = logo_paths[c.id] %>
