@@ -9,3 +9,10 @@ en:
         Accounts using 2FA cannot be self-deleted. Disable 2FA first.
       self_delete_wrong_username: >
         The username you entered was incorrect.
+    labels:
+      view_abilities_self: View your abilities
+      view_answers_self: View your answers
+      view_articles_self: View your articles
+      view_posts_self: View your posts
+      view_questions_self: View your questions
+      view_votes_self: View your received votes
