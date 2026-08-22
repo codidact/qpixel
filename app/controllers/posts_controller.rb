@@ -1,12 +1,15 @@
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 class PostsController < ApplicationController
+  include DraftManagement
+
   before_action :authenticate_user!, except: [:document, :help_center, :show]
-  before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock]
+  before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock, :legal_delete]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_moderator, only: [:toggle_comments]
   before_action :edit_checks, only: [:edit, :update]
   before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore]
+  before_action :verify_staff, only: [:legal_delete]
 
   def new
     @post_type = PostType.find(params[:post_type])
@@ -33,15 +36,23 @@ class PostsController < ApplicationController
   end
 
   def create
+    submitted = params[:post]
+
+    unless submitted.present?
+      flash[:danger] = helpers.i18ns('posts.create_requires_post')
+      redirect_back fallback_location: root_path
+      return
+    end
+
     @parent = Post.where(id: params[:parent]).first
     @post_type = if @parent.present? && @parent.post_type.answer_type.present?
                    @parent.post_type.answer_type
                  else
-                   PostType.find(params[:post][:post_type_id])
+                   PostType.find(submitted[:post_type_id])
                  end
     @category = if @post_type.has_category
-                  if params[:post][:category_id].present?
-                    Category.find(params[:post][:category_id])
+                  if submitted[:category_id].present?
+                    Category.find(submitted[:category_id])
                   elsif @parent.present?
                     @parent.category
                   end
@@ -99,6 +110,7 @@ class PostsController < ApplicationController
 
     if @post.save
       @post.update(last_activity: @post.created_at, last_activity_by: current_user)
+      NewThreadFollower.create user: @post.user, post: @post
       if @post_type.has_parent?
         unless @post.user_id == @post.parent.user_id
           @post.parent.user.create_notification("New response to your post #{@post.parent.title}",
@@ -111,7 +123,7 @@ class PostsController < ApplicationController
         Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/#{key}"
       end
 
-      do_draft_delete(URI(request.referer || '').path)
+      do_delete_draft(current_user, URI(request.referer || '').path)
 
       redirect_to helpers.generic_show_link(@post)
     else
@@ -130,7 +142,7 @@ class PostsController < ApplicationController
       redirect_to policy_path(@post.doc_slug)
     end
 
-    if @post.deleted? && !current_user&.post_privilege?('flag_curate', @post)
+    if @post.deleted? && !current_user&.post_privilege?('flag_curate', @post) && !current_user&.staff?
       return not_found!
     end
 
@@ -144,7 +156,7 @@ class PostsController < ApplicationController
     end
 
     # @post = @post.includes(:flags, flags: :post_flag_type)
-    @children = if current_user&.privilege?('flag_curate')
+    @children = if current_user&.privilege?('flag_curate') || current_user&.staff?
                   Post.where(parent_id: @post.id)
                 else
                   Post.where(parent_id: @post.id).undeleted
@@ -207,7 +219,7 @@ class PostsController < ApplicationController
     body_rendered = helpers.rendered_post(:post, :body_markdown)
     new_tags_cache = params[:post][:tags_cache]&.reject(&:empty?)
 
-    if edit_post_params.to_h.all? { |k, v| @post.send(k) == v }
+    if edit_post_params.to_h.all? { |k, v| normalize(@post.send(k)) == normalize(v) }
       flash[:danger] = helpers.i18ns('posts.no_edit_changes')
       return redirect_to post_path(@post)
     end
@@ -261,7 +273,7 @@ class PostsController < ApplicationController
               PostHistory.redact(@post, current_user)
             end
             Rails.cache.delete "community_user/#{current_user.community_user.id}/metric/E"
-            do_draft_delete(URI(request.referer || '').path)
+            do_delete_draft(current_user, URI(request.referer || '').path)
             redirect_to post_path(@post)
           end
 
@@ -300,7 +312,7 @@ class PostsController < ApplicationController
             message += " on '#{@post.parent.title}'"
           end
           @post.user.create_notification message, suggested_edit_url(edit, host: @post.community.host)
-          do_draft_delete(URI(request.referer || '').path)
+          do_delete_draft(current_user, URI(request.referer || '').path)
           redirect_to post_path(@post)
         else
           @post.errors.copy!(edit.errors)
@@ -403,6 +415,35 @@ class PostsController < ApplicationController
                                        last_activity_by_id: user.id)
   end
 
+  def do_atomic_delete_with_children(post, user)
+    post.transaction do
+      unless do_delete(post, user)
+        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
+        raise ActiveRecord::Rollback
+      end
+
+      history_entry = PostHistory.post_deleted(post, user)
+
+      if history_entry&.errors&.any?
+        post.errors.merge!(history_entry.errors)
+        raise ActiveRecord::Rollback
+      end
+
+      if post.children.undeleted.any?
+        unless do_delete_children(post, user)
+          raise ActiveRecord::Rollback
+        end
+
+        histories = post.children.map do |c|
+          { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: user, post: c,
+            community: RequestContext.community }
+        end
+
+        PostHistory.create!(histories)
+      end
+    end
+  end
+
   def delete
     unless check_your_privilege('flag_curate', @post, false)
       flash[:danger] = helpers.ability_err_msg(:flag_curate, 'delete this post')
@@ -429,32 +470,7 @@ class PostsController < ApplicationController
     end
 
     # post deletion, its children deletion, and post history creation must all be made as one atomic operation
-    @post.transaction do
-      unless do_delete(@post, current_user)
-        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
-        raise ActiveRecord::Rollback
-      end
-
-      history_entry = PostHistory.post_deleted(@post, current_user)
-
-      if history_entry&.errors&.any?
-        @post.errors.merge!(history_entry.errors)
-        raise ActiveRecord::Rollback
-      end
-
-      if @post.children.undeleted.any?
-        unless do_delete_children(@post, current_user)
-          raise ActiveRecord::Rollback
-        end
-
-        histories = @post.children.map do |c|
-          { post_history_type: PostHistoryType.find_by(name: 'post_deleted'), user: current_user, post: c,
-            community: RequestContext.community }
-        end
-
-        PostHistory.create!(histories)
-      end
-    end
+    do_atomic_delete_with_children(@post, current_user)
 
     redirect_to post_path(@post)
   end
@@ -474,6 +490,12 @@ class PostsController < ApplicationController
 
     if @post.deleted_by.at_least_moderator? && !current_user&.at_least_moderator?
       flash[:danger] = helpers.i18ns('posts.cant_restore_deleted_by_moderator')
+      redirect_to post_path(@post)
+      return
+    end
+
+    if @post.deleted_by.staff? && !current_user&.staff?
+      flash[:danger] = helpers.i18ns('posts.cant_restore_deleted_by_staff')
       redirect_to post_path(@post)
       return
     end
@@ -509,15 +531,17 @@ class PostsController < ApplicationController
   end
 
   def upload
-    content_types = Rails.application.config.active_storage.web_image_content_types
-    extensions = content_types.map { |ct| ct.gsub('image/', '') }
-    unless helpers.valid_image?(params[:file])
-      render json: { error: "Images must be one of #{extensions.join(', ')}" }, status: :bad_request
+    unless helpers.valid_upload?(params[:file])
+      render json: { status: 'failed',
+                     message: "Images must be one of #{helpers.allowed_upload_extensions.join(', ')}" },
+             status: :bad_request
       return
     end
+
     @blob = ActiveStorage::Blob.create_and_upload!(io: params[:file], filename: params[:file].original_filename,
                                                    content_type: params[:file].content_type)
-    render json: { link: uploaded_url(@blob.key) }
+    render json: { status: 'success',
+                   link: uploaded_url(@blob.key) }
   end
 
   def help_center
@@ -629,42 +653,61 @@ class PostsController < ApplicationController
     render json: { status: 'success', success: true }
   end
 
-  # saving by-field is kept for backwards compatibility with old drafts
   def save_draft
-    expiration_time = 86_400 * 7
-
-    base_key = "saved_post.#{current_user.id}.#{params[:path]}"
-
-    [:body, :comment, :excerpt, :license, :tag_name, :tags, :title].each do |key|
-      next unless params.key?(key)
-
-      key_name = [:body, :saved_at].include?(key) ? base_key : "#{base_key}.#{key}"
-
-      if key == :tags
-        valid_tags = params[key]&.select(&:present?)
-
-        RequestContext.redis.del(key_name)
-
-        if valid_tags.present?
-          RequestContext.redis.sadd(key_name, valid_tags)
-        end
-      else
-        RequestContext.redis.set(key_name, params[key])
-      end
-
-      RequestContext.redis.expire(key_name, expiration_time)
-    end
-
-    saved_at_key = "saved_post_at.#{current_user.id}.#{params[:path]}"
-    RequestContext.redis.set(saved_at_key, DateTime.now.iso8601)
-    RequestContext.redis.expire(saved_at_key, expiration_time)
-
+    base_key = do_save_draft(current_user, params[:path])
     render json: { status: 'success', success: true, key: base_key }
   end
 
   def delete_draft
-    do_draft_delete(params[:path])
+    do_delete_draft(current_user, params[:path])
     render json: { status: 'success', success: true }
+  end
+
+  def legal_delete
+    placeholder = 'This post has been removed by staff for legal reasons and cannot be restored.'
+    ApplicationRecord.transaction do
+      @post.assign_attributes(body: "<p>#{placeholder}</p>",
+                              body_markdown: placeholder,
+                              title: 'Removed for legal reasons')
+      unless @post.save(validate: false)
+        flash[:danger] = helpers.i18ns('posts.cant_delete_post')
+        raise ActiveRecord::Rollback
+      end
+      do_atomic_delete_with_children(@post, current_user)
+      PostHistory.redact(@post, current_user)
+    end
+
+    if params[:content_type].present?
+      @complaint = Complaint.new(user: current_user, report_type: 'illegal', user_wants_updates: false,
+                                 content_type: params[:content_type], email: 'none@localhost',
+                                 reported_url: helpers.generic_share_link(@post))
+      @comment = ComplaintComment.new(user: current_user, internal: false,
+                                      content: 'Report automatically created from legal deletion of linked post.')
+
+      Complaint.transaction do
+        unless @complaint.save
+          flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
+          raise ActiveRecord::Rollback
+        end
+
+        @comment.complaint = @complaint
+        unless @comment.save
+          flash[:danger] = "Post deleted, but couldn't create report: ('#{@comment.errors.full_messages.join(', ')}')"
+          raise ActiveRecord::Rollback
+        end
+
+        unless @complaint.update(status: 'reviewed', assignee: current_user, outcome: 'upheld')
+          flash[:danger] = "Post deleted, but couldn't create report: ('#{@complaint.errors.full_messages.join(', ')}')"
+          raise ActiveRecord::Rollback
+        end
+      end
+
+      ComplaintsMailer.with(post: @post, complaint: @complaint).legal_deletion.deliver_later
+    else
+      ComplaintsMailer.with(post: @post, complaint: nil).legal_deletion.deliver_later
+    end
+
+    redirect_to post_path(@post)
   end
 
   private
@@ -723,16 +766,6 @@ class PostsController < ApplicationController
 
   def unless_locked
     check_if_locked(@post)
-  end
-
-  def do_draft_delete(path)
-    keys = [:body, :comment, :excerpt, :license, :saved_at, :tags, :tag_name, :title].map do |key|
-      pfx = key == :saved_at ? 'saved_post_at' : 'saved_post'
-      base = "#{pfx}.#{current_user.id}.#{path}"
-      [:body, :saved_at].include?(key) ? base : "#{base}.#{key}"
-    end
-
-    RequestContext.redis.del(*keys)
   end
 end
 # rubocop:enable Metrics/MethodLength

@@ -1,0 +1,44 @@
+<%#
+   "Comment thread actions view
+
+    Variables:
+      inline : whether the thread is diplayed inline with the parent post
+      thread : CommentThread to display actions for
+"%>
+
+<% can_only_rename = current_user&.can_rename?(thread) && !current_user&.privilege?('flag_curate') %>
+
+<div class="thread--actions">
+  <% if thread.deleted %>
+    <i class="fas fa-trash fa-fw"
+     title="Deleted. This thread has been deleted."></i>
+  <% elsif thread.archived %>
+    <i class="fas fa-archive fa-fw"
+     title="Archived. This thread is outdated/completed and hence cannot be modified."></i>
+  <% elsif thread.locked? %>
+    <i class="fas fa-lock fa-fw"
+     title="Locked. This thread has been locked and cannot be modified."></i>
+  <% end %>
+
+  <% unless current_user.nil? %>
+    <%= render 'comments/thread_follow_link', thread: thread, user: current_user %>
+  <% end %>
+  <% if current_user&.privilege?('flag_curate') %>
+    <%= render 'comments/thread_tools_link', thread: thread %>
+  <% end %>
+
+  <% if can_only_rename %>
+    <a href="javascript:void(0)"
+         class="widget--header-link"
+         data-modal=".js--rename-thread-<%= thread.id %>"
+         role="button"
+         aria-label="Rename thread">
+      <i class="fas fa-pen fa-fw"></i> rename
+    </a>
+  <% end %>
+
+  <% if inline %>
+    <a href="javascript:void(0)" class="js-collapse-thread widget--header-link">collapse</a>
+    <a href="<%= comment_thread_path(thread.id) %>" class="widget--header-link">show thread</a>
+  <% end %>
+</div>

@@ -1,3 +1,8 @@
 .js-suggested-edit-reject-dialog.is-hidden {
-    display: none;
+  display: none;
+}
+
+.suggested-edits-list-header {
+  display: flex;
+  justify-content: space-between;
 }

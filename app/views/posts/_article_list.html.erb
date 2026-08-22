@@ -21,6 +21,11 @@
       <% end %>
       <%= link_to post.title, generic_share_link(post), 'data-ckb-item-link' => '' %>
     </div>
+    <% if (SiteSetting['PostBodyListTruncateLength'] || 0) > 0 %>
+      <p class="post-list--content">
+        <%= sanitize(strip_tags(post.body).truncate(SiteSetting['PostBodyListTruncateLength'] || 200), scrubber: scrubber) %>
+      </p>
+    <% end %>
      <p class="has-color-tertiary-600 has-float-right post-list--meta">
       posted <span title="<%= post.created_at.iso8601 %>"><%= time_ago_in_words(post.created_at, locale: :en_abbrev) %> ago</span>
       by <%= user_link post.user %>

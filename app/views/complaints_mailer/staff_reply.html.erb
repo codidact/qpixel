@@ -1,0 +1,24 @@
+<h1 class="has-font-size-heading">Your report has a reply from a member of staff</h1>
+
+<p>
+  Your <%= report_type(@complaint.report_type)['name'].downcase %> that you reported to us on
+  <%= @complaint.created_at.strftime '%d %B %Y' %> has a reply from a member of staff.
+</p>
+
+<div class="widget">
+  <div class="widget--header">
+    <span class="has-font-size-caption">
+      <strong>
+        Staff
+      </strong>
+      <%= time_ago_in_words(@comment.created_at) %> ago
+    </span>
+  </div>
+  <div class="widget--body has-font-size-caption">
+    <%= @comment.content %>
+  </div>
+</div>
+
+<p>
+  You may reply if necessary by <%= link_to 'visiting the report here', complaint_url(@complaint.access_token) %>.
+</p>

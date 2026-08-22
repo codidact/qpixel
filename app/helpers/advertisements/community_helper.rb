@@ -5,6 +5,7 @@ module Advertisements::CommunityHelper
 
   # rubocop:disable Metrics/BlockLength
   def community_ad
+    # TODO: trying to cache like this is probably a terrible idea - review options
     Rails.cache.fetch 'community_ad', expires_in: 60.minutes do
       ad = Image.new(600, 500)
       ad.background_color = 'white'
@@ -24,9 +25,9 @@ module Advertisements::CommunityHelper
         img.fill = 'white'
       end
 
-      icon_path = SiteSetting['SiteLogoPath']
-      if icon_path.present?
-        icon = community_icon(icon_path)
+      icon = community_icon(SiteSetting['SiteLogoPath'])
+
+      if icon.present?
         icon.resize_to_fit!(400, 200)
         ad.composite!(icon, CenterGravity, 0, -175, SrcAtopCompositeOp)
       else

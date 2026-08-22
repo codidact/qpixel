@@ -6,53 +6,45 @@ class VotesControllerTest < ActionController::TestCase
   test 'should cast upvote' do
     sign_in users(:standard_user)
 
-    post :create, params: { post_id: posts(:question_without_votes).id, vote_type: 1 }
+    try_create_vote posts(:question_without_votes), 1
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'OK', JSON.parse(response.body)['status']
+    assert_json_success
   end
 
   test 'should cast downvote' do
     sign_in users(:standard_user)
 
-    post :create, params: { post_id: posts(:question_without_votes).id, vote_type: -1 }
+    try_create_vote posts(:question_without_votes), -1
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'OK', JSON.parse(response.body)['status']
+    assert_json_success
   end
 
   test 'should return correct modified status' do
-    post_id = posts(:question_without_votes).id
+    post = posts(:question_without_votes)
 
     sign_in users(:standard_user)
 
-    post :create, params: { post_id: post_id, vote_type: 1 }
-    post :create, params: { post_id: post_id, vote_type: -1 }
+    try_create_vote post, 1
+    try_create_vote post, 1
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'modified', JSON.parse(response.body)['status']
+    assert_json_success(status: 'modified')
   end
 
   test 'should silently accept duplicate votes' do
-    post_id = posts(:question_without_votes).id
+    post = posts(:question_without_votes)
 
     sign_in users(:standard_user)
 
-    post :create, params: { post_id: post_id, vote_type: 1 }
-    post :create, params: { post_id: post_id, vote_type: 1 }
+    try_create_vote post, 1
+    try_create_vote post, 1
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'modified', JSON.parse(response.body)['status']
+    assert_json_success(status: 'modified')
   end
 
   test 'should prevent self voting' do
     sign_in users(:editor)
 
-    post :create, params: { post_id: posts(:question_without_votes).id, vote_type: 1 }
+    try_create_vote posts(:question_without_votes), 1
 
     assert_response(:forbidden)
     assert_valid_json_response
@@ -64,9 +56,7 @@ class VotesControllerTest < ActionController::TestCase
 
     delete :destroy, params: { id: votes(:one).id }
 
-    assert_response(:success)
-    assert_valid_json_response
-    assert_equal 'OK', JSON.parse(response.body)['status']
+    assert_json_success
   end
 
   test 'should prevent users removing others votes' do
@@ -102,7 +92,7 @@ class VotesControllerTest < ActionController::TestCase
   test 'should prevent deleted account casting votes' do
     sign_in users(:deleted_account)
 
-    post :create, params: { post_id: posts(:question_without_votes).id, vote_type: 1 }
+    try_create_vote posts(:question_without_votes), 1
 
     assert_response(:forbidden)
     assert_valid_json_response
@@ -112,10 +102,27 @@ class VotesControllerTest < ActionController::TestCase
   test 'should prevent deleted profile casting votes' do
     sign_in users(:deleted_profile)
 
-    post :create, params: { post_id: posts(:question_without_votes).id, vote_type: 1 }
+    try_create_vote posts(:question_without_votes), 1
 
     assert_response(:forbidden)
     assert_valid_json_response
     assert_json_response_message('You must be logged in to vote.')
+  end
+
+  test 'should not allow restricted users to vote' do
+    sign_in users(:basic_user)
+
+    try_create_vote posts(:question_without_votes), 1
+
+    assert_response(:forbidden)
+    assert_valid_json_response
+    assert_json_response_message(I18n.t('votes.limits.restricted_ability'))
+  end
+
+  private
+
+  def try_create_vote(target_post, vote_type)
+    post :create, params: { post_id: target_post.id,
+                            vote_type: vote_type }
   end
 end

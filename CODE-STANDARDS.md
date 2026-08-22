@@ -281,8 +281,8 @@ onto the next line, and every continuation line must be indented _at least_ one 
 Wrapped lines may be indented further to align certain elements with one another.
 
 ```js
-codidact.createDangerConfirmationAudit(document.querySelectorAll('.modal.is-danger > .modal--body'),
-                                       'POST', 'https://codidact.org/audits/danger-confirmation');
+QPixel.createDangerConfirmationAudit(document.querySelectorAll('.modal.is-danger > .modal--body'),
+                                       'POST', 'https://example.com/audits/danger-confirmation');
 ```
 
 #### Bracing

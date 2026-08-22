@@ -4,11 +4,12 @@
   <strong>Q&A by the community, for the community</strong>
 </div>
 <br>
-<p align="center">
-  <a href="https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml"><img src="https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml/badge.svg" alt="Pipeline status" /></a>
-  <a href="https://codecov.io/gh/codidact/qpixel"><img src="https://codecov.io/gh/codidact/qpixel/graph/badge.svg?token=RM60WJLP1V" alt="Coverage Status"/></a>
-  <a href="https://zenodo.org/badge/latestdoi/237078806"><img src="https://zenodo.org/badge/237078806.svg" alt="DOI"></a>
-</p>
+<div align="center">
+
+  [![Pipeline status](https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/codidact/qpixel/actions/workflows/ci-cd.yml)
+  [![Coverage status](https://codecov.io/gh/codidact/qpixel/graph/badge.svg?token=RM60WJLP1V)](https://codecov.io/gh/codidact/qpixel)
+  [![DOI](https://zenodo.org/badge/237078806.svg)](https://zenodo.org/badge/latestdoi/237078806)
+</div>
 
 Rails-based version of our core software, powering [codidact.com](https://codidact.com). Currently under active development towards MVP.
 

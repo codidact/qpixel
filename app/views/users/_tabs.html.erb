@@ -1,31 +1,43 @@
 <div class="tabs is-classic-tabs">
-  <%= link_to user_path(user), class: "tabs--item #{current_page?(user_path(user)) ? 'is-active' : ''}" do %>
-    <i class="fas fa-user"></i> Profile
+  <%= link_to user_path(user), class: "tabs--item #{'is-active' if active_tab == 'profile'}" do %>
+    Profile
   <% end %>
-  <%= link_to user_activity_path(user), class: "tabs--item #{current_page?(user_activity_path(user)) ? 'is-active' : ''}" do %>
+  <%= link_to user_activity_path(user), class: "tabs--item #{'is-active' if active_tab == 'activity'}" do %>
     Activity
   <% end %>
-  <%= link_to vote_summary_path(user), class: "tabs--item #{current_page?(vote_summary_path(user)) ? 'is-active' : ''}" do %>
-    Vote Summary
+  <%= link_to vote_summary_path(user), class: "tabs--item #{'is-active' if active_tab == 'votes'}" do %>
+    Votes
   <% end %>
   <% if user == current_user %>
-    <%= link_to edit_user_registration_path, class: "tabs--item #{current_page?(edit_user_registration_path) ? 'is-active' : ''}" do %>
+    <%= link_to edit_user_registration_path, class: "tabs--item #{'is-active' if active_tab == 'account'}" do %>
       Account
     <% end %>
-    <%= link_to edit_user_profile_path, class: "tabs--item #{current_page?(edit_user_profile_path) ? 'is-active' : ''}" do %>
+    <%= link_to edit_user_profile_path, class: "tabs--item #{'is-active' if active_tab == 'edit'}" do %>
       Edit
     <% end %>
-    <%= link_to user_preferences_path, class: "tabs--item #{current_page?(user_preferences_path) ? 'is-active' : ''}" do %>
+    <%= link_to user_preferences_path, class: "tabs--item #{'is-active' if active_tab == 'preferences'}" do %>
       Preferences
     <% end %>
-    <%= link_to user_filters_path, class: "tabs--item #{current_page?(user_filters_path) ? 'is-active' : ''}" do %>
+    <%= link_to user_filters_path, class: "tabs--item #{'is-active' if active_tab == 'filters'}" do %>
       Filters
     <% end %>
-    <%= link_to notifications_path, class: "tabs--item #{current_page?(notifications_path) ? 'is-active' : ''}" do %>
-      Notifications
+    <%= link_to notifications_path, class: "tabs--item #{'is-active' if active_tab == 'inbox'}" do %>
+      Inbox
+    <% end %>
+    <%= link_to subscriptions_path, class: "tabs--item #{'is-active' if active_tab == 'email'}" do %>
+      Email
     <% end %>
   <% end %>
-  <%= link_to network_path(user), class: "tabs--item #{current_page?(network_path(user)) ? 'is-active' : ''}" do %>
-  All Communities
+  <%= link_to network_path(user), class: "tabs--item #{'is-active' if active_tab == 'network'}" do %>
+    Network
+  <% end %>
+  <div class="tabs--push"></div>
+  <% if current_user&.moderator? %>
+    <%= link_to mod_user_path(user), class: "tabs--item #{'is-active' if active_tab == 'mod_tools'}" do %>
+      <i class="fas fa-shield-alt"></i> Moderator Tools
+      <% if user&.community_user&.mod_warnings&.size&.positive? %>
+        (<%= pluralize(user.community_user.mod_warnings.count, 'message') %>)
+      <% end %>
+    <% end %>
   <% end %>
 </div>

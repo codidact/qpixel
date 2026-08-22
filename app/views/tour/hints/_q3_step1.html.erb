@@ -1,0 +1,8 @@
+<%= render(layout: 'hint_widget', locals: { classes: "step-1" }) do %>
+  <% content_for :body, flush: true do %>
+    <p>This is your post. We are currently waiting for other people to see and answer it.</p>
+  <% end %>
+  <% content_for :footer, flush: true do %>
+    <button class="button js-tour-skip-wait" data-timeout="first-answer">Skip the wait</button>
+  <% end %>
+<% end %>

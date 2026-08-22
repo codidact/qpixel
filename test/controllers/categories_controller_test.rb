@@ -9,6 +9,55 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:categories)
   end
 
+  test ':index should correctly search categories' do
+    get :index
+    assert_response(:success)
+    @all_categories = assigns(:categories)
+    assert_not_nil @all_categories
+    assert @all_categories.any?
+
+    get :index, params: { term: 'meta' }
+    assert_response(:success)
+    @search_categories = assigns(:categories)
+    assert_not_nil @search_categories
+    assert @search_categories.any?
+    assigns(@search_categories.all? { |c| c.name.downcase.match?('meta') })
+
+    assert_not_equal @all_categories.size, @search_categories.size
+  end
+
+  test 'homepage should show categories in the correct order' do
+    get :homepage
+    assert_not_nil assigns(:header_categories)
+    seq = 0
+    id = 0
+    assigns(:header_categories).each do |category|
+      if category.sequence.nil?
+        assert category.id > id, "Category #{category.id} not after #{id}"
+      else
+        assert category.sequence >= seq, "Category #{category.id} sequence #{category.sequence} not greater than #{seq}"
+      end
+      seq = category.sequence || seq
+      id = category.id
+    end
+  end
+
+  test ':homepage should correctly show the homepage category' do
+    get :homepage
+    assert_response(:success)
+    @category = assigns(:category)
+    assert_not_nil @category
+    assert @category.homepage?
+  end
+
+  test ':homepage should redirect to the categories list if there is no default category' do
+    Category.where(is_homepage: true).destroy_all
+
+    get :homepage
+    assert_response(:found)
+    assert_redirected_to(categories_path)
+  end
+
   test 'should correctly show public categories' do
     public_categories = categories.select(&:public?)
 
@@ -87,6 +136,11 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:category).id
     assert_equal false, assigns(:category).errors.any?
     assert_redirected_to category_path(assigns(:category))
+  end
+
+  test 'should require authentication to get post types' do
+    get :post_types, params: { id: categories(:main) }
+    assert_redirected_to_sign_in
   end
 
   private

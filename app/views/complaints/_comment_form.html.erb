@@ -1,0 +1,26 @@
+<div class="complaints-container js-reply-container">
+  <div class="button-list">
+    <button type="button" class="button is-primary is-outlined js-reply-button" data-internal="false">Add reply</button>
+    <% if user_signed_in? && current_user.staff? %>
+      <button type="button" class="button is-yellow is-outlined js-reply-button" data-internal="true">
+        Add internal note
+      </button>
+    <% end %>
+  </div>
+
+  <div class="widget js-reply-widget hidden">
+    <%= form_tag create_complaint_comment_path(@complaint.access_token), class: 'js-reply-form widget--body' do %>
+      <%= hidden_field_tag :internal, false %>
+      <%= label_tag :content, 'Add your reply', class: 'js-reply-label' %>
+      <%= text_area_tag :content, nil, class: 'form-element', rows: 10 %>
+
+      <% unless @complaint.user_wants_updates? %>
+        <p class="has-color-red">
+          The reporter has indicated they do not want to receive further communication about this report. You can
+          still reply, but it will not be sent to the reporter.
+        </p>
+      <% end %>
+      <%= submit_tag 'Save', class: 'button is-primary is-filled' %>
+    <% end %>
+  </div>
+</div>

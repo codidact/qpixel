@@ -77,6 +77,40 @@ class PostTest < ActiveSupport::TestCase
     assert_equal post_type.id, post.post_type_id
   end
 
+  test 'should validate body and body_markdown length' do
+    category = categories(:main)
+    license = licenses(:cc_by_sa)
+    post_type = post_types(:question)
+    user = users(:standard_user)
+
+    category.min_body_length = 1 # stops min length errors from interfering
+
+    shared_params = { title: 'Title of the post to test',
+                      category: category,
+                      license: license,
+                      post_type: post_type,
+                      tags_cache: ['support'],
+                      score: 0,
+                      user: user }
+
+    [
+      ['', '', false],
+      ['', '<p></p>', false],
+      ['  ', '<p>  </p>', false],
+      ['# Heading', '<h1>Heading</h1>', true],
+      ['a' * 30_000, 'a' * 65_535, true],
+      ['a' * 30_001, '<p>body_markdown is too long</p>', false],
+      ['body is too long', 'a' * 65_536, false],
+      ["a\r\n" * 15_000, '<p>body_markdown is too long before converting newlines to \n</p>', true],
+      ["#{"a\r\n" * 15_000}a", '<p>body_markdown is too long even after converting newlines to \n</p>', false]
+    ].each do |test_case|
+      post = Post.new(shared_params.merge({ body_markdown: test_case.first,
+                                            body: test_case.second }))
+
+      assert_equal test_case.third, post.valid?, post.errors.full_messages.inspect
+    end
+  end
+
   test 'should not allow unspecified post types in a category' do
     category = categories(:main)
     post_type = post_types(:help_doc)
@@ -119,6 +153,28 @@ class PostTest < ActiveSupport::TestCase
         assert_equal user.at_least_moderator?, true
       else
         assert_not_empty post.errors[:mod_tags]
+      end
+    end
+  end
+
+  test 'closeable? should correctly determine if the post can be closed' do
+    post_types.each do |post_type|
+      Post.where(post_type: post_type).each do |post|
+        assert_equal post.closeable?, post_type.is_closeable
+      end
+    end
+  end
+
+  test 'deleted_by_owner? should correctly determine if the post is deleted by its owner' do
+    posts.reject(&:deleted).each do |post|
+      assert_not post.deleted_by_owner?
+    end
+  end
+
+  test 'top_level? should correctly determine if the post is top level' do
+    post_types.each do |type|
+      Post.where(post_type: type).each do |post|
+        assert_equal post.top_level?, type.is_top_level
       end
     end
   end

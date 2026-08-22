@@ -71,6 +71,7 @@ module UserMerge
       CommentThread.where(archived_by_id: id).update_all(archived_by_id: target_user.id)
       CommentThread.where(deleted_by_id: id).update_all(deleted_by_id: target_user.id)
       ThreadFollower.where(user_id: id).update_all(user_id: target_user.id)
+      NewThreadFollower.where(user_id: id).update_all(user_id: target_user.id)
     end
 
     def update_post_action_references(target_user)

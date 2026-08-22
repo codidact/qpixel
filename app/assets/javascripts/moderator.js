@@ -38,4 +38,23 @@ $(() => {
       QPixel.createNotification('danger', `<strong>Failed:</strong> Unexpected status (${req.status})`);
     }
   });
+
+  QPixel.DOM.addSelectorListener('click', '.js-bulk-check', async (ev) => {
+    const tgt = /** @type {HTMLElement} */(ev.target);
+    const action = tgt.dataset.check;
+    const checkboxes = document.querySelectorAll('.js-spammer-form input[type="checkbox"]');
+    checkboxes.forEach((/** @type {HTMLInputElement} */checkbox) => {
+      checkbox.checked = action === 'all';
+    });
+  });
+
+  QPixel.DOM.addSelectorListener('submit', '#pii-correlation-form', async (ev) => {
+    ev.preventDefault();
+
+    const targetId = /** @type {HTMLInputElement}*/(document.querySelector('input[name="target_id"]')).value;
+    const resp = await QPixel.fetch(`${location.pathname}?format=template&target_id=${targetId}`);
+    const html = await resp.text();
+
+    document.querySelector('.js-correlation-container').innerHTML = html;
+  });
 });

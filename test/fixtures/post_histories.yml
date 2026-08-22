@@ -14,3 +14,11 @@ question_one_hidden_revision:
   comment: 'A hidden revision made by an admin user'
   community: sample
   hidden: true
+
+question_two_initial_revision:
+  post_history_type: initial_revision
+  user: editor
+  post: question_two
+  community: sample
+  after_state: This is the body of test question two. Note that we did not include any markdown or HTML in here.
+  after_title: Q2 - This is test question number two

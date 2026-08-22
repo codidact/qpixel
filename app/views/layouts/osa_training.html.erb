@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <%= render 'layouts/head' %>
+</head>
+<body class="<%= Rails.env.development? ? 'development' : '' %>"
+      data-user-id="<%= user_signed_in? ? current_user.id : 'none' %>"
+      data-mathjax="<%= SiteSetting['MathJaxEnabled'] %>">
+<%= render 'layouts/header' %>
+
+<main class="container">
+  <div class="grid">
+    <div class="grid--cell is-8-lg is-12">
+      <div class="has-padding-4">
+        <%= render 'shared/notices' %>
+
+        <% if @first_visit_notice %>
+          <%= render 'notices/first_visit' %>
+        <% end %>
+
+        <%= yield %>
+      </div>
+    </div>
+
+    <div class="grid--cell is-4-lg is-12 js-sidebar" role="complementary">
+      <nav class="widget">
+        <div class="widget--body">
+          <h3>Modules</h3>
+          <p>Navigate through the modules here.</p>
+          <div class="menu">
+            <%= link_to 'Home', osa_training_path('home'),
+                        class: "menu--item #{'is-active' if params[:page] == 'home'}" %>
+            <%= link_to 'Overview', osa_training_path('overview'),
+                        class: "menu--item #{'is-active' if params[:page] == 'overview'}" %>
+            <%= link_to 'Priority & Non-Prority Illegal Content', osa_training_path('illegal-content'),
+                        class: "menu--item #{'is-active' if params[:page] == 'illegal-content'}" %>
+            <%= link_to 'Definitions', osa_training_path('definitions'),
+                        class: "menu--item #{'is-active' if params[:page] == 'definitions'}" %>
+            <%= link_to 'Handling Illegal Content', osa_training_path('handling'),
+                        class: "menu--item #{'is-active' if params[:page] == 'handling'}" %>
+            <%= link_to 'Higher-Risk Content', osa_training_path('higher-risk'),
+                        class: "menu--item #{'is-active' if params[:page] == 'higher-risk'}" %>
+            <%= link_to 'Conclusion', osa_training_path('conclusion'),
+                        class: "menu--item #{'is-active' if params[:page] == 'conclusion'}" %>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+</main>
+
+<%= render 'layouts/footer' %>
+
+<%= render 'layouts/matomo' %>
+
+<% if Rails.env.production? %>
+  <script src="https://7zb04r9ckbwg.statuspage.io/embed/script.js"></script>
+<% end %>
+</body>
+</html>

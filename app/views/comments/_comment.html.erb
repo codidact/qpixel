@@ -1,16 +1,18 @@
 <%#
-    Single comment view.
+   "Single comment view.
 
     Variables:
       comment : Comment to display
     ? with_post_link : includes share labelled post
     ? pingable       : an Array of user IDs to ping
-%>
+"%>
 
 <% with_post_link ||= false %>
 <% pingable ||= nil %>
 
-<div class="comment <%= comment.deleted ? 'deleted-content' : '' %>" data-id="<%= comment.id %>" id="comment-<%= comment.id %>">
+<div class="comment <%= comment.deleted ? 'deleted-content' : '' %>"
+     data-id="<%= comment.id %>"
+     id="comment-<%= comment.id %>">
   <div class="comment-meta">
     <% if comment.has_reference %>
       <div class="comment--reference">
@@ -57,22 +59,25 @@
         <a href="#" class="js-comment-edit nowrap" role="button" aria-label="Edit comment">edit</a>
         <% if comment.deleted %>
           <%= form_tag undelete_comment_path(comment), method: :patch do %>
-            <%= submit_tag 'undelete', class: 'link is-red js-comment-undelete nowrap', aria: { label: 'Undelete comment' } %>
+            <%= submit_tag 'undelete',
+                           class: 'link is-red js-comment-undelete nowrap',
+                           aria: { label: 'Undelete comment' } %>
           <% end %>
         <% else %>
           <%= form_tag delete_comment_path(comment), method: :delete do %>
-            <%= submit_tag 'delete', class: 'link is-red js-comment-delete nowrap', aria: { label: 'Delete comment' } %>
+            <%= submit_tag 'delete',
+                           class: 'link is-red js-comment-delete nowrap',
+                           aria: { label: 'Delete comment' } %>
           <% end %>
         <% end %>
       <% end %>
       <% if user_signed_in? %>
-        <a href="javascript:void(0)" class="nowrap" data-drop="#flag-comment-<%= comment.id %>" role="button" aria-label="Flag comment">flag</a>
-        <div class="droppanel is-large h-c-black" id="flag-comment-<%= comment.id %>">
-          <label for="flag-post-<%= comment.id %>">Flag reason</label>
-          <input type="text" id="flag-post-<%= comment.id %>" class="form-element" />
-          <a href="javascript:void(0)" class="flag-link js-comment-flag button is-danger" data-post-id="<%= comment.id %>"
-             data-requires-details="true" role="button" aria-label="Flag comment">Flag</a>
-        </div>
+        <a href="javascript:void(0)"
+           class="nowrap"
+           data-drop="#flag-comment-<%= comment.id %>"
+           role="button"
+           aria-label="Flag comment">flag</a>
+        <%= render 'comments/flag_modal', comment: comment %>
       <% end %>
     </div>
   </div>

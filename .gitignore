@@ -37,6 +37,7 @@ coverage/*
 
 .idea
 .vscode
+.ruby-version
 
 test/reports
 
@@ -75,3 +76,4 @@ node_modules
 
 # YARD data
 .yardoc
+doc/

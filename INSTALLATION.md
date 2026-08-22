@@ -26,6 +26,14 @@ sudo apt install autoconf bison build-essential libssl-dev libyaml-dev libreadli
 sudo apt install mysql-server libmysqlclient-dev
 ```
 
+For Red Hat-Based Linux:
+
+```
+sudo dnf install gcc make pkg-config
+sudo dnf install autoconf bison @development-tools openssl-libs libyaml-devel readline-devel zlibrary-devel ncurses-devel libffi-devel gdbm-devel
+sudo dnf install mysql-server mysql-devel
+```
+
 For Arch-Based Linux:
 
 ```
@@ -57,7 +65,8 @@ The following lists environment variables provided for QPixel customization
 | `BUNDLE_GEMFILE`                  |                                                        | no        |                            |                                                                                                                |
 | `CONFIRMABLE_ALLOWED_ACCESS_DAYS` | `<number>`                                             | no        | `0`                        | Sets for how long (in days) an unconfirmed account can access the instance                                     |
 | `DRIVER`                          | `<headless_chrome\|chrome\|headless_firefox\|firefox>` | no        | `headless_firefox`         | Sets browser to use when running system tests                                                                  |
-| `MAILER_PROTOCOL`                 | `http\|https`                                          | no        | `https`                    | Sets default URL protocol to use with mailes (f.e., confirmation emails)                                       |
+| `MAILER_HOST`                     | `<fully qualified domain name to use in email>`        | no        | `<per-environment>`        | Sets default host to use with emails                                                                           |
+| `MAILER_PROTOCOL`                 | `http\|https`                                          | no        | `https`                    | Sets default URL protocol to use with emails (f.e., confirmation emails)                                       |
 | `PIDFILE`                         | `<string>`                                             | no        | `tmp/pids/server.pid`      | Sets pidfile (a file where the id of a process is written to) for Puma                                         |
 | `PORT`                            | `<number>`                                             | no        | `3000`                     | Sets the port on which the server will listen for incoming requests                                            |
 | `RAILS_ENV`                       | `<development\|production\|test>`                      | no        | `development`              | Sets the environment to use (see [config/environments](/config/environments/))                                 |
@@ -131,6 +140,7 @@ the MySQL server with `sudo mysql -u root` and create a new database user for QP
 CREATE USER qpixel@localhost IDENTIFIED BY 'choose_a_password_here';
 GRANT ALL ON qpixel_dev.* TO qpixel@localhost;
 GRANT ALL ON qpixel_test.* TO qpixel@localhost;
+GRANT ALL ON qpixel_dump.* TO qpixel@localhost;
 GRANT ALL ON qpixel.* TO qpixel@localhost;
 ```
 
@@ -233,6 +243,16 @@ Add the tags to the "Required tags" section:
 
 ![img/required-tags.png](img/required-tags.png)
 
+## Optional: Email blocklists
+
+If you want to block some known-bad actors from using the deployment, you can setup the following email blocklists:
+
+- Bad email patterns for granular control over which email addresses to block.
+  To enable it, add a file named `qpixel-email-patterns.txt` to the deployment root's parent directory.
+  Each line in the file should be a valid regular expression that a given email will be checked against.
+- Bad email domains for bulk blocks on emails from known bad domains.
+  To enable it, add a file named `qpixel-domain-blocklist.txt` to the deployment root's parent directory.
+  Each line in the file corresponds to a domain that should be blocked.
 
 ## Optional: Help Topics
 

@@ -1,13 +1,51 @@
-<%= render 'users/tabs', user: current_user %>
+<%
+  title = 'Your Inbox'
+%>
 
-<h1>Your Inbox</h1>
+<% content_for :title, title %>
+
+<%= render 'users/tabs', user: current_user, active_tab: 'inbox' %>
+
+<%
+  status = params[:status].presence || 'all'
+  unread_notifications = @notifications.select(&:unread?)
+  read_notifications = @notifications.select(&:read?)
+%>
+
+<h1><%= title %></h1>
 <p>You'll find all your inbox messages here, as far back as your account goes.</p>
 
-<% @notifications.each do |notif| %>
-  <div class="notification">
-    <div class="form-caption"><%= CGI.unescape_html(notif.created_at.strftime('%b&nbsp;%-d,&nbsp;%Y&nbsp;at&nbsp;%H:%M')).html_safe %></div>
-    <a href="<%= notif.link %>"><%= notif.content %></a>
+<div class="notifications-list-header has-margin-bottom-2">
+  <div class="button-list is-gutterless">
+    <%= link_to 'All', notifications_path,
+                class: "button is-muted is-outlined #{'is-active' if status == 'all'}" %>
+    <%= link_to 'Read', query_url(status: 'read'),
+                class: "button is-muted is-outlined #{'is-active' if status == 'read'}" %>
+    <%= link_to 'Unread', query_url(status: 'unread'),
+                class: "button is-muted is-outlined #{'is-active' if status == 'unread'}" %>
   </div>
+
+  <%= render 'shared/sorting', default_order: @default_sort_order,
+                               default_type: @default_sort_type,
+                               types: %w[age] %>
+</div>
+
+<% if unread_notifications.any? %>
+  <% if status == 'all' %>
+    <h2>Unread</h2>
+  <% end %>
+  <% unread_notifications.each do |notif| %>
+    <%= render 'notifications/notification', notification: notif %>
+  <% end %>
+<% end %>
+
+<% if read_notifications.any? %>
+  <% if status == 'all' %>
+    <h2>Read</h2>
+  <% end %>
+  <% read_notifications.each do |notif| %>
+    <%= render 'notifications/notification', notification: notif %>
+  <% end %>
 <% end %>
 
 <%= will_paginate @notifications, renderer: BootstrapPagination::Rails %>

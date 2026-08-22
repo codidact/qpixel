@@ -1,4 +1,10 @@
-<h1>Categories</h1>
+<%
+  title = t('admin.tools.categories')
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <% @categories.each do |cat| %>
   <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>

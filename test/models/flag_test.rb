@@ -14,4 +14,57 @@ class FlagTest < ActiveSupport::TestCase
     assert_equal normal.confidential?, false
     assert_equal secret.confidential?, true
   end
+
+  test 'flags should be correctly validated' do
+    SiteSetting['MaxFlagReasonLength'] = 500
+
+    common_attributes = {
+      post: posts(:question_one),
+      user: users(:standard_user)
+    }
+
+    too_long = Flag.new(reason: 'a' * 1000, **common_attributes)
+    assert_not too_long.valid?
+    assert too_long.errors[:reason].any?
+
+    valid = Flag.new(reason: 'my reasons are my own', **common_attributes)
+    assert valid.valid?
+  end
+
+  test 'accessible_to should correctly scope flags' do
+    std = users(:standard_user)
+    del = users(:deleter)
+    mod = users(:moderator)
+
+    [std, del, mod].each do |user|
+      flags = Flag.accessible_to(user, posts(:question_one))
+      assert_equal user.same_as?(std), flags.none?
+    end
+
+    assert Flag.accessible_to(mod, posts(:deleted)).any?(&:confidential?)
+    assert_not Flag.accessible_to(del, posts(:deleted)).any?(&:confidential?)
+  end
+
+  test 'resolve should correctly resolve flag' do
+    flag = flags(:one)
+    assert_nil flag.status
+    assert_no_difference 'Notification.where(user: flag.user).count' do
+      flag.resolve(status: 'helpful', message: '', handled_by: users(:moderator))
+    end
+    assert_equal 'helpful', flag.status
+  end
+
+  test 'resolve should create an AbilityQueue entry' do
+    flag = flags(:one)
+    assert_difference 'AbilityQueue.where(community_user: flag.user.community_user).count', 1 do
+      flag.resolve(status: 'helpful', message: '', handled_by: users(:moderator))
+    end
+  end
+
+  test 'resolve with message should create notification' do
+    flag = flags(:one)
+    assert_difference 'Notification.where(user: flag.user).count', 1 do
+      flag.resolve(status: 'helpful', message: 'This is a message', handled_by: users(:moderator))
+    end
+  end
 end

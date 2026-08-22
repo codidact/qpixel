@@ -1,6 +1,23 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-admin_log:
+impersonation_start_log:
+  community: sample
+  log_type: admin_audit
+  event_type: impersonation_start
+  related_type: User
+  related: moderator
+  user: admin
+  comment: For science!
+
+impersonation_end_log:
+  community: sample
+  log_type: admin_audit
+  event_type: impersonation_end
+  related_type: User
+  related: moderator
+  user: admin
+
+site_setting_update_log:
   community: sample
   log_type: admin_audit
   event_type: setting_update
@@ -8,3 +25,14 @@ admin_log:
   related: one
   user: admin
   comment: some words
+
+vote_rate_limit_log:
+  community: sample
+  log_type: rate_limit_log
+  event_type: vote
+  related_type: Post
+  related: question_one
+  user: standard_user
+  comment: >
+    limit: 10
+    vote: 1

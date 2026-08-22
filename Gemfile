@@ -1,16 +1,20 @@
 source 'https://rubygems.org'
-ruby '>= 3.1', '< 3.3'
+ruby '>= 3.3', '< 3.5'
 
 # Essential gems: servers, adapters, Rails + Rails requirements
+gem 'bcrypt', '~> 3.1'
 gem 'coffee-rails', '~> 5.0.0'
+gem 'connection_pool', '< 3.0' # mperham/connection_pool#210
 gem 'counter_culture', '~> 3.2'
 gem 'fastimage', '~> 2.2'
 gem 'image_processing', '~> 1.12'
 gem 'jquery-rails', '~> 4.5.0'
+gem 'mime-types', '~> 3.7'
+gem 'mutex_m', '~> 0.3'
 gem 'mysql2', '~> 0.5.4'
-gem 'puma', '~> 5.6'
-gem 'rails', '~> 7.2'
-gem 'rails-html-sanitizer', '~> 1.6'
+gem 'puma', '~> 7.2'
+gem 'rails', '~> 8.1'
+gem 'rails-html-sanitizer', '~> 1.7'
 gem 'redis', '~> 4.8'
 gem 'rotp', '~> 6.2'
 gem 'sass-rails', '~> 6.0'
@@ -20,7 +24,7 @@ gem 'terser', '~> 1.1'
 gem 'tzinfo-data', '~> 1.2022.3'
 
 # Sign in
-gem 'devise', '~> 4.8'
+gem 'devise', '~> 5.0'
 gem 'devise_saml_authenticatable', '~> 1.9'
 gem 'msgpack', '~> 1.8' # required for ActiveSupport::MessageEncryptor
 gem 'omniauth', '~> 2.1'
@@ -35,15 +39,17 @@ gem 'groupdate', '~> 6.1'
 
 # View stuff.
 gem 'diffy', '~> 3.4'
+gem 'ipaddress', '~> 0.8'
 gem 'jbuilder', '~> 2.11'
 gem 'rqrcode', '~> 2.1'
 gem 'will_paginate', '~> 3.3'
 gem 'will_paginate-bootstrap', '~> 1.0'
 
 # AWS for S3 (image storage) and SES (emails).
-gem 'aws-sdk-s3', '~> 1.61', require: false
+gem 'aws-actionmailer-ses', '~> 1'
+gem 'aws-sdk-rails', '~> 5'
+gem 'aws-sdk-s3', '~> 1.208', require: false
 gem 'aws-sdk-sns', '~> 1.72'
-gem 'aws-ses-v4', require: 'aws/ses'
 
 # Task scheduling & maintenance.
 gem 'maintenance_tasks', '~> 2.2'
@@ -52,6 +58,7 @@ gem 'whenever', '~> 1.0', require: false
 # Debugging, linting, testing.
 gem 'awesome_print', '~> 1.9'
 gem 'erb_lint', '~> 0.9.0'
+gem 'rails_performance', '~> 1.6'
 gem 'rubocop', '~> 1'
 gem 'rubocop-rails', '~> 2.15'
 gem 'rubocop-rake', '~> 0.7.1'
@@ -83,7 +90,7 @@ gem 'stripe', '~> 5.55'
 gem 'premailer-rails', '~> 1.11'
 
 group :test do
-  gem 'minitest', '~> 5.16.0'
+  gem 'minitest', '~> 5.25.2'
   gem 'minitest-ci', '~> 3.4.0'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'simplecov', '~> 0.21'
@@ -93,10 +100,12 @@ group :test do
   gem 'capybara', '~> 3.38'
   gem 'selenium-webdriver', '~> 4.7'
   gem 'webdrivers', '~> 5.2'
+  gem 'webmock', '~> 3.26'
 end
 
 group :development, :test do
   gem 'byebug', '~> 11.1'
+  gem 'octokit', '~> 10.0'
 end
 
 group :development do

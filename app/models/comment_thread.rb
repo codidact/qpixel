@@ -7,27 +7,54 @@ class CommentThread < ApplicationRecord
   has_many :thread_follower
   belongs_to :archived_by, class_name: 'User', optional: true
 
+  scope :priority_order, -> { order(deleted: :asc, archived: :asc, updated_at: :desc, reply_count: :desc) }
   scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
   scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
-  after_create :create_follower
+  validate :maximum_title_length
+  validates :title, presence: { message: I18n.t('comments.errors.title_presence') }
 
-  def self.post_followed?(post, user)
-    ThreadFollower.where(post: post, user: user).any?
+  before_save :bump_last_activity
+
+  # Gets threads appropriately scoped for a given user & post
+  # @param user [User, nil] user to check
+  # @param post [Post] post to check
+  # @return [ActiveRecord::Relation<CommentThread>]
+  def self.accessible_to(user, post)
+    if user&.at_least_moderator? || user&.post_privilege?('flag_curate', post)
+      CommentThread
+    else
+      CommentThread.undeleted
+    end
   end
 
+  # Is the thread read-only (can't be edited)?
+  # @return [Boolean] check result
   def read_only?
     locked? || archived? || deleted?
   end
 
+  # Is a given user a follower of the thread?
+  # @param user [User] user to check
+  # @return [Boolean] check result
   def followed_by?(user)
     ThreadFollower.where(comment_thread: self, user: user).any?
   end
 
+  # Does a given user have access to the thread?
+  # @param user [User] user to check access for
+  # @return [Boolean] check result
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate') || user&.post_privilege?('flag_curate', post)) &&
       post.can_access?(user)
+  end
+
+  # Gets last activity date and time on the thread
+  # @return [DateTime] last activity date and time
+  def last_activity
+    last_comment_activity = comments.map(&:last_activity).compact.max
+    [created_at, updated_at, last_activity_at, last_comment_activity].compact.max
   end
 
   # Gets a list of user IDs who should be pingable in the thread.
@@ -53,14 +80,44 @@ class CommentThread < ApplicationRecord
     ActiveRecord::Base.connection.execute(query).to_a.flatten
   end
 
-  private
-
-  # Comment author and post author are automatically followed to the thread. Question author is NOT
-  # automatically followed on new answer comment threads. Comment author follower creation is done
-  # on the Comment model.
-  def create_follower
-    if post.user.preference('auto_follow_comment_threads') == 'true'
-      ThreadFollower.create comment_thread: self, user: post.user
+  def maximum_title_length
+    max_len = SiteSetting['MaxThreadTitleLength'] || 255
+    if title.length > [max_len, 255].min
+      errors.add(:title, "can't be more than #{max_len} characters")
     end
+  end
+
+  # Registers a given user as a follower of the thread
+  # @param user [User] user to register as a follower
+  # @return [Boolean] status of the operation
+  def add_follower(user)
+    if ThreadFollower.where(comment_thread: self, user: user).any?
+      bump_last_activity(persist_changes: true)
+      return true
+    end
+
+    ThreadFollower.create(comment_thread: self, user: user)
+  end
+
+  # Directly bumps the thread's last activity date & time
+  # @param persist_changes [Boolean] if set to +true+, will persist the changes
+  def bump_last_activity(persist_changes: false)
+    self.last_activity_at = DateTime.now
+
+    if persist_changes
+      save
+    end
+  end
+
+  # Removes a given user from the thread's followers
+  # @param user [User] user to remove from followers
+  # @return [Boolean] status of the operation
+  def remove_follower(user)
+    if ThreadFollower.where(comment_thread: self, user: user).none?
+      bump_last_activity(persist_changes: true)
+      return true
+    end
+
+    ThreadFollower.where(comment_thread: self, user: user).destroy_all.any?
   end
 end

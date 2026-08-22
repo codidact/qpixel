@@ -1,0 +1,29 @@
+<%#
+   "Renders an inbox notification
+
+    Variables:
+      notification : Notification to render
+"%>
+
+<%
+  mobile_logo_path = SiteSetting['MobileLogoPath', community: notification.community]
+  full_logo_path = SiteSetting['SiteLogoPath', community: notification.community]
+  logo_path = mobile_logo_path.presence || full_logo_path
+%>
+
+<div class="notification">
+  <div class="notification-content">
+    <div class="form-caption">
+      <% if logo_path.present? %>
+        <img class="notification--icon"
+             src="<%= logo_path %>"
+             alt="<% notification.community_name %> logo" />
+      <% end %>
+      <%= notification.community_name %> &middot; <span data-relstamp="<%= notification.created_at.iso8601 %>"
+                                                        title="<%= notification.created_at.iso8601 %>">
+        <%= notification.created_at.utc %>
+      </span>
+    </div>
+    <a href="<%= notification.link %>"><%= render_pings_text(notification.content) %></a>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+@import 'variables';
+
+a.header--site-name:any-link {
+  display: flex;
+}
+
+.header .header--item.is-complex:not(.is-mobile-menu) {
+  align-items: center !important;
+  display: flex !important;
+}
+
+
+header {
+  &.header {
+    z-index: 5;
+    position: relative;
+    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  &.header.sticky {
+    position: sticky;
+    top: 0;
+  }
+}
+
+.header--container {
+  align-items: center !important;
+}
+
+/* The default header size (2.5rem) is too huge for small headers. */
+.header.is-small .header--brand .header--site-name {
+  font-size: 2rem;
+}
+
+/* Fix header images being stretched - https://meta.codidact.com/posts/278377 */
+img.header--item-image {
+  object-fit: contain;
+}

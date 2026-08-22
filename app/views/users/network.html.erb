@@ -1,10 +1,15 @@
-<%= render 'tabs', user: @user %>
+<%
+  title = sanitize("Profiles for #{user_link(@user)}")
+%>
 
-<h1>Profiles for <%= user_link @user %></h1>
+<% content_for :title, strip_tags(title) %>
+
+<%= render 'tabs', user: @user, active_tab: 'network' %>
+
+<h1><%= title %></h1>
 
 <p>
   Links to profiles on other communities on this network.
 </p>
 
 <%= render 'network' %>
-

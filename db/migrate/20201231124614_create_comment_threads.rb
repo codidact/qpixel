@@ -6,16 +6,16 @@ class CreateCommentThreads < ActiveRecord::Migration[5.2]
       t.references :post
 
       t.boolean :locked
-      t.references :locked_by, foreign_key: {to_table: :users}, null: true
+      t.references :locked_by, foreign_key: { to_table: :users }, null: true
       t.timestamp :locked_until, null: true
 
       t.boolean :archived
-      t.references :archived_by, foreign_key: {to_table: :users}, null: true
+      t.references :archived_by, foreign_key: { to_table: :users }, null: true
       t.timestamp :archived_until, null: true
       t.boolean :ever_archived_before
 
       t.boolean :deleted
-      t.references :deleted_by, foreign_key: {to_table: :users}, null: true
+      t.references :deleted_by, foreign_key: { to_table: :users }, null: true
 
       t.timestamps
     end
@@ -24,6 +24,6 @@ class CreateCommentThreads < ActiveRecord::Migration[5.2]
 
     add_column :comments, :has_reference, :boolean
     add_column :comments, :reference_text, :text, null: true
-    add_reference :comments, :references_comment, foreign_key: {to_table: :comments}, null: true
+    add_reference :comments, :references_comment, foreign_key: { to_table: :comments }, null: true
   end
 end

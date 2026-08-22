@@ -8,6 +8,14 @@ module PostsHelper
     user_link(user, { host: post.community.host })
   end
 
+  # Renders title for a given post
+  # @param post [Post] post to render the title for
+  # @return [ActiveSupport::SafeBuffer] rendered title
+  def rendered_title(post)
+    raw_title = post.top_level? ? post.title : post.parent.title
+    sanitize(render_markdown(raw_title), scrubber: title_scrubber)
+  end
+
   ##
   # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
   # rendered HTML over rendering server-side.
@@ -76,13 +84,42 @@ module PostsHelper
     [SiteSetting['MaxTitleLength'] || 255, 255].min
   end
 
-  class PostScrubber < Rails::Html::PermitScrubber
+  class PostTitleScrubber < Rails::HTML::PermitScrubber
     def initialize
       super
-      # IF YOU CHANGE THESE VALUES YOU MUST ALSO CHANGE app/assets/javascripts/posts.js
-      self.tags = %w[a p span b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img strike del code pre br ul ol li sup sub
-                     section details summary ins table thead tbody tr th td s]
-      self.attributes = %w[id class href title src height width alt rowspan colspan lang start dir]
+
+      attrs = []
+      tags = []
+
+      allowed_types = SiteSetting['AllowedPostTitleFormattingTypes'] || ['code', 'italic', 'keyboard']
+      tags.push('del', 'strike') if allowed_types.include?('strikethrough')
+      tags << 'code' if allowed_types.include?('code')
+      tags << 'kbd' if allowed_types.include?('keyboard')
+      tags << 'em' if allowed_types.include?('italic')
+      tags << 'strong' if allowed_types.include?('bold')
+      tags << 'sub' if allowed_types.include?('subscript')
+      tags << 'sup' if allowed_types.include?('superscript')
+
+      self.tags = tags
+      self.attributes = attrs
+    end
+
+    def skip_node?(node)
+      node.text?
+    end
+  end
+
+  class PostScrubber < Rails::Html::PermitScrubber
+    ALLOWED_ATTRS = %w[id class href title src height width alt rowspan colspan lang start dir].freeze
+
+    ALLOWED_TAGS = %w[a p span b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img
+                      strike del code pre br ul ol li sup sub kbd
+                      section details summary ins table thead tbody tr th td s].freeze
+
+    def initialize
+      super
+      self.tags = ALLOWED_TAGS
+      self.attributes = ALLOWED_ATTRS
     end
 
     def skip_node?(node)
@@ -95,5 +132,11 @@ module PostsHelper
   # @return [PostScrubber]
   def scrubber
     PostsHelper::PostScrubber.new
+  end
+
+  # Get a post title scrubber instance
+  # @return [PostTitleScrubber]
+  def title_scrubber
+    PostsHelper::PostTitleScrubber.new
   end
 end

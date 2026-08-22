@@ -1,3 +1,5 @@
+require 'mime/types'
+
 module UploadsHelper
   def upload_remote_url(blob)
     bucket = Rails.cache.fetch 'active_storage/s3/bucket' do
@@ -6,15 +8,23 @@ module UploadsHelper
     "https://s3.amazonaws.com/#{bucket}/#{blob.is_a?(String) ? blob : blob.key}"
   end
 
-  ##
-  # Test if the given IO object is a valid image file by content type, extension, and content test.
-  # @param io [File] The file to test.
+  # Gets a list of MIME types allowed to be uploaded
+  # @return [Array<String>]
+  def allowed_upload_mime_types
+    fallback_types = Rails.application.config.active_storage.web_image_content_types
+    SiteSetting['AllowedUploadTypes'].presence || fallback_types
+  end
+
+  # Gets a list of file extensions allowed to be uploaded
+  # @return [Array<String>]
+  def allowed_upload_extensions
+    allowed_upload_mime_types.map { |mime| MIME::Types[mime].first.preferred_extension }
+  end
+
+  # Is a given file a valid upload by content type?
+  # @param io [File] file to check
   # @return [Boolean]
-  def valid_image?(io)
-    content_types = Rails.application.config.active_storage.web_image_content_types
-    extensions = content_types.map { |ct| ct.gsub('image/', '') }
-    submitted_extension = io.original_filename.split('.')[-1].downcase
-    content_types.include?(io.content_type) && extensions.include?(submitted_extension) &&
-      extensions.map(&:to_sym).include?(FastImage.type(io))
+  def valid_upload?(io)
+    allowed_upload_mime_types.include?(io.content_type)
   end
 end

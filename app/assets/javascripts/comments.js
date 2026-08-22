@@ -19,17 +19,18 @@ $(() => {
     return $tgt.closest('.js-comment-thread-wrapper')[0] ?? null;
   };
 
-  $(document).on('click', '.post--comments-thread.is-inline a', async (evt) => {
-    if (evt.ctrlKey) { return; }
+  /**
+   * @param {HTMLElement} wrapper
+   * @returns {boolean}
+   */
+  const isInlineCommentThread = (wrapper) => {
+    return !!wrapper.querySelector('[data-inline=true]');
+  };
 
-    evt.preventDefault();
-
-    const $tgt = $(evt.target);
-    const $threadId = $tgt.data('thread');
-    const wrapper = getCommentThreadWrapper($tgt);
-
-    openThread(wrapper, $threadId);
-  });
+  const afterThreadRender = () => {
+    window.MathJax && MathJax.typeset();
+    window.hljs && hljs.highlightAll();
+  };
 
   /**
    * @param {HTMLElement} wrapper
@@ -39,14 +40,42 @@ $(() => {
   async function openThread(wrapper, threadId, options) {
     const data = await QPixel.getThreadContent(threadId, options);
 
+    if (!data) {
+      QPixel.createNotification('danger', 'Failed to open thread');
+      return;
+    }
+
     wrapper.innerHTML = data;
 
-    window.MathJax && MathJax.typeset();
-    window.hljs && hljs.highlightAll();
+    if (window.MathJax) {
+      const titleElem = wrapper.querySelector('.js-thread-title');
+
+      if (titleElem && QPixel.DOM.isHTMLElement(titleElem)) {
+        titleElem.dataset.title = titleElem.textContent;
+      }
+    }
+
+    afterThreadRender();
   }
 
+  $(document).on('click', '.js--comment-link', async (ev) => {
+    if (ev.ctrlKey || ev.metaKey) {
+      return;
+    }
+
+    ev.preventDefault();
+
+    const $tgt = $(ev.currentTarget);
+    const $threadId = $tgt.data('thread');
+    const wrapper = getCommentThreadWrapper($tgt);
+
+    openThread(wrapper, $threadId);
+  });
+
   $(document).on('click', '.js-show-deleted-comments', (ev) => {
-    if (ev.ctrlKey) { return; } // do we really need it?
+    if (ev.ctrlKey || ev.metaKey) {
+      return;
+    }
 
     ev.preventDefault();
 
@@ -61,13 +90,14 @@ $(() => {
   $(document).on('click', '.js-collapse-thread', async (ev) => {
     const $tgt = $(ev.target);
     const $widget = $tgt.parents('.widget');
+    const $title = $widget.find('.js-thread-title');
     const $embed = $tgt.parents('.post--comments-thread');
 
     const threadId = $widget.data('thread');
     const isLocked = $widget.data('locked');
     const isDeleted = $widget.data('deleted');
     const isArchived = $widget.data('archived');
-    const threadTitle = $widget.find('.js-thread-title').text();
+    const threadTitle = $title.data('title') || $title.text();
     const replyCount = $widget.data('comments');
 
     const $container = $(`<div class="post--comments-thread is-inline"></div>`);
@@ -80,7 +110,9 @@ $(() => {
     }
 
     if (isDeleted) {
-      $container.append(`<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`);
+      $container.append(
+        `<i class="fas fa-trash h-c-red-600 fa-fw" title="Deleted thread" aria-label="Deleted thread"></i>`,
+      );
       $container.addClass('is-deleted');
     }
 
@@ -92,6 +124,8 @@ $(() => {
     $container.append($link);
     $container.append(`(${replyCount} comment${replyCount !== 1 ? 's' : ''})`);
     $embed[0].outerHTML = $container[0].outerHTML;
+
+    afterThreadRender();
   });
 
   $(document).on('click', '.js-comment-edit', async (evt) => {
@@ -179,6 +213,8 @@ $(() => {
     });
   });
 
+  QPixel.DOM?.watchClass('.js-thread-actions.is-active', (target) => target.querySelector('a')?.focus());
+
   $(document).on('click', '.js--show-followers', async (evt) => {
     evt.preventDefault();
 
@@ -186,10 +222,8 @@ $(() => {
     const threadId = $tgt.data('thread');
     const $modal = $($tgt.data('modal'));
 
-    const resp = await fetch(`/comments/thread/${threadId}/followers`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: { 'Accept': 'text/html' }
+    const resp = await QPixel.fetch(`/comments/thread/${threadId}/followers`, {
+      headers: { Accept: 'text/html' },
     });
 
     const data = await resp.text();
@@ -197,28 +231,155 @@ $(() => {
     $modal.find('.js-follower-display').html(data);
   });
 
-  $(document).on('click', '[class*=js--lock-thread] form', async (evt) => {
-    evt.preventDefault();
+  $(document).on('click', '.js-archive-thread', async (ev) => {
+    ev.preventDefault();
 
-    const $tgt = $(evt.target);
-    const threadID = $tgt.data("thread");
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
 
-    const data = await QPixel.lockThread(threadID);
+    const data = await QPixel.archiveThread(threadID);
 
     QPixel.handleJSONResponse(data, () => {
-      window.location.reload();
+      const wrapper = getCommentThreadWrapper($tgt);
+      const inline = isInlineCommentThread(wrapper);
+      openThread(wrapper, threadID, { inline });
     });
   });
 
-  $(document).on('click', '.js--restrict-thread, .js--unrestrict-thread', async (evt) => {
+  $(document).on('click', '.js-delete-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
+
+    const data = await QPixel.deleteThread(threadID);
+
+    QPixel.handleJSONResponse(data, () => {
+      const wrapper = getCommentThreadWrapper($tgt);
+      const inline = isInlineCommentThread(wrapper);
+      openThread(wrapper, threadID, { inline });
+    });
+  });
+
+  $(document).on('click', '.js-follow-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
+
+    const data = await QPixel.followThread(threadID);
+
+    QPixel.handleJSONResponse(data, () => {
+      const wrapper = getCommentThreadWrapper($tgt);
+
+      if (wrapper) {
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
+      }
+    });
+  });
+
+  $(document).on('click', '.js--unfollow-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
+
+    const data = await QPixel.unfollowThread(threadID);
+
+    QPixel.handleJSONResponse(data, () => {
+      const wrapper = getCommentThreadWrapper($tgt);
+
+      if (wrapper) {
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
+      }
+    });
+  });
+
+  /**
+   * @param {Element} target
+   */
+  const checkThreadRename = (target) => {
+    if (target instanceof HTMLInputElement) {
+      const $tgt = $(target);
+      const threadID = $tgt.data('thread');
+      const $form = $tgt.closest(`form[data-thread=${threadID}]`);
+      const $submitter = $form.find('.js-rename-thread');
+
+      const newStripped = QPixel.MD.stripMarkdown($tgt.val(), {
+        removeLeadingQuote: true,
+      });
+
+      if (newStripped === $tgt.data('old')) {
+        $submitter.attr('disabled', 'true');
+      }
+    }
+  };
+
+  document.querySelectorAll('.js-thread-title-field').forEach((el) => {
+    checkThreadRename(el);
+  });
+
+  $(document).on('keyup change paste', '.js-thread-title-field', (ev) => {
+    checkThreadRename(ev.target);
+  });
+
+  $(document).on('click', '.js-rename-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
+    const form = $tgt.closest(`form[data-thread=${threadID}]`).get(0);
+
+    if (form instanceof HTMLFormElement) {
+      const { value: newTitle, dataset = {} } = form.elements['title'] ?? {};
+      const { old } = dataset;
+
+      const newStripped = QPixel.MD.stripMarkdown(newTitle, {
+        removeLeadingQuote: true,
+      });
+
+      if (newStripped === old) {
+        return;
+      }
+
+      form.submit();
+    }
+  });
+
+  $(document).on('click', '.js-lock-thread', async (ev) => {
+    ev.preventDefault();
+
+    const $tgt = $(ev.target);
+    const threadID = $tgt.data('thread');
+    const form = $tgt.closest(`form[data-thread=${threadID}]`).get(0);
+
+    if (form instanceof HTMLFormElement) {
+      const { value: duration } = form.elements['duration'] ?? {};
+
+      const data = await QPixel.lockThread(threadID, duration ? Math.round(+duration) : void 0);
+
+      QPixel.handleJSONResponse(data, () => {
+        const wrapper = getCommentThreadWrapper($tgt);
+        const inline = isInlineCommentThread(wrapper);
+        openThread(wrapper, threadID, { inline });
+      });
+    }
+    else {
+      QPixel.createNotification('danger', 'Failed to find thread to lock');
+    }
+  });
+
+  // TODO: split into individual handlers once unrestrict_thread is split
+  $(document).on('click', '.js--unrestrict-thread', async (evt) => {
     evt.preventDefault();
 
     const $tgt = $(evt.target);
-    const threadID = $tgt.data("thread");
-    const action = $tgt.data("action");
-    const route = $tgt.hasClass("js--restrict-thread") ? 'restrict' : 'unrestrict';
+    const threadID = $tgt.data('thread');
+    const action = $tgt.data('action');
 
-    const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/${route}`, { type: action });
+    const resp = await QPixel.fetchJSON(`/comments/thread/${threadID}/unrestrict`, { type: action });
 
     const data = await resp.json();
 
@@ -248,7 +409,7 @@ $(() => {
 
     const $tgt = $(ev.target);
     const content = $tgt.val();
-    const splat = content.split(' ');
+    const splat = content.split(/\s+/);
     const caretPos = $tgt[0].selectionStart;
     const [currentWord, posInWord] = QPixel.currentCaretSequence(splat, caretPos);
 
@@ -261,8 +422,8 @@ $(() => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('user-id');
       $tgt[0].selectionStart = caretPos - posInWord;
-      $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
-      QPixel.replaceSelection($tgt, `@#${id}`);
+      $tgt[0].selectionEnd = caretPos - posInWord + currentWord.length;
+      QPixel.MD.replaceSelection($tgt, `@#${id}`);
       popup.destroy();
       $tgt.focus();
     };
@@ -277,18 +438,23 @@ $(() => {
       const postId = $tgt.data('post');
 
       if (!pingable[`${threadId}-${postId}`] || Object.keys(pingable[`${threadId}-${postId}`]).length === 0) {
-        const resp = await fetch(`/comments/thread/${threadId}/pingable?post=${postId}`);
+        const resp = await QPixel.getJSON(`/comments/thread/${threadId}/pingable?post=${postId}`);
+
         pingable[`${threadId}-${postId}`] = await resp.json();
       }
 
-      const items = Object.entries(pingable[`${threadId}-${postId}`]).filter((e) => {
-        return e[0].toLowerCase().startsWith(currentWord.substr(1).toLowerCase());
-      }).map((e) => {
-        const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
-        const id = e[1];
-        return itemTemplate.clone().html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
-          .attr('data-user-id', id);
-      });
+      const items = Object.entries(pingable[`${threadId}-${postId}`])
+        .filter((e) => {
+          return e[0].toLowerCase().startsWith(currentWord.substr(1).toLowerCase());
+        })
+        .map((e) => {
+          const username = e[0].replace(/</g, '&#x3C;').replace(/>/g, '&#x3E;');
+          const id = e[1];
+          return itemTemplate
+            .clone()
+            .html(`${username} <span class="has-color-tertiary-600">#${id}</span>`)
+            .attr('data-user-id', id);
+        });
       QPixel.Popup.getPopup(items, $tgt[0], callback);
     }
     else {
@@ -338,5 +504,40 @@ $(() => {
     setTimeout(() => {
       $tgt.find('.js-text').text('copy link');
     }, 1000);
+  });
+
+  QPixel.DOM.addSelectorListener('click', '.js-follow-comments', async (ev) => {
+    ev.preventDefault();
+
+    const { target } = ev;
+
+    if (!QPixel.DOM.isHTMLElement(target)) {
+      return;
+    }
+
+    const { postId, action } = target.dataset;
+
+    if (!postId || !action) {
+      return;
+    }
+
+    const shouldFollow = action === 'follow';
+
+    const data = shouldFollow ? await QPixel.followComments(postId) : await QPixel.unfollowComments(postId);
+
+    QPixel.handleJSONResponse(data, () => {
+      target.dataset.action = shouldFollow ? 'unfollow' : 'follow';
+
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-fw', shouldFollow ? 'fa-bell-slash' : 'fa-bell');
+      const text = document.createTextNode(` ${shouldFollow ? 'Unfollow' : 'Follow'} new`);
+      target.replaceChildren(icon, text);
+
+      const form = target.closest('form');
+
+      if (form) {
+        form.action = `/comments/post/${postId}/${shouldFollow ? 'unfollow' : 'follow'}`;
+      }
+    });
   });
 });

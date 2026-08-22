@@ -1,0 +1,30 @@
+<h1 class="has-font-size-heading">
+  Your post has been removed for legal reasons
+</h1>
+
+<p>Hi <%= @post.user.rtl_safe_username %>,</p>
+<p>
+  We're writing to let you know that a <%= link_to 'post you wrote', generic_share_link(@post) %> has been removed
+  by our community team for legal reasons.
+</p>
+
+<% if @complaint.present? %>
+  <p>
+    This removal was necessary because of our legal obligations under the Online Safety Act, because we believe the
+    content may be related to <%= content_type(@complaint.content_type)['name'].downcase %>.
+  </p>
+  <p>
+    You can <%= link_to 'view the details of the report here', complaint_url(@complaint.access_token,
+                                                                             host: @post.community.host) %>.
+  </p>
+<% end %>
+
+<p>
+  If you believe this removal was in error, you may <%= link_to 'start an appeal',
+                                                                new_complaint_url(host: @post.community.host) %>.
+</p>
+
+<p>
+  Thanks for your understanding.<br/>
+  <%= SiteSetting['NetworkName'] %> Community Team
+</p>

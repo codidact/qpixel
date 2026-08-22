@@ -47,10 +47,9 @@ module UsersHelper
     end
   end
 
-  ##
-  # Get the default filter for the specified user and category.
-  # @param user_id [Integer]
-  # @param category_id [Category]
+  # Get the default filter for a given user and category +id+.
+  # @param user_id [Integer] +id+ of the user to get default filter for
+  # @param category_id [Integer] +id+ of the category to get default filter for
   # @return [Filter, nil]
   def default_filter(user_id, category_id)
     CategoryFilterDefault.find_by(user_id: user_id, category_id: category_id)&.filter
@@ -87,8 +86,8 @@ module UsersHelper
   end
 
   ##
-  # Is the specified user deleted, either globally or on the current community?
-  # @param user [User]
+  # Is a gven user deleted (globally or on the current community)?
+  # @param user [User, nil] user to check
   # @return [Boolean] check result - true if the user is +nil+.
   def deleted_user?(user)
     return true if user.nil?
@@ -98,7 +97,7 @@ module UsersHelper
 
   ##
   # Get a RTL-safe string of the specified user's username. Appends an RTL terminator to the username.
-  # @param user [User]
+  # @param user [User, nil] user to get RTL-safe username for
   # @return [String]
   def rtl_safe_username(user)
     deleted_user?(user) ? 'deleted user' : user&.rtl_safe_username

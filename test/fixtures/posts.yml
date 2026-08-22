@@ -40,6 +40,35 @@ question_two:
   upvote_count: 0
   downvote_count: 0
 
+question_three:
+  post_type: question
+  title: Q3 - This is test question number three
+  body: |
+      <p>This is the body of test question three.</p>
+      <p>Note that there are newlines for testing purposes.</p>
+      <p>This is important.</p>
+  body_markdown: |
+      This is the body of test question three.
+
+      Note that there are newlines for testing purposes.
+
+      This is important.
+  tags_cache:
+    - discussion
+    - support
+    - bug
+  tags:
+    - discussion
+    - support
+    - bug
+  score: 0.5
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
 new_user_question:
   post_type: question
   title: Q1 - This is test question number one
@@ -124,6 +153,26 @@ deleted_mod:
   deleted: true
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: moderator
+  community: sample
+  category: main
+  license: cc_by_sa
+  upvote_count: 0
+  downvote_count: 0
+
+deleted_staff:
+  post_type: question
+  title: Q4DS - This question is deleted by a staff member
+  body: Q4DS - This question is in category main, posted by standard_user. It has been deleted by a staff member.
+  body_markdown: Q4DS - This question is in category main, posted by standard_user. It has been deleted by a staff member.
+  tags_cache:
+    - support
+  tags:
+    - support
+  score: 0.5
+  user: standard_user
+  deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: staff
   community: sample
   category: main
   license: cc_by_sa
@@ -477,6 +526,67 @@ question_without_votes:
     - support
   score: 0.5
   user: editor
+  community: sample
+  category: main
+  license: cc_by_sa
+
+post_scorer_question:
+  post_type: question
+  title: This is a question for testing post scores
+  body: This post MUST be positively scored (> 0.5) to count towards the score
+  body_markdown: <p>This post MUST be positively scored (> 0.5) to count towards the score</p>
+  tags_cache:
+    - post
+  tags:
+    - post
+  score: 0.7
+  user: post_scorer
+  community: sample
+  category: main
+  license: cc_by_sa
+
+imported_question:
+  post_type: question
+  title: This is a question imported from an external source
+  body: This is the body of the question imported from an external source
+  body_markdown: <p>This is the body of the question imported from an external source</p>
+  att_source: https://example.com/posts/42
+  tags_cache:
+    - support
+  tags:
+    - support
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+
+deleted_spam_question:
+  post_type: question
+  title: Best spam in the neighborhood! Call 555-55-55
+  body: Find the best spam in your neighborhood on Spam Central
+  body_markdown: <p>Find the best spam in your neighborhood on <a href="https://example.com/spam">Spam Central</a></p>
+  tags_cache:
+    - discussion
+  tags:
+    - discussion
+  user: spammer
+  community: sample
+  category: main
+  license: cc_by_sa
+  deleted: true
+  deleted_at: 2019-01-01T00:00:00.000000Z
+  deleted_by: moderator
+
+without_new_thread_followers:
+  post_type: question
+  title: This post does not have any new thread followers
+  body: This is the body of the post used to test new thread followers
+  body_markdown: <p>This is the body of the post used to test new thread followers</p>
+  tags_cache:
+    - support
+  tags:
+    - test
+  user: standard_user
   community: sample
   category: main
   license: cc_by_sa

@@ -19,6 +19,9 @@ exclude:
   - 'app/views/questions/_list.html.erb'
   - 'app/views/tags/category.html.erb'
   - 'app/views/users/_activity_items.html.erb'
+  # TODO: fix parser errors first:
+  - 'app/views/complaints/training/higher-risk.html.erb'
+  - 'app/views/complaints/training/illegal-content.html.erb'
 
 glob: '**/*.{html,text,js}{+*,}.erb'
 

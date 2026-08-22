@@ -36,6 +36,7 @@ module Qpixel
     config.i18n.default_locale = :en
 
     config.to_prepare do
+      Devise::Mailer.helper :application
       Devise::Mailer.helper :users
       Devise::Mailer.layout 'devise_mailer'
     end

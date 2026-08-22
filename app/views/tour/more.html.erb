@@ -1,6 +1,6 @@
 <div class="grid step-1" id="1">
-  <div class="grid--cell codidactyl">
-    <img src="/assets/codidactyl.png" alt="Codidactyl">
+  <div class="grid--cell mascot tour-wide-only">
+    <img src="<%= SiteSetting['NetworkMascotLogoPath'] %>" alt="<%= SiteSetting['NetworkMascotName'] %>">
   </div>
   <div class="grid--cell is-flexible">
     <div class="widget">
@@ -15,8 +15,8 @@
 </div>
 
 <div class="grid step-2 hide" id="2">
-  <div class="grid--cell codidactyl">
-    <img src="/assets/codidactyl.png" alt="Codidactyl">
+  <div class="grid--cell mascot tour-wide-only">
+    <img src="<%= SiteSetting['NetworkMascotLogoPath'] %>" alt="<%= SiteSetting['NetworkMascotName'] %>">
   </div>
   <div class="grid--cell is-flexible">
     <div class="widget">
@@ -30,8 +30,8 @@
         <% @header_categories.each do |cat| %>
           <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
           <tr>
-              <td class="h-fw-bold"><%= cat.name %></td>
-              <td><%= raw(sanitize(render_markdown(cat.short_wiki), scrubber: scrubber)) %></td>
+              <td class="h-fw-bold wrap-word"><%= cat.name %></td>
+              <td class="wrap-word"><%= raw(sanitize(render_markdown(cat.short_wiki), scrubber: scrubber)) %></td>
           </tr>
         <% end %>
         </table>
@@ -45,8 +45,8 @@
 </div>
 
 <div class="grid step-3 hide" id="3">
-  <div class="grid--cell codidactyl">
-    <img src="/assets/codidactyl.png" alt="Codidactyl">
+  <div class="grid--cell mascot tour-wide-only">
+    <img src="<%= SiteSetting['NetworkMascotLogoPath'] %>" alt="<%= SiteSetting['NetworkMascotName'] %>">
   </div>
   <div class="grid--cell is-flexible">
     <div class="widget">
@@ -65,8 +65,8 @@
 </div>
 
 <div class="grid step-4 hide" id="4">
-  <div class="grid--cell codidactyl">
-    <img src="/assets/codidactyl.png" alt="Codidactyl">
+  <div class="grid--cell mascot tour-wide-only">
+    <img src="<%= SiteSetting['NetworkMascotLogoPath'] %>" alt="<%= SiteSetting['NetworkMascotName'] %>">
   </div>
   <div class="grid--cell is-flexible">
     <div class="widget">
@@ -102,8 +102,8 @@
 </div>
 
 <div class="grid step-5 hide" id="5">
-  <div class="grid--cell codidactyl">
-    <img src="/assets/codidactyl.png" alt="Codidactyl">
+  <div class="grid--cell mascot tour-wide-only">
+    <img src="<%= SiteSetting['NetworkMascotLogoPath'] %>" alt="<%= SiteSetting['NetworkMascotName'] %>">
   </div>
   <div class="grid--cell is-flexible">
     <div class="widget">
@@ -122,8 +122,8 @@
 </div>
 
 <div class="grid step-6 hide" id="6">
-  <div class="grid--cell codidactyl">
-    <img src="/assets/codidactyl.png" alt="Codidactyl">
+  <div class="grid--cell mascot tour-wide-only">
+    <img src="<%= SiteSetting['NetworkMascotLogoPath'] %>" alt="<%= SiteSetting['NetworkMascotName'] %>">
   </div>
   <div class="grid--cell is-flexible">
     <div class="widget">

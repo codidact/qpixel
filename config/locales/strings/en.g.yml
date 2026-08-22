@@ -23,6 +23,4 @@ en:
     threshold: 'threshold'
     type: 'type'
     user: 'user'
-
-  platform:
-    network_name: 'Codidact'
+    version: 'version'

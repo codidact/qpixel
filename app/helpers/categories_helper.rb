@@ -46,4 +46,15 @@ module CategoriesHelper
       SuggestedEdit.where(post: Post.undeleted.in(current_category), active: true).any?
     end
   end
+
+  ##
+  # Checks if there are any pending edit suggestions in the current category,
+  # including on deleted posts (for viewers who can both edit and see deleted).
+  # @note Cached - cache is manually broken when new suggestions are created.
+  # @return [Boolean]
+  def pending_suggestions_with_deleted?
+    Rails.cache.fetch "pending_suggestions_with_deleted/#{current_category.id}" do
+      SuggestedEdit.where(post: Post.in(current_category), active: true).any?
+    end
+  end
 end

@@ -2,19 +2,42 @@
 class AdminController < ApplicationController
   before_action :verify_admin, except: [:change_back, :verify_elevation]
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
-                                             :setup_save, :hellban, :all_email, :send_all_email]
+                                             :setup_save, :failban, :all_email, :send_all_email]
   before_action :verify_developer, only: [:change_users, :impersonate]
+  before_action :set_user, only: [:change_users, :failban, :impersonate]
+
+  skip_before_action :check_if_warning_or_suspension_pending, only: [:change_back, :verify_elevation]
 
   def index; end
 
   def error_reports
-    @reports = if params[:uuid].present?
-                 ErrorLog.where(uuid: params[:uuid])
-               elsif current_user.is_global_admin
-                 ErrorLog.all
-               else
-                 ErrorLog.where(community: RequestContext.community)
-               end.newest_first.paginate(page: params[:page], per_page: 50)
+    base_scope = if current_user.global_admin?
+                   ErrorLog.all
+                 else
+                   ErrorLog.where(community: RequestContext.community)
+                 end
+
+    @error_types = base_scope.select(:klass).distinct.to_a.map(&:klass)
+
+    base_scope = base_scope.includes(:community, :user)
+
+    if params[:type].present?
+      base_scope = base_scope.where(klass: params[:type])
+    end
+
+    if params[:uuid].present?
+      base_scope = base_scope.where(uuid: params[:uuid])
+    end
+
+    if params[:version].present? && params[:version] == 'current'
+      sha, _date = helpers.current_commit
+      base_scope = base_scope.where(version: sha)
+    elsif params[:version].present?
+      base_scope = base_scope.where(version: params[:version])
+    end
+
+    @reports = base_scope.newest_first.paginate(page: params[:page], per_page: 50)
+    render layout: 'without_sidebar'
   end
 
   def privileges
@@ -63,30 +86,31 @@ class AdminController < ApplicationController
   def send_all_email
     community = RequestContext.community
 
-    Thread.new do
-      emails = User.where.not(confirmed_at: nil).where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
-      emails.each_slice(49) do |slice|
-        AdminMailer.with(body_markdown: params[:body_markdown],
-                         subject: params[:subject],
-                         emails: slice, community: community)
-                   .to_all_users
-                   .deliver_later
-      end
+    emails = User.where.not(confirmed_at: nil).where('email NOT LIKE ?', '%localhost').select(:email).map(&:email)
+    emails.each_slice(49) do |slice|
+      AdminMailer.with(body_markdown: params[:body_markdown],
+                       subject: params[:subject],
+                       emails: slice,
+                       community: community)
+                 .to_all_users
+                 .deliver_later
     end
+
     AuditLog.admin_audit(event_type: 'send_all_email', user: current_user,
                          comment: "Subject: #{params[:subject]}")
+
     flash[:success] = t 'admin.email_being_sent'
     redirect_to admin_path
   end
 
-  def audit_log
+  def audit_logs
     @page = helpers.safe_page(params)
     @per_page = helpers.safe_per_page(params)
 
     @log_types = AuditLog.unscoped.select(:log_type).distinct.map(&:log_type) - ['user_annotation', 'user_history']
     @event_types = AuditLog.unscoped.select(:event_type).distinct.map(&:event_type)
 
-    @logs = if current_user.is_global_admin
+    @logs = if current_user.global_admin?
               AuditLog.unscoped.where.not(log_type: ['user_annotation', 'user_history'])
             else
               AuditLog.where.not(log_type: ['block_log', 'user_annotation', 'user_history'])
@@ -181,21 +205,22 @@ class AdminController < ApplicationController
     render
   end
 
-  def hellban
-    @user = User.find params[:id]
+  def failban
     @user.block("user manually blocked by admin ##{current_user.id}")
     flash[:success] = t 'admin.user_fed_stat'
     redirect_back fallback_location: admin_path
   end
 
   def impersonate
-    @user = User.find params[:id]
+    if Rails.env.development?
+      change_users
+    else
+      render layout: 'without_sidebar'
+    end
   end
 
   def change_users
-    @user = User.find params[:id]
-
-    unless params[:comment].present?
+    unless params[:comment].present? || Rails.env.development?
       flash[:danger] = 'Please explain why you are impersonating this user.'
       render :impersonate
       return
@@ -245,5 +270,11 @@ class AdminController < ApplicationController
       flash[:danger] = helpers.i18ns('admin.errors.email_query_not_found')
     end
     render :email_query
+  end
+
+  private
+
+  def set_user
+    @user = User.find(params[:id])
   end
 end

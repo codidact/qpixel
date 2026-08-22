@@ -1,0 +1,23 @@
+en:
+  mod:
+    actions:
+      profile_delete: >
+        Delete community profile
+      profile_undelete: >
+        Undelete community profile
+      user_delete: >
+        Delete user network-wide
+      errors:
+        profile_already_deleted: >
+          The user's profile is already deleted
+        user_already_deleted: >
+          The user is already deleted network-wide
+    tools:
+      pinned_links: 'Featured Links'
+      pinned_links_blurb: >
+        Featured links allow you as a moderator to draw attention to issues or posts of importance to the community.
+        Use them sparingly and only when needed, because they tend to get ignored if used too often.
+      reactions: 'Reactions'
+      reactions_blurb: >
+        Reactions can be used to give feedback to post authors and hints to post readers.
+        Use them sparingly and only when necessary.

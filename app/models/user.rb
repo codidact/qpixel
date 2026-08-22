@@ -1,12 +1,14 @@
+# rubocop:disable Metrics/ClassLength
 class User < ApplicationRecord
-  include ::UsernameValidations
-  include ::UserRateLimits
-  include ::UserMerge
-  include ::Timestamped
-  include ::SoftDeletable
-  include ::SamlInit
-  include ::Inspectable
-  include ::Identity
+  include EmailValidations
+  include UsernameValidations
+  include UserRateLimits
+  include UserMerge
+  include Timestamped
+  include SoftDeletable
+  include SamlInit
+  include Inspectable
+  include Identity
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
@@ -33,14 +35,25 @@ class User < ApplicationRecord
   has_many :category_filter_defaults, dependent: :destroy
   has_many :filters, dependent: :destroy
   has_many :user_websites, dependent: :destroy
+  has_many :complaints, dependent: :nullify
+  has_many :complaint_comments, dependent: :nullify
+  has_many :assigned_complaints, class_name: 'Complaint', foreign_key: 'assignee_id', dependent: :nullify
   accepts_nested_attributes_for :user_websites
 
-  validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
-  validate :email_domain_not_blocklisted
-  validate :not_blocklisted?
-  validate :email_not_bad_pattern
+  after_update :recalc_trust_level, if: :saved_change_affects_trust_level?
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
+
+  delegate :recalc_trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user, allow_nil: true
+
+  alias_attribute :name, :username
+
+  # Gets users appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<User>]
+  def self.accessible_to(user)
+    (user&.at_least_moderator? ? User.all : User.undeleted)
+  end
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
@@ -48,6 +61,18 @@ class User < ApplicationRecord
 
   def self.search(term)
     where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
+  end
+
+  # Gets the system user
+  # @return [User, nil]
+  def self.system
+    find_by(id: -1)
+  end
+
+  # Safely gets the user's reputation even if they don't have a community user
+  # @return [Integer] user's reputation
+  def reputation
+    community_user&.reputation || 1
   end
 
   # Safely gets the user's trust level even if they don't have a community user
@@ -73,6 +98,23 @@ class User < ApplicationRecord
   # because of the importance of these methods.
   def post_privilege?(name, post)
     post.user == self || privilege?(name)
+  end
+
+  # Can the user vote on this post?
+  # This post does not check for the 'AllowSelfVotes' site setting, only
+  # whether this user has the ability to vote on this post.
+  # @param post [Post] to check
+  # @return [Boolean] check result
+  def can_vote_on?(post)
+    privilege?('unrestricted') || owns_post_or_parent?(post)
+  end
+
+  # Can the user rename a given comment thread?
+  # @param thread [CommentThread] thread to rename
+  # @return [Boolean] check result
+  def can_rename?(thread)
+    privilege?('flag_curate') ||
+      Comment.where(user: self, comment_thread_id: thread.id).any?
   end
 
   # Can the user archive a given comment thread?
@@ -108,11 +150,39 @@ class User < ApplicationRecord
     post.comments_allowed? && !comment_rate_limited?(post)
   end
 
+  # Can the user close a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def can_close?(post)
+    return false unless post.closeable?
+    return false if post.locked?
+
+    privilege?('flag_close') || post.user&.same_as?(self)
+  end
+
   # Can the user delete a given target?
   # @param target [ApplicationRecord] record to delete
   # @return [Boolean] check result
   def can_delete?(target)
     privilege?('flag_curate') && !target.deleted?
+  end
+
+  # Can the user edit abilities?
+  # @return [Boolean] check result
+  def can_edit_abilities?
+    at_least_moderator?
+  end
+
+  # Can the user edit tags?
+  # @return [Boolean] check result
+  def can_edit_tags?
+    privilege?('edit_tags') || false
+  end
+
+  # Can the user handle flags?
+  # @return [Boolean] check result
+  def can_handle_flags?
+    privilege?('flag_curate') || false
   end
 
   # Can the user undelete a given target?
@@ -166,11 +236,17 @@ class User < ApplicationRecord
     privilege?('flag_curate') || false
   end
 
-  # Can the user push a given post type to network?
-  # @param post_type [PostType] type of the post to be pushed
+  # Can the user push a given target network-wide?
+  # @param target [Ability, PostType] target to be pushed
   # @return [Boolean] check result
-  def can_push_to_network?(post_type)
-    post_type.system? && (is_global_moderator || is_global_admin)
+  def can_push_to_network?(target)
+    return false unless global_moderator? || global_admin?
+
+    if target.is_a?(PostType)
+      target.system?
+    else
+      true
+    end
   end
 
   # Can the user directly update a given post?
@@ -184,7 +260,17 @@ class User < ApplicationRecord
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
+  # Checks if one of the persisted changes affects trust_level
+  # @return [Boolean] check result
+  def saved_change_affects_trust_level?
+    ['is_global_admin', 'is_global_moderator', 'staff'].any? do |attr|
+      saved_change_to_attribute?(attr)
+    end
+  end
+
   def metric(key)
+    return 0 unless community_user
+
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key
       when 'p'
@@ -350,54 +436,6 @@ class User < ApplicationRecord
     "#{username}\u202D"
   end
 
-  def email_domain_not_blocklisted
-    return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
-    return unless saved_changes.include? 'email'
-
-    blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
-    email_domain = email.split('@')[-1]
-    matched = blocklist.select { |x| email_domain == x }
-    if matched.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      matched_domains = matched.map { |d| "equals: #{d}" }
-      AuditLog.block_log(event_type: 'user_email_domain_blocked',
-                         comment: "email: #{email}\n#{matched_domains.join("\n")}\nsource: file")
-    end
-  end
-
-  def not_blocklisted?
-    return true unless saved_changes.include? 'email'
-
-    email_domain = email.split('@')[-1]
-    is_mail_blocked = BlockedItem.emails.where(value: email)
-    is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain)
-    if is_mail_blocked.any? || is_mail_host_blocked.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      if is_mail_blocked.any?
-        AuditLog.block_log(event_type: 'user_email_blocked', related: is_mail_blocked.first,
-                           comment: "email: #{email}\nfull match to: #{is_mail_blocked.first.value}")
-      end
-      if is_mail_host_blocked.any?
-        AuditLog.block_log(event_type: 'user_email_domain_blocked', related: is_mail_host_blocked.first,
-                           comment: "email: #{email}\ndomain match to: #{is_mail_host_blocked.first.value}")
-      end
-    end
-  end
-
-  def email_not_bad_pattern
-    return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
-    return unless changes.include? 'email'
-
-    patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
-    matched = patterns.select { |p| email.match? Regexp.new(p) }
-    if matched.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      matched_patterns = matched.map { |p| "matched: #{p}" }
-      AuditLog.block_log(event_type: 'user_email_pattern_match',
-                         comment: "email: #{email}\n#{matched_patterns.join("\n")}")
-    end
-  end
-
   def ensure_community_user!
     community_user || create_community_user(reputation: SiteSetting['NewUserInitialRep'])
   end
@@ -415,7 +453,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason, length: 180.days)
+  def block(reason, length: 180.days, automatic: true)
     user_email = email
     user_ip = [last_sign_in_ip]
 
@@ -424,10 +462,10 @@ class User < ApplicationRecord
     end
 
     BlockedItem.create(item_type: 'email', value: user_email, expires: length.from_now,
-                       automatic: true, reason: "#{reason}: #" + id.to_s)
+                       automatic: automatic, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
       BlockedItem.create(item_type: 'ip', value: ip, expires: length.from_now,
-                         automatic: true, reason: "#{reason}: #" + id.to_s)
+                         automatic: automatic, reason: "#{reason}: #" + id.to_s)
     end
   end
 
@@ -445,7 +483,7 @@ class User < ApplicationRecord
   def category_preference(category_id)
     category_key = "prefs.#{id}.category.#{RequestContext.community_id}.category.#{category_id}"
     AppConfig.preferences.select { |_, v| v['category'] }.transform_values { |v| v['default'] }
-             .merge(RequestContext.redis.hgetall(category_key))
+                                                         .merge(RequestContext.redis.hgetall(category_key))
   end
 
   def validate_prefs!
@@ -476,12 +514,31 @@ class User < ApplicationRecord
     post.flags.where(user: self, status: nil)
   end
 
-  def do_soft_delete(attribute_to)
+  # Anonymizes the user (f.e., for the purpose of soft deletion)
+  # @param persist_changes [Boolean] if set to +true+, will persist the changes
+  def anonymize(persist_changes: false)
+    assign_attributes(username: "user#{id}",
+                      email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
+
+    if persist_changes
+      skip_reconfirmation!
+      save
+    end
+  end
+
+  # Soft-deletes the user (username, password, and email are irrevocably reset!)
+  # @param attribute_to [User] user to attribute the action to
+  def soft_delete(attribute_to)
     AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
                              comment: attributes_print(join: "\n"))
-    assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
-                      username: "user#{id}", email: "#{id}@deleted.localhost",
-                      password: SecureRandom.hex(32))
+
+    assign_attributes(deleted: true,
+                      deleted_by_id: attribute_to.id,
+                      deleted_at: DateTime.now)
+
+    anonymize(persist_changes: false)
+
     skip_reconfirmation!
     save
   end
@@ -504,3 +561,4 @@ class User < ApplicationRecord
     votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
   end
 end
+# rubocop:enable Metrics/ClassLength

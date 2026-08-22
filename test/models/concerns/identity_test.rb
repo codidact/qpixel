@@ -1,9 +1,10 @@
 require 'test_helper'
-
+# rubocop:disable Lint/DuplicateMethods
 class IdentityTest < ActiveSupport::TestCase
   def setup
     @klass1 = Class.new do
       include Identity
+
       def initialize(id)
         super()
         @id = id
@@ -13,6 +14,7 @@ class IdentityTest < ActiveSupport::TestCase
 
     @klass2 = Class.new do
       include Identity
+
       def initialize(id)
         super()
         @id = id
@@ -47,3 +49,4 @@ class IdentityTest < ActiveSupport::TestCase
     assert_not first.same_as?(nil)
   end
 end
+# rubocop:enable Lint/DuplicateMethods

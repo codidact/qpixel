@@ -1,7 +1,5 @@
 # Provides helper methods for use by views under <tt>ApplicationController</tt> (and by extension, every view).
 module ApplicationHelper
-  include Warden::Test::Helpers
-
   ##
   # Is the current user a moderator or admin on the current community?
   # @return [Boolean]
@@ -48,7 +46,7 @@ module ApplicationHelper
   end
 
   ##
-  # Utility to add additional query parameters to a URI.
+  # Adds additional query parameters to a URI.
   # @param base_url [String, nil] A base URI to which to add parameters. If none is specified then the request URI for
   #   the current page will be used.
   # @param params [Hash{#to_s => #to_s}] A hash of query parameters to add to the URI.
@@ -65,7 +63,7 @@ module ApplicationHelper
     end
 
     query = query.merge(params.to_h { |k, v| [k.to_s, v.to_s] })
-    uri.query = query.map { |k, v| "#{k}=#{v}" }.join('&')
+    uri.query = Rack::Utils.build_nested_query(query)
     uri.to_s
   end
 
@@ -114,12 +112,29 @@ module ApplicationHelper
 
   ##
   # Render a markdown string to HTML with consistent options.
-  # @param markdown [String] The markdown string to render.
-  # @return [String] The rendered HTML string.
-  def render_markdown(markdown)
-    CommonMarker.render_doc(markdown,
-                            [:FOOTNOTES, :LIBERAL_HTML_TAG, :STRIKETHROUGH_DOUBLE_TILDE],
-                            [:table, :strikethrough, :autolink]).to_html(:UNSAFE)
+  # @param markdown [String] markdown string to render
+  # @option opts :footnotes [Boolean] render footnotes?
+  # @option opts :strikethrough [Boolean] render strikethrough?
+  # @option opts :tables [Boolean] render tables?
+  # @return [String] rendered HTML string
+  def render_markdown(markdown, **opts)
+    extensions = [:autolink]
+    options = [:LIBERAL_HTML_TAG]
+
+    unless opts[:footnotes] == false
+      options << :FOOTNOTES
+    end
+
+    unless opts[:strikethrough] == false
+      extensions << :strikethrough
+      options << :STRIKETHROUGH_DOUBLE_TILDE
+    end
+
+    unless opts[:tables] == false
+      extensions << :table
+    end
+
+    CommonMarker.render_doc(markdown, options, extensions).to_html(:UNSAFE)
   end
 
   ##
@@ -127,8 +142,9 @@ module ApplicationHelper
   # This isn't a perfect way to strip out Markdown, so it should only be used for non-critical things like
   # page descriptions - things that will later be supplemented by the full formatted content.
   # @param markdown [String] The Markdown string to strip.
+  # @param strip_leading_quote [Boolean] whether to remove the leading blockquote if present
   # @return [String] The plain-text equivalent.
-  def strip_markdown(markdown)
+  def strip_markdown(markdown, strip_leading_quote: false)
     # Remove block-level formatting: headers, hr, references, images, HTML tags
     markdown = markdown.gsub(/(?:^#+ +|^-{3,}|^\[[^\]]+\]: ?.+$|^!\[[^\]]+\](?:\([^)]+\)|\[[^\]]+\])$|<[^>]+>)/, '')
 
@@ -136,7 +152,10 @@ module ApplicationHelper
     markdown = markdown.gsub(/[*_~]+/, '')
 
     # Remove links and inline images but replace them with their text/alt text.
-    markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
+    markdown = markdown.gsub(/!?\[([^\]]+)\](?:\([^)]+\)|\[[^\]]+\])/, '\1')
+
+    # Optionally remove the leading blockquote
+    strip_leading_quote ? markdown.gsub(/^>.+?$/, '') : markdown
   end
 
   ##
@@ -231,10 +250,13 @@ module ApplicationHelper
 
   ##
   # Split a string after a specified number of characters, only breaking at word boundaries.
+  # @deprecated Use {String#truncate}[https://www.rubydoc.info/gems/activesupport/String#truncate-instance_method].
   # @param text [String] The text to split.
   # @param max_length [Integer] The maximum number of characters to leave in the resulting strings.
   # @return [Array<String>]
   def split_words_max_length(text, max_length)
+    logger.warn 'ApplicationHelper#split_words_max_length is deprecated. Use String#truncate instead.'
+    logger.warn caller[0]
     words = text.split
     splat = [[]]
     words.each do |word|
@@ -309,10 +331,16 @@ module ApplicationHelper
     @current_user ||= warden.authenticate(scope: :user)
     if @current_user&.deleted? || @current_user&.community_user&.deleted?
       scope = Devise::Mapping.find_scope!(:user)
-      logout scope
+      warden.logout(scope)
       @current_user = nil
     end
     @current_user
+  end
+
+  # Gets the special System user
+  # @return [User, nil]
+  def system_user
+    User.system
   end
 
   ##

@@ -31,6 +31,20 @@ class PostsControllerTest < ActionController::TestCase
     assert_redirected_to_sign_in
   end
 
+  test 'create requires post' do
+    sign_in users(:standard_user)
+
+    post :create, params: {
+      category: categories(:main).id,
+      post_type: post_types(:question).id
+    }
+
+    assert_response(:found)
+    assert_redirected_to root_path
+    assert_not_nil flash[:danger]
+    assert_nil assigns(:post)
+  end
+
   test 'can create help post' do
     sign_in users(:moderator)
 
@@ -116,6 +130,16 @@ class PostsControllerTest < ActionController::TestCase
     sign_in users(:deleted_profile)
     try_create_post
     assert_redirected_to_sign_in
+  end
+
+  test 'should make post author a thread follower of the post' do
+    user = users(:standard_user)
+    sign_in user
+    try_create_post
+    assert_response(:found)
+
+    # Assert user follows post
+    assert_equal 1, NewThreadFollower.where(['post_id = ? AND user_id = ?', assigns(:post), user]).count
   end
 
   private

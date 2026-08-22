@@ -16,6 +16,7 @@ Rails.application.configure do
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
+  Rack::MiniProfiler.config.disable_caching = false
 
   # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
   # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
@@ -93,8 +94,8 @@ Rails.application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
   config.action_mailer.delivery_method = :ses
-  config.action_mailer.default_url_options = { 
-    host: 'meta.codidact.com',
+  config.action_mailer.default_url_options = {
+    host: ENV['MAILER_HOST'] || 'meta.codidact.com',
     protocol: ENV['MAILER_PROTOCOL'] || 'https'
   }
   config.action_mailer.asset_host = 'https://meta.codidact.com'

@@ -1,0 +1,1 @@
+AutoCloseComplaintsJob.perform_now

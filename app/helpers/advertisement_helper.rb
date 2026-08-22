@@ -78,18 +78,25 @@ module AdvertisementHelper
   # images.
   # @param icon_path [String] A path or URI from which to load the image. If using a path this should be the asset path
   #   as it would be accessible through the Rails server - see example.
-  # @return [Magick::ImageList] An ImageList containing the icon.
+  # @return [Magick::ImageList, nil] An ImageList containing the icon if found
   # @example Load an image from app/assets/images:
   #   # This uses the path from which the image would be accessed via HTTP.
   #   helpers.community_icon('/assets/codidact.png')
   def community_icon(icon_path)
-    if icon_path.start_with? '/assets/'
-      icon = Magick::ImageList.new("./app/assets/images/#{File.basename(icon_path)}")
+    return nil unless icon_path.present?
+
+    expanded_path = File.expand_path(icon_path)
+
+    if expanded_path.start_with?('/assets/')
+      icon = Magick::ImageList.new("./app/assets/images/#{File.basename(expanded_path)}")
     else
       icon = Magick::ImageList.new
       icon_path_content = URI.open(icon_path).read # rubocop:disable Security/Open
       icon.from_blob(icon_path_content)
     end
+
     icon
+  rescue
+    nil
   end
 end

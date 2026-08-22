@@ -12,6 +12,7 @@ class CommunityUser < ApplicationRecord
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
 
   after_create :prevent_ulysses_case
+  after_update :recalc_trust_level, if: :saved_change_affects_trust_level?
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
@@ -123,6 +124,10 @@ class CommunityUser < ApplicationRecord
     # If not sandbox mode, create new privilege entry
     grant_privilege!(internal_id) unless sandbox
     recalc_trust_level unless sandbox
+
+    AuditLog.admin_audit(event_type: 'ability_grant', related: user,
+                         user: User.system,
+                         comment: priv.name)
     true
   end
 
@@ -172,6 +177,12 @@ class CommunityUser < ApplicationRecord
     moderator? || admin?
   end
 
+  # Checks if one of the persisted changes affects trust_level
+  # @return [Boolean] check result
+  def saved_change_affects_trust_level?
+    ['is_admin', 'is_moderator'].any? { |attr| saved_change_to_attribute?(attr) }
+  end
+
   def recalc_trust_level
     trust = if user.staff?
               5
@@ -186,5 +197,28 @@ class CommunityUser < ApplicationRecord
             end
     update(trust_level: trust)
     trust
+  end
+
+  # Soft-deletes the community user
+  # @param attribute_to [User] user to attribute the action to
+  def soft_delete(attribute_to)
+    AuditLog.moderator_audit(event_type: 'profile_delete', related: self, user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+
+    update(deleted: true, deleted_by: attribute_to, deleted_at: DateTime.now)
+  end
+
+  # Undeletes the community user if it's soft-deleted
+  # @param attribute_to [User] user to attribute the action to
+  # @return [Boolean] whether the community user has been undeleted
+  def undelete(attribute_to)
+    return true unless deleted?
+
+    AuditLog.moderator_audit(event_type: 'profile_undelete',
+                             related: self,
+                             user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+
+    update(deleted: false, deleted_by: nil, deleted_at: nil)
   end
 end

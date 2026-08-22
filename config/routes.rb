@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   mount Rack::Directory.new('coverage/'), at: '/coverage' if Rails.env.development?
   mount MaintenanceTasks::Engine, at: '/maintenance'
-  
+
   scope 'admin' do
     root                                   to: 'admin#index', as: :admin
     get    'errors',                       to: 'admin#error_reports', as: :admin_error_reports
@@ -35,6 +35,7 @@ Rails.application.routes.draw do
     post   'settings/:name',               to: 'site_settings#update', as: :update_site_setting
 
     delete 'users/delete/:id',             to: 'users#soft_delete', as: :soft_delete_user
+    post   'users/undelete/:id',           to: 'users#undelete', as: :undelete_user
 
     get    'privileges',                   to: 'admin#privileges', as: :admin_privileges
     get    'privileges/:name',             to: 'admin#show_privilege', as: :admin_privilege
@@ -45,7 +46,7 @@ Rails.application.routes.draw do
     get    'email-all',                    to: 'admin#all_email', as: :email_all
     post   'email-all',                    to: 'admin#send_all_email', as: :send_all_email
 
-    get    'audits',                       to: 'admin#audit_log', as: :audit_log
+    get    'audits',                       to: 'admin#audit_logs', as: :audit_logs
 
     get    'new-site',                     to: 'admin#new_site', as: :new_site
     post   'new-site',                     to: 'admin#create_site', as: :create_site
@@ -99,7 +100,8 @@ Rails.application.routes.draw do
     get    'flags',                        to: 'flags#queue', as: :flag_queue
     get    'flags/handled',                to: 'flags#handled', as: :handled_flags
     get    'flags/escalated',              to: 'flags#escalated_queue', as: :escalated_flags
-    delete 'users/destroy/:id',            to: 'users#destroy', as: :destroy_user
+    get    'users/spam',                   to: 'moderator#spammy_users', as: :mod_spammers
+    post   'users/spam',                   to: 'moderator#handle_spammy_users', as: :mod_handle_spammers
     get    'users/votes/:id',              to: 'moderator#user_vote_summary', as: :mod_vote_summary
     post   'flags/:id/resolve',            to: 'flags#resolve', as: :resolve_flag
     post   'flags/:id/escalate',           to: 'flags#escalate', as: :escalate_flag
@@ -161,6 +163,7 @@ Rails.application.routes.draw do
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
     post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
     delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
+    delete ':id/legal-delete',             to: 'posts#legal_delete', as: :legal_delete_post
 
     get    ':id/:answer',                  to: 'posts#show', as: :answer_post
   end
@@ -192,6 +195,7 @@ Rails.application.routes.draw do
     get    '/mobile-login',             to: 'users#qr_login_code', as: :qr_login_code
     get    '/mobile-login/:token',      to: 'users#do_qr_login', as: :qr_login
     get    '/me',                       to: 'users#me', as: :users_me
+    get    '/me/activity',              to: 'users#my_activity', as: :my_activity
     get    '/me/preferences',           to: 'users#preferences', as: :user_preferences
     post   '/me/preferences',           to: 'users#set_preference', as: :set_user_preference
     get    '/me/filters',               to: 'users#filters', as: :user_filters
@@ -221,8 +225,12 @@ Rails.application.routes.draw do
     get    '/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
     post   '/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
-    post   '/:id/hellban',              to: 'admin#hellban', as: :hellban_user
+    post   '/:id/failban',              to: 'admin#failban', as: :failban_user
+    get    '/:id/mod/delete',           to: 'users#mod_delete', as: :mod_delete
+    get    '/:id/mod/delete-network-account', to: 'users#mod_delete_network_account', as: :mod_delete_network_account
+    get    '/:id/mod/failban',          to: 'users#mod_failban', as: :mod_failban
     get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
+    get    '/:id/mod/pii',              to: 'moderator#pii_correlation', as: :mod_pii_correlation
   end
 
   post   'notifications/:id/read',         to: 'notifications#read', as: :read_notifications
@@ -240,11 +248,18 @@ Rails.application.routes.draw do
     get    'thread/:id/pingable',          to: 'comments#pingable', as: :thread_pingable
     post   'thread/:id/new',               to: 'comments#create', as: :create_comment
     post   'thread/:id/rename',            to: 'comments#thread_rename', as: :rename_comment_thread
-    post   'thread/:id/restrict',          to: 'comments#thread_restrict', as: :restrict_comment_thread
+
+    post   'thread/:id/archive',           to: 'comments#archive_thread', as: :archive_comment_thread
+    post   'thread/:id/delete',            to: 'comments#delete_thread', as: :delete_comment_thread
+    post   'thread/:id/follow',            to: 'comments#follow_thread', as: :follow_comment_thread
+    post   'thread/:id/unfollow',          to: 'comments#unfollow_thread', as: :unfollow_comment_thread
+    post   'thread/:id/lock',              to: 'comments#lock_thread', as: :lock_comment_thread
+
     post   'thread/:id/unrestrict',        to: 'comments#thread_unrestrict', as: :unrestrict_comment_thread
     get    'thread/:id/followers',         to: 'comments#thread_followers', as: :comment_thread_followers
     get    'post/:post_id',                to: 'comments#post', as: :post_comments
     post   'post/:post_id/follow',         to: 'comments#post_follow', as: :follow_post_comments
+    post   'post/:post_id/unfollow',       to: 'comments#post_unfollow', as: :unfollow_post_comments
     get    ':id',                          to: 'comments#show', as: :comment
     get    'thread/:id',                   to: 'comments#thread', as: :comment_thread
     get    'thread/:id/content',           to: 'comments#thread_content', as: :comment_thread_content
@@ -253,9 +268,10 @@ Rails.application.routes.draw do
     patch  ':id/delete',                   to: 'comments#undelete', as: :undelete_comment
   end
 
-  get    'subscriptions/new/:type',        to: 'subscriptions#new', as: :new_subscription
+  get    'subscriptions/new',              to: 'subscriptions#new', as: :new_subscription
   post   'subscriptions/new',              to: 'subscriptions#create', as: :create_subscription
   get    'subscriptions',                  to: 'subscriptions#index', as: :subscriptions
+  get    'subscriptions/qualifiers',       to: 'subscriptions#qualifiers', as: :subscription_qualifiers
   post   'subscriptions/:id/enable',       to: 'subscriptions#enable', as: :enable_subscription
   delete 'subscriptions/:id',              to: 'subscriptions#destroy', as: :destroy_subscription
 
@@ -333,9 +349,11 @@ Rails.application.routes.draw do
   end
 
   scope 'abilities' do
-    root                                   to: 'abilities#index', as: :abilities
-    get 'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
-    get ':id',                             to: 'abilities#show', as: :ability
+    root                                     to: 'abilities#index', as: :abilities
+    get   'recalc',                          to: 'abilities#recalc', as: :abilities_recalc
+    get   ':id',                             to: 'abilities#show', as: :ability
+    get   ':id/edit',                        to: 'abilities#edit', as: :edit_ability
+    patch ':id/edit',                        to: 'abilities#update', as: :update_ability
   end
 
   scope 'donate' do
@@ -366,6 +384,21 @@ Rails.application.routes.draw do
     post   'log', to: 'email_logs#log', as: :create_email_log
   end
 
+  scope 'safety' do
+    root                                   to: 'complaints#index', as: :safety_center
+    get    'report',                       to: 'complaints#report', as: :new_complaint
+    post   'report',                       to: 'complaints#create', as: :create_complaint
+    get    'report/:token',                to: 'complaints#show', as: :complaint
+    post   'report/:token/comment',        to: 'complaints#comment', as: :create_complaint_comment
+    post   'report/:token/assign',         to: 'complaints#self_assign', as: :complaint_self_assign
+    post   'report/:token/status',         to: 'complaints#update_status', as: :update_complaint_status
+    post   'report/:token/content_type',   to: 'complaints#change_content_type', as: :update_complaint_content_type
+    get    'reports',                      to: 'complaints#reports', as: :complaints
+    get    'reporting',                    to: 'complaints#reporting', as: :complaints_reporting
+    get    'training/:page',               to: 'complaints#training', as: :osa_training
+    post   'training/complete',            to: 'complaints#training_complete', as: :osa_training_complete
+  end
+
   get   '403',                             to: 'errors#forbidden'
   get   '404',                             to: 'errors#not_found'
   get   '409',                             to: 'errors#conflict'
@@ -380,7 +413,7 @@ Rails.application.routes.draw do
     root                                   to: 'fake_community#communities', as: :fc_communities
   end
 
-  # Communities can have custom js or css defined (placed in public/assets/community).
-  # If these are not defined for a community, respond with 204 (ok but empty)
-  get '/assets/community/*path', to: ->(env) { [204, {}, ['']] }
+  scope 'data' do
+    root                                   to: 'dumps#index', as: :data_dumps
+  end
 end

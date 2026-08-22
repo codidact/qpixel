@@ -59,6 +59,34 @@ class SubscriptionTest < ActiveSupport::TestCase
     end
   end
 
+  test 'qualified? should correctly determine if a subscription should have a qualifier' do
+    subscriptions.each do |sub|
+      assert_equal sub.qualified?, Subscription::QUALIFIED_TYPES.include?(sub.type)
+    end
+  end
+
+  test 'predicates for each type should correctly determine if the subscription is of type' do
+    Subscription::TYPES.each do |type|
+      other_types = Subscription::TYPES.reject { |t| t == type }
+      subscription = Subscription.new(type: type)
+
+      assert(subscription.send("#{type}?"))
+      assert(other_types.none? { |t| subscription.send("#{t}?") })
+    end
+  end
+
+  test 'qualifier_entity should correctly return entities bound through qualifiers' do
+    class_map = { category: Category, tag: Tag, user: User }
+
+    subscriptions.each do |sub|
+      next unless sub.qualified?
+
+      entity = sub.qualifier_entity
+      assert_not_nil(entity)
+      assert(entity.is_a?(class_map[sub.type.to_sym]))
+    end
+  end
+
   private
 
   def assert_questions_valid(questions)

@@ -19,28 +19,9 @@ permissions:
   pull-requests: write
 
 jobs:
-  erb_lint:
-    name: ERB checking
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-      - name: Setup dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -yqq libmagickwand-dev
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.RUBY_VERSION }}
-          bundler-cache: true
-      - run: bundle exec erb_lint --lint-all
-
   rubocop:
-    name: Rubocop checking
+    name: Ruby linting (Ruby + Rails + ERB)
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -55,43 +36,60 @@ jobs:
           bundler-cache: true
       - run: bundle exec rubocop
 
+  erb-lint:
+    name: ERB linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -yqq libmagickwand-dev
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      - run: bundle exec erb_lint --lint-all
+
   typescript:
     name: TypeScript type checking
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
-    - name: Install Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: 22
-    - run: npm install
-    - run: tsc
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 22
+      - run: npm ci --verbose
+      - run: npx tsc --version
+      - run: npm run typecheck
 
   tests:
     name: Ruby on Rails tests
     runs-on: ubuntu-latest
     needs:
-      - erb_lint
       - rubocop
+      - erb-lint
       - typescript
 
     strategy:
       matrix:
-        ruby_version: [3.1, 3.2]
-        test_type: [test, test:system]
+        ruby_version: [3.3, 3.4]
 
     services:
-      mysql:
-        image: mysql:8.0
+      mysql: &db-service
+        image: mysql:8.4.2 # please keep the image in sync with Dockerfile.db
         env:
           MYSQL_ROOT_HOST: '%'
           MYSQL_ROOT_PASSWORD: 'root'
           MYSQL_DATABASE: 'qpixel_test'
         ports:
           - 3306:3306
-      redis:
+      redis: &redis-service
         image: redis:8.0
         ports:
           - 6379:6379
@@ -102,12 +100,58 @@ jobs:
       - name: Setup dependencies
         run: |
           sudo apt-get -qq update
+          sudo apt-get -yqq install libmariadb-dev \
+                                    libmagickwand-dev \
+                                    mariadb-client
+      - name: Report database client versions
+        run: |
+          mysql --version
+          mysqldump --version
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+          bundler-cache: true
+      - name: Prepare for testing
+        run: |
+          echo "${{ secrets.MASTER_KEY }}" > config/master.key
+          cp config/database.sample.yml config/database.yml
+          cp config/storage.sample.yml config/storage.yml
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rails db:migrate
+          bundle exec rails test:prepare
+      - run: bundle exec rails test
+      - uses: codecov/codecov-action@v5
+        if: ${{ matrix.ruby_version == env.RUBY_VERSION && github.actor != 'dependabot[bot]' }}
+        with:
+          directory: coverage
+          fail_ci_if_error: true
+          report_type: coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  system-tests:
+    name: Ruby on Rails system tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby_version: [3.3, 3.4]
+
+    services:
+      mysql: *db-service
+      redis: *redis-service
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get -qq update
           sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
       - name: Setup Firefox
-        if: ${{ matrix.test_type == 'test:system' }}
         uses: browser-actions/setup-firefox@v1.5.4
       - name: Check Firefox setup
-        if: ${{ matrix.test_type == 'test:system' }}
         run: firefox --version
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -122,31 +166,25 @@ jobs:
           bundle exec rails db:schema:load
           bundle exec rails db:migrate
           bundle exec rails test:prepare
-      - run: bundle exec rails ${{ matrix.test_type }}
+      - run: bundle exec rails test:system
       - name: Upload screenshots
-        if: ${{ matrix.test_type == 'test:system' }}
         uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
           name: screenshots-${{ matrix.ruby_version }}
           path: tmp/screenshots
           if-no-files-found: ignore
-      - uses: codecov/codecov-action@v5
-        if: ${{ matrix.ruby_version == 3.2 && matrix.test_type == 'test' && github.actor != 'dependabot[bot]' }}
-        with:
-          directory: coverage
-          fail_ci_if_error: true
-          report_type: coverage
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   deploy:
     name: Dev server deployment
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }}
     needs:
-      - erb_lint
       - rubocop
+      - erb-lint
       - typescript
       - tests
+      - system-tests
 
     env:
       SSH_IP: ${{ secrets.DEV_SSH_IP }}
@@ -171,3 +209,26 @@ jobs:
               -i ~/.ssh/deploy.key \
               "$SSH_USER"@"$SSH_IP" \
               "sudo su -l qpixel /var/apps/deploy-dev"
+
+  db_changes:
+    name: Check for data dump changes
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4
+          bundler-cache: true
+      - name: Check for changes
+        run: |
+          bundle exec ruby lib/database_changes_checker.rb origin/${{ github.event.pull_request.base.ref }} \
+            origin/${{ github.event.pull_request.head.ref }} ${{ secrets.GITHUB_TOKEN }} \
+            ${{ github.event.pull_request.number }}

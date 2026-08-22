@@ -1,7 +1,14 @@
-<%= content_for :title, 'Dashboard' %>
+<%
+  title = 'Dashboard'
+%>
 
-<h1>Dashboard</h1>
-<p>All communities, with their categories. You can also see the communities from the dropdown arrow at the top right of each page.</p>
+<%= content_for :title, title %>
+
+<h1><%= title %></h1>
+<p>
+  All communities, with their categories. You can also see the communities from the dropdown arrow at the top right of
+  each page.
+</p>
 <div class="grid community-list">
   <% @communities.each do |c| %>
     <% categories = Category.unscoped.where(community: c).order(sequence: :asc, id: :asc) %>
@@ -40,7 +47,7 @@
             <% end %>
           </div>
         <% end %>
-        <% if current_user&.is_global_moderator || current_user&.is_global_admin %>
+        <% if current_user&.at_least_global_moderator? %>
           <% open_flags = Flag.unscoped.where(community: c, status: nil).count %>
           <% resolved_flags = Flag.unscoped.where(community: c).where.not(status: nil).count %>
           <div class="widget--body h-fw-bold h-bg-tertiary-050">

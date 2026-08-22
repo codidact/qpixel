@@ -1,10 +1,16 @@
+<%
+  title = t('mod.tools.reactions')
+  blurb = t('mod.tools.reactions_blurb')
+%>
+
+<% content_for :title, title %>
+
 <%= link_to moderator_path, class: 'has-font-size-small' do %>
   &laquo; Return to moderator tools
 <% end %>
 
-<h1>Reactions</h1>
-
-<p class="is-lead">Reactions can be used to give feedback to post authors and to give hints to readers regarding the usefulness, safety, ... of an post. Use them sparely and only when necessary</p>
+<h1><%= title %></h1>
+<p class="is-lead"><%= blurb %></p>
 
 <table>
     <tr>

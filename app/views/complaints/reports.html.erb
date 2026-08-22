@@ -1,0 +1,77 @@
+<%= link_to safety_center_path do %>
+  &laquo; Back to Safety Center
+<% end %>
+
+<h1>Reports</h1>
+
+<div class="error-reports-filters flex-row items-end">
+  <%= form_tag complaints_path, method: :get, class: 'has-margin-bottom-4 primary' do %>
+    <div class="form-group-horizontal">
+      <div class="form-group">
+        <%= label_tag :status, 'Status' %>
+        <%= select_tag :status,
+                       options_for_select([['All open reports', '']] + statuses_select_options,
+                                          selected: params[:status]),
+                       class: 'form-element js-complaint-status-select' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :report_type, 'Report type' %>
+        <%= select_tag :report_type,
+                       options_for_select(report_types_select_options, selected: params[:report_type]),
+                       include_blank: true, class: 'form-element js-complaint-type-select' %>
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :outcome, 'Outcome' %>
+        <%= select_tag :outcome,
+                       options_for_select(outcomes_select_options, selected: params[:outcome]),
+                       include_blank: true, class: 'form-element js-complaint-outcome-select' %>
+      </div>
+
+      <div class="actions gap-sm">
+        <button type="submit" class="button is-filled is-medium"><%= t('g.search').capitalize %></button>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<table class="table is-full-width is-with-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Reporter</th>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Assigned</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @complaints.each do |complaint| %>
+      <tr>
+        <td><%= link_to complaint.access_token.split('-')[0], complaint_path(complaint.access_token) %></td>
+        <td>
+          <% if complaint.user.present? %>
+            <%= user_link complaint.user %>
+          <% else %>
+            <%= complaint.email %>
+          <% end %>
+        </td>
+        <td><%= report_type(complaint.report_type)['name'] %></td>
+        <td>
+          <div class="complaint-status-badge has-background-color-<%= status(complaint.status)['color'] %>">
+            <i class="<%= status(complaint.status)['icon'] %>"></i>
+            <%= status(complaint.status)['name'] %>
+          </div>
+        </td>
+        <td>
+          <% if complaint.assignee.present? %>
+            <%= user_link complaint.assignee %>
+          <% end %>
+        </td>
+        <td><%= time_ago_in_words complaint.created_at %> ago</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
