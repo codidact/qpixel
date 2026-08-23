@@ -102,7 +102,7 @@ $(() => {
     hr: new InlineAction('\n\n-----\n\n'),
     table: new InlineAction('\n\n| Title1 | Title2 |\n|- | - |\n| row1_1 | row1_2 |\n\n'),
     mathjax: new InlineAction('$', '$'),
-    spoiler: new InlineAction('\n\n<details>\n<summary>Spoiler</summary>\n', '\n</details>\n\n'),
+    spoiler: new InlineAction('\n\n<details>\n<summary>Spoiler</summary>\n\n', '\n</details>\n\n'),
   };
 
   $(document).on('click', '.js-markdown-tool', (ev) => {
