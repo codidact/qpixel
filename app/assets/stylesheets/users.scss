@@ -208,6 +208,14 @@ img {
     .label {
       flex-grow: 1;
     }
+    .sortable-buttons {
+      display: flex;
+      flex-direction: column;
+    }
+    .community-label {
+      display: flex;
+      align-items: center;
+    }
   }
 }
 

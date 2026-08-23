@@ -31,22 +31,26 @@
           <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
           <ol class="sortable">
             <% Community.where(hidden: false).user_preferred_order(current_user).each do |c| %>
-              <li class="community-sortable-list-item" data-id="<%= c.id %>">
+              <li class="community-sortable-list-item grid" data-id="<%= c.id %>">
                 <i class="fas fa-grip-vertical"></i>
-                <div class="button-list is-gutterless">
+                <div class="sortable-buttons grid--cell">
                   <button class="button is-icon-only-button is-extremely-large sort-top-btn"><i class="fas fa-angle-double-up"></i></button>
-                  <button class="button is-icon-only-button is-extremely-large sort-up-btn"><i class="fas fa-arrow-up"></i></button>
-                  <button class="button is-icon-only-button is-extremely-large sort-down-btn"><i class="fas fa-arrow-down"></i></button>
                   <button class="button is-icon-only-button is-extremely-large sort-bottom-btn"><i class="fas fa-angle-double-down"></i></button>
                 </div>
-                <% logo_setting = logo_paths[c.id] %>
-                <% if logo_setting.present? %>
-                  <div class="img">
-                    <img loading="lazy" src="<%= logo_setting %>" alt="<%= c.name %>" class="community-header-list-image">
+                <div class="sortable-buttons grid--cell">
+                  <button class="button is-icon-only-button is-extremely-large sort-up-btn"><i class="fas fa-arrow-up"></i></button>
+                  <button class="button is-icon-only-button is-extremely-large sort-down-btn"><i class="fas fa-arrow-down"></i></button>
+                </div>
+                <div class="community-label grid--cell">
+                  <% logo_setting = logo_paths[c.id] %>
+                  <% if logo_setting.present? %>
+                    <div class="img">
+                      <img loading="lazy" src="<%= logo_setting %>" alt="<%= c.name %>" class="community-header-list-image">
+                    </div>
+                  <% end %>
+                  <div class="label">
+                    <%= c.name %>
                   </div>
-                <% end %>
-                <div class="label">
-                  <%= c.name %>
                 </div>
               </li>
             <% end %>
