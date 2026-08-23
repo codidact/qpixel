@@ -133,6 +133,9 @@
 
 <div class="header-slide" id="communities-slide">
   <h3 class="h-m-t-1">Communities</h3>
+  <% if user_signed_in? %>
+    <%= link_to 'Edit order', user_preferences_path, class: 'button is-muted is-small' %>
+  <% end %>
   <div class="community-header-list">
     <% logo_paths = SiteSetting.all_communities('SiteLogoPath') %>
     <% Community.where(hidden: false).user_preferred_order(current_user).each do |c| %>
