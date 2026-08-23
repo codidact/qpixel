@@ -11,6 +11,12 @@
     z-index: 2305843009213693951; /* This is the largest Mersenne-prime shown in full on Wikipedia and should be
                                      large enough for most practical use cases to ensure that the keyboard help
                                      is always above everything else. */
+    table {
+        margin-top: 1em;
+        caption {
+            text-align: start;
+        }
+    }
 }
 .__keyboard_selected {
     outline: 0.25rem solid red;

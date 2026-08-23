@@ -47,7 +47,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       this.dialogClose();
       const d = document.createElement('div');
       d.classList.add('__keyboard_help');
-      d.append(...elements);
+      d.append(...elements.map(e => {
+        if (typeof e == 'string') {
+          const p = document.createElement('p');
+          p.innerText = e;
+          return p;
+        }
+        else {
+          return e
+        }
+      }));
       document.body.appendChild(d);
     },
     dialogClose: function () {
@@ -105,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   const formatShortcuts = (caption, shortcuts) => {
     const table = document.createElement('table');
-    table.classList.add('table');
+    table.classList.add('table', 'is-full-width');
     const captionEl = document.createElement('caption');
     captionEl.innerText = caption;
     table.append(captionEl);
@@ -170,7 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     QPixel.Keyboard.dialog(
       'Go to ...',
-      formatShortcuts('Page', shortcuts)
+      formatShortcuts('Pages', shortcuts)
     );
   };
 
@@ -291,20 +300,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (e.key === 't') {
       QPixel.Keyboard.dialog(
         'Go to tags of ...',
-        formatShortcuts("Category", categoryShortcuts())
+        formatShortcuts("Categories", categoryShortcuts())
       );
       QPixel.Keyboard.state = 'goto/category-tags';
     } else if (e.key === 'e') {
       QPixel.Keyboard.dialog(
         'Go to suggested edits of ...\n',
-        formatShortcuts("Category", categoryShortcuts())
+        formatShortcuts("Categories", categoryShortcuts())
       );
       QPixel.Keyboard.state = 'goto/category-edits';
     } else if (e.key === 'c') {
       const data = Object.keys(QPixel.Keyboard.categories());
       QPixel.Keyboard.dialog(
         'Go to category ...\n',
-        formatShortcuts("Category", categoryShortcuts())
+        formatShortcuts("Categories", categoryShortcuts())
       );
       QPixel.Keyboard.state = 'goto/category';
     }
