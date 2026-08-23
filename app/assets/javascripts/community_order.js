@@ -14,12 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelectorAll('.community-sortable-list-item').forEach(el => {
+    el.querySelector('.sort-top-btn')?.addEventListener('click', _ => {
+      el.parentElement.insertAdjacentElement('afterbegin', el);
+      sortable.save();
+    });
     el.querySelector('.sort-up-btn')?.addEventListener('click', _ => {
       el.previousElementSibling?.insertAdjacentElement('beforebegin', el);
       sortable.save();
     });
     el.querySelector('.sort-down-btn')?.addEventListener('click', _ => {
       el.nextElementSibling?.insertAdjacentElement('afterend', el);
+      sortable.save();
+    });
+    el.querySelector('.sort-bottom-btn')?.addEventListener('click', _ => {
+      el.parentElement.insertAdjacentElement('beforeend', el);
       sortable.save();
     });
   })
