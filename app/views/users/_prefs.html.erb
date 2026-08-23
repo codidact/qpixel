@@ -34,8 +34,10 @@
               <li class="community-sortable-list-item" data-id="<%= c.id %>">
                 <i class="fas fa-grip-vertical"></i>
                 <div class="button-list is-gutterless">
+                  <button class="button is-icon-only-button is-extremely-large sort-top-btn"><i class="fas fa-angle-double-up"></i></button>
                   <button class="button is-icon-only-button is-extremely-large sort-up-btn"><i class="fas fa-arrow-up"></i></button>
                   <button class="button is-icon-only-button is-extremely-large sort-down-btn"><i class="fas fa-arrow-down"></i></button>
+                  <button class="button is-icon-only-button is-extremely-large sort-bottom-btn"><i class="fas fa-angle-double-down"></i></button>
                 </div>
                 <% logo_setting = logo_paths[c.id] %>
                 <% if logo_setting.present? %>
