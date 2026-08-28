@@ -21,7 +21,7 @@ $(() => {
       const preSelectionEnd = $field[0].selectionEnd;
       QPixel.MD.insertIntoField($field, this.start, this.end);
       $field[0].selectionStart = preSelectionStart + this.start.length;
-      $field[0].selectionEnd = preSelectionEnd + this.end.length;
+      $field[0].selectionEnd = preSelectionEnd + this.start.length;
     }
   }
 
