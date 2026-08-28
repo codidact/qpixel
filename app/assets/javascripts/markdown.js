@@ -104,8 +104,7 @@ $(() => {
     mathjax: new InlineAction('$', '$'),
     spoiler: new InlineAction(
       '\n\n<details>\n<summary>Spoiler</summary>\n' +
-      '<!--\nAn empty line is required for markdown to render.\n' +
-      'This hint text is an HTML comment and can be safely deleted.\n-->\n\n',
+      '<!-- An empty line is required for markdown to render -->\n\n',
       '\n</details>\n\n'),
   };
 
