@@ -6,7 +6,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   setup :devise_setup
 
-  test 'should correctly register user' do
+  test ':crete should correctly register user' do
     try_register_user('test', 'test@example.com', 'testtest')
 
     assert_response(:found)
@@ -18,13 +18,8 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_operator 1.minute.ago, :<, @user.created_at
   end
 
-  test 'should prevent rapid registrations from same IP' do
-    User.create(username: 'test',
-                email: 'test2@example.com',
-                password: 'testtest',
-                current_sign_in_ip: '0.0.0.0',
-                created_at: 1.second.ago.utc)
-
+  test ':create should prevent rapid registration from the same IP' do
+    ensure_user_already_exists
     try_register_user('test', 'test@example.com', 'testtest')
 
     assert_response(:found)
@@ -32,7 +27,17 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_not_nil flash[:danger]
   end
 
-  test 'ensure Devise errors are handled properly' do
+  test ':create should skip registration rate limit in dev env' do
+    Rails.env.stub(:development?, true) do
+      ensure_user_already_exists
+      try_register_user('test', 'test@example.com', 'testtest')
+
+      assert_response(:found)
+      assert_redirected_to root_path
+    end
+  end
+
+  test ':create should correctly handle Devise errors' do
     existing_user = users(:standard_user)
     try_register_user(existing_user.username, existing_user.email, 'testtest')
 
@@ -126,6 +131,14 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
   def try_register_user(username, email, password)
     post :create, params: { user: { username: username, email: email, password: password,
                                     password_confirmation: password } }
+  end
+
+  def ensure_user_already_exists
+    User.create(username: 'test',
+                email: 'test2@example.com',
+                password: 'testtest',
+                current_sign_in_ip: '0.0.0.0',
+                created_at: 1.second.ago.utc)
   end
 
   def devise_setup
