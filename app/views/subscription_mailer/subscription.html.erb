@@ -15,8 +15,7 @@
     <%= link_to question.title, post_url(question, host: @subscription.community.host) %>
   </h3>
   <p>
-    <%= question.body.first(150).gsub(/<\/?[^>]+>/, '') %>
-    <%= question.body.length > 150 ? '...' : '' %>
+    <%= sanitize(strip_tags(question.body).truncate(150), scrubber: scrubber) %>
   </p>
   <p>
     &mdash; <%= user_link question.user, { host: @subscription.community.host }  %>
