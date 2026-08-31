@@ -46,13 +46,13 @@ To use a custom build config, change the `CLIENT_DOCKERFILE` variable in the .en
 
 The following lists environment variables specific to deploying QPixel via Docker:
 
-| Name                       | Value    | Required? | Default | Description                                                                         |
-| -------------------------- | -------- | --------- | ------- | ----------------------------------------------------------------------------------- |
-| `COMMUNITY_ADMIN_USERNAME` | <string> | yes*      | -       | Username of the admin user on the default community. Only required on database init |
-| `COMMUNITY_ADMIN_PASSWORD` | <string> | yes*      | -       | Password of the admin user on the default community. Only required on database init |
-| `COMMUNITY_ADMIN_EMAIL`    | <string> | yes*      | -       | Email of the admin user on the default community. Only required on database init    |
-| `COMMUNITY_NAME`           | <string> | yes*      | -       | Name of the default community to create. Only required on database init             |
-| `LOCAL_DEV_PORT`           | <string> | no        | `3000`  | Port or port range on the host to map the server's port `3000` in the container to  |
+| Name                       | Value      | Required? | Default | Description                                                                         |
+| -------------------------- | ---------- | --------- | ------- | ----------------------------------------------------------------------------------- |
+| `COMMUNITY_ADMIN_USERNAME` | `<string>` | yes*      | -       | Username of the admin user on the default community. Only required on database init |
+| `COMMUNITY_ADMIN_PASSWORD` | `<string>` | yes*      | -       | Password of the admin user on the default community. Only required on database init |
+| `COMMUNITY_ADMIN_EMAIL`    | `<string>` | yes*      | -       | Email of the admin user on the default community. Only required on database init    |
+| `COMMUNITY_NAME`           | `<string>` | yes*      | -       | Name of the default community to create. Only required on database init             |
+| `LOCAL_DEV_PORT`           | `<string>` | no        | `3000`  | Port or port range on the host to map the server's port `3000` in the container to  |
 
 ## 2. Database File
 Ensure `config/database.yml` has the username and password as defined in [docker/env](docker/env) file. The `config/database.yml` should already be gitignored.
