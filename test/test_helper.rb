@@ -211,22 +211,30 @@ class ActiveSupport::TestCase
     assert_redirected_to(new_user_session_path)
   end
 
+  ##
+  # Assert that the given array contains at least one of the array of expected values.
+  # @param ary [Array] array to check
+  # @param expected [Array] array of expected values
+  # @param error_message [String] error message to display if the assertion fails
+  def assert_include_any(ary, expected, error_message = nil)
+    default_error = 'Expected array to contain any expected value.'
+    assert ary.any? { |x| expected.include?(x) }, error_message || default_error
+  end
+
   PostMock = Struct.new(:title, :body_markdown, :body, :tags_cache, :edit, keyword_init: true)
 
-  def sample
-    PostMock.new(
-      title: 'This is a sample title',
-      body_markdown: 'This is a sample post with some **Markdown** and [a link](/).',
-      body: '<p>This is a sample post with some <b>Markdown</b> and <a href="/">a link</a></p>',
-      tags_cache: ['discussion', 'posts', 'tags'],
-      edit: PostMock.new(
-        title: 'This is another sample title',
-        body_markdown: 'This is a sample post with some more **Markdown** and [a link](/).',
-        body: '<p>This is a sample post with some more <b>Markdown</b> and <a href="/">a link</a></p>',
-        tags_cache: ['discussion', 'posts', 'tags', 'edits'],
-        edit: nil
-      )
-    )
+  def sample(**options)
+    PostMock.new(title: 'This is a sample title',
+                 body_markdown: 'This is a sample post with some **Markdown** and [a link](/).',
+                 body: '<p>This is a sample post with some <b>Markdown</b> and <a href="/">a link</a></p>',
+                 tags_cache: ['discussion', 'posts', 'tags'],
+                 edit: PostMock.new(
+                   title: 'This is another sample title',
+                   body_markdown: 'This is a sample post with some more **Markdown** and [a link](/).',
+                   body: '<p>This is a sample post with some more <b>Markdown</b> and <a href="/">a link</a></p>',
+                   tags_cache: ['discussion', 'posts', 'tags', 'edits'],
+                   edit: nil
+                 ), **options)
   end
 end
 

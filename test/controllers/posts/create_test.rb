@@ -82,10 +82,9 @@ class PostsControllerTest < ActionController::TestCase
 
     try_create_post(category: nil)
 
-    assert_response(:found)
-    assert_redirected_to root_path
-    assert_not_nil flash[:danger]
+    assert_response(:bad_request)
     assert_nil assigns(:post).id
+    assert_not_empty assigns(:post).errors.full_messages
   end
 
   test 'category post type checks required trust level' do
@@ -93,7 +92,7 @@ class PostsControllerTest < ActionController::TestCase
 
     try_create_post(category: categories(:high_trust))
 
-    assert_response(:forbidden)
+    assert_response(:bad_request)
     assert_nil assigns(:post).id
     assert_not_empty assigns(:post).errors.full_messages
   end
@@ -103,10 +102,9 @@ class PostsControllerTest < ActionController::TestCase
 
     try_create_post(post_type: post_types(:answer))
 
-    assert_response(:found)
-    assert_redirected_to root_path
-    assert_not_nil flash[:danger]
+    assert_response(:bad_request)
     assert_nil assigns(:post).id
+    assert_not_empty assigns(:post).errors.full_messages
   end
 
   test 'create ensures community user is created' do
@@ -142,6 +140,54 @@ class PostsControllerTest < ActionController::TestCase
     assert_equal 1, NewThreadFollower.where(['post_id = ? AND user_id = ?', assigns(:post), user]).count
   end
 
+  test 'should block identical post spam from low-activity user' do
+    user = users(:spammer)
+    previous_post = posts(:non_deleted_spam_question)
+    sign_in user
+
+    sample_post = sample(body_markdown: previous_post.body_markdown)
+    try_create_post(sample_post: sample_post)
+
+    assert_response(:bad_request)
+    assert_not_nil assigns(:post)
+    assert assigns(:post).errors.full_messages.include?(I18n.t('posts.spam_blocked'))
+  end
+
+  test 'should block posting from user with active spam flag' do
+    user = users(:high_rep_spammer)
+    sign_in user
+
+    try_create_post
+
+    assert_response(:bad_request)
+    assert_not_nil assigns(:post)
+    assert assigns(:post).errors.full_messages.include?(I18n.t('posts.spam_blocked'))
+  end
+
+  test 'should allow posting but flag from blocked IP prefix' do
+    user = users(:bad_ip_prefix)
+    sign_in user
+
+    before_flags = Flag.count
+    assert_performed_jobs 1 do
+      try_create_post
+    end
+    after_flags = Flag.count
+    assert_equal before_flags + 1, after_flags, 'Expected a flag to be created'
+  end
+
+  test 'should allow posting but flag from blocked IP CIDR' do
+    user = users(:bad_ip_cidr)
+    sign_in user
+
+    before_flags = Flag.count
+    assert_performed_jobs 1 do
+      try_create_post
+    end
+    after_flags = Flag.count
+    assert_equal before_flags + 1, after_flags, 'Expected a flag to be created'
+  end
+
   private
 
   # Attempts to create a post
@@ -152,16 +198,18 @@ class PostsControllerTest < ActionController::TestCase
   def try_create_post(post_type: post_types(:question),
                       category: categories(:main),
                       parent: nil,
-                      license: licenses(:cc_by_sa))
+                      license: licenses(:cc_by_sa),
+                      sample_post: nil)
+    sample_post ||= sample
     post :create, params: { post_type: post_type.id,
                             parent: parent&.id,
                             category: category&.id,
                             post: { post_type_id: post_type.id,
-                                    title: sample.title,
-                                    body_markdown: sample.body_markdown,
+                                    title: sample_post.title,
+                                    body_markdown: sample_post.body_markdown,
                                     category_id: category&.id,
                                     parent_id: parent&.id,
-                                    tags_cache: sample.tags_cache,
+                                    tags_cache: sample_post.tags_cache,
                                     license_id: license.id } }
   end
 end
