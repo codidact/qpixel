@@ -6,7 +6,7 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
 
   setup :devise_setup
 
-  test ':crete should correctly register user' do
+  test ':create should correctly register user' do
     try_register_user('test', 'test@example.com', 'testtest')
 
     assert_response(:found)
@@ -45,20 +45,20 @@ class Users::RegistrationsControllerTest < ActionController::TestCase
     assert_not_empty assigns(:user).errors
   end
 
-  test 'should show deletion information page' do
+  test ':delete should show deletion information page' do
     sign_in users(:standard_user)
     session[:sudo] = DateTime.now.iso8601
     get :delete
     assert_response(:success)
   end
 
-  test 'should require authentication for deletion information' do
+  test ':delete should require authentication' do
     get :delete
     assert_response(:found)
     assert_redirected_to new_user_session_path
   end
 
-  test 'should require sudo for deletion information' do
+  test ':delete should require sudo' do
     sign_in users(:standard_user)
     get :delete
     assert_response(:found)
