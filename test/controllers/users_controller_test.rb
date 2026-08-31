@@ -1,10 +1,10 @@
 require 'test_helper'
-require_relative 'concerns/users/users_abilities_test'
+require_relative 'concerns/users/user_test_helpers'
 
 class UsersControllerTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
   include ApplicationHelper
-  include UsersAbilitiesTest
+  include UserTestHelpers
 
   test 'should get index' do
     [:html, :json].each do |format|
@@ -60,123 +60,6 @@ class UsersControllerTest < ActionController::TestCase
 
     assert_equal assigns(:posts)&.count, limit
     assert_equal assigns(:total_post_count), post_count
-  end
-
-  test 'should get mod tools page' do
-    sign_in users(:moderator)
-    get :mod, params: { id: users(:standard_user).id }
-    assert_not_nil assigns(:user)
-    assert_response(:success)
-  end
-
-  test 'should require authentication to access mod tools' do
-    sign_out :user
-    get :mod, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
-  test 'should require moderator status to access mod tools' do
-    sign_in users(:standard_user)
-    get :mod, params: { id: users(:standard_user).id }
-    assert_nil assigns(:user)
-    assert_response(:not_found)
-  end
-
-  test 'moderators and higher should be able to delete user profiles' do
-    std_usr = users(:standard_user)
-
-    users.select(&:at_least_moderator?).each do |user|
-      sign_in(user)
-
-      try_soft_delete_user('profile', std_usr)
-      @user = assigns(:user)
-
-      assert_response(:success)
-      assert_not_nil @user
-      assert @user.community_user.deleted
-    end
-  end
-
-  test 'should require authentication to undelete user profiles' do
-    del_usr = users(:deleted_profile)
-
-    try_undelete_user(del_usr)
-
-    assert_json_failure(:not_found)
-  end
-
-  test 'normal users should not be able to undelete user profiles' do
-    del_usr = users(:deleted_profile)
-
-    users.reject(&:at_least_moderator?).each do |user|
-      sign_in(user)
-
-      try_undelete_user(del_usr)
-
-      assert_json_failure(:not_found)
-      res_body = JSON.parse(response.body)
-      assert_includes res_body['errors'], 'not_found'
-    end
-  end
-
-  test 'moderators and higher should be able to undelete user profiles' do
-    del_usr = users(:deleted_profile)
-
-    users.select(&:at_least_moderator?).each do |user|
-      sign_in(user)
-
-      try_undelete_user(del_usr)
-      @user = assigns(:user)
-
-      assert_json_success
-      assert_not_nil @user
-      assert_not @user.community_user.deleted?
-    end
-  end
-
-  test 'users that are deleted network-wide should not be undeletable' do
-    del_usr = users(:deleted_account)
-
-    users.select(&:at_least_moderator?).each do |user|
-      sign_in(user)
-
-      try_undelete_user(del_usr)
-      del_usr.reload
-
-      assert_json_failure(:not_found)
-      assert del_usr.community_user.deleted?
-    end
-  end
-
-  test 'should soft-delete user' do
-    sign_in users(:global_admin)
-
-    try_soft_delete_user('user', users(:standard_user))
-
-    assert_response(:success)
-    assert_not_nil assigns(:user)
-    assert assigns(:user).deleted
-  end
-
-  test 'only global moderators or admins should be able to soft-delete users' do
-    std_usr = users(:standard_user)
-
-    ([nil] + users).each do |user|
-      if user.present?
-        sign_in(user)
-      end
-
-      try_soft_delete_user('user', std_usr)
-
-      if user&.at_least_global_moderator?
-        assert_json_success
-      elsif user&.at_least_moderator?
-        assert_json_failure(:forbidden)
-      else
-        assert_json_failure(:not_found)
-      end
-    end
   end
 
   test 'should require authentication to soft-delete user' do
@@ -333,20 +216,6 @@ class UsersControllerTest < ActionController::TestCase
     assert_response(:not_found)
   end
 
-  test 'should get annotations' do
-    sign_in users(:admin)
-    get :annotations, params: { id: users(:standard_user).id }
-    assert_response(:success)
-    assert_not_nil assigns(:logs)
-  end
-
-  test 'should annotate user' do
-    sign_in users(:admin)
-    post :annotate, params: { id: users(:standard_user).id, comment: 'some words' }
-    assert_response(:found)
-    assert_redirected_to user_annotations_path(users(:standard_user))
-  end
-
   test 'should deny access to deleted account' do
     get :show, params: { id: users(:deleted_account).id }
     assert_response(:not_found)
@@ -355,20 +224,6 @@ class UsersControllerTest < ActionController::TestCase
   test 'should deny access to deleted profile' do
     get :show, params: { id: users(:deleted_profile).id }
     assert_response(:not_found)
-    assert_not_nil assigns(:user)
-  end
-
-  test 'should allow moderator access to deleted account' do
-    sign_in users(:moderator)
-    get :show, params: { id: users(:deleted_account).id }
-    assert_response(:success)
-    assert_not_nil assigns(:user)
-  end
-
-  test 'should allow moderator access to deleted profile' do
-    sign_in users(:moderator)
-    get :show, params: { id: users(:deleted_profile).id }
-    assert_response(:success)
     assert_not_nil assigns(:user)
   end
 
@@ -455,91 +310,6 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal data['username'], mod.username
   end
 
-  test 'role toggle should correctly grant & revoke moderator role' do
-    sign_in users(:global_admin)
-
-    mod = users(:moderator)
-
-    post :role_toggle, params: { id: mod.id, role: 'mod' }
-    assert_response(:success)
-
-    mod.reload
-    assert_equal mod.moderator?, false
-
-    post :role_toggle, params: { id: mod.id, role: 'mod' }
-    assert_response(:success)
-
-    mod.reload
-    assert_equal mod.moderator?, true
-  end
-
-  test 'role toggle should correctly grant & revoke admin role' do
-    sign_in users(:global_admin)
-
-    admin = users(:admin)
-
-    post :role_toggle, params: { id: admin.id, role: 'admin' }
-    assert_response(:success)
-
-    admin.reload
-    assert_equal admin.admin?, false
-
-    post :role_toggle, params: { id: admin.id, role: 'admin' }
-    assert_response(:success)
-
-    admin.reload
-    assert_equal admin.admin?, true
-  end
-
-  test 'role toggle should correctly grant & revoke global moderator role' do
-    sign_in users(:global_admin)
-
-    mod = users(:moderator)
-
-    post :role_toggle, params: { id: mod.id, role: 'mod_global' }
-    assert_response(:success)
-
-    mod.reload
-    assert_equal mod.global_moderator?, true
-
-    post :role_toggle, params: { id: mod.id, role: 'mod_global' }
-    assert_response(:success)
-
-    mod.reload
-    assert_equal mod.global_moderator?, false
-  end
-
-  test 'role toggle should correctly grant & revoke global admin role' do
-    sign_in users(:global_admin)
-
-    admin = users(:admin)
-
-    post :role_toggle, params: { id: admin.id, role: 'admin_global' }
-    assert_response(:success)
-
-    admin.reload
-    assert_equal admin.global_admin?, true
-
-    post :role_toggle, params: { id: admin.id, role: 'admin_global' }
-    assert_response(:success)
-
-    admin.reload
-    assert_equal admin.global_admin?, false
-  end
-
-  test 'full_log should only be accessible to mods or admins' do
-    mod = users(:moderator)
-    std = users(:standard_user)
-
-    sign_in mod
-    get :full_log, params: { id: std.id }
-    assert_response(:success)
-
-    sign_in std
-    get :full_log, params: { id: std.id }
-    assert_response(:not_found)
-  end
-
   test 'activity should correctly apply single-type items filter' do
     std = users(:standard_user)
 
@@ -596,50 +366,6 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
-  test 'full_log should correctly apply single-type items filter' do
-    sign_in users(:moderator)
-
-    model_map = {
-      'posts' => Post,
-      'comments' => Comment,
-      'edits' => SuggestedEdit,
-      'flags' => Flag,
-      'warnings' => ModWarning
-    }
-
-    model_map.each do |filter, model|
-      get :full_log, params: { id: users(:standard_user).id, filter: filter }
-      assert_response(:success)
-      items = assigns(:items)
-
-      assert(items.all?(model))
-    end
-  end
-
-  test 'full_log\'s \'interesting\' filter should include deleted comments' do
-    sign_in users(:moderator)
-
-    get :full_log, params: { id: users(:standard_user).id, filter: 'interesting' }
-    assert_response(:success)
-    items = assigns(:items)
-
-    deleted_comment = comments(:deleted)
-
-    assert(items.any? { |x| x.instance_of?(Comment) && x.id == deleted_comment.id })
-  end
-
-  test 'full_log\'s \'interesting\' filter should include declined flags' do
-    sign_in users(:moderator)
-
-    get :full_log, params: { id: users(:standard_user).id, filter: 'interesting' }
-    assert_response(:success)
-    items = assigns(:items)
-
-    declined_flag = flags(:declined)
-
-    assert(items.any? { |x| x.instance_of?(Flag) && x.id == declined_flag.id })
-  end
-
   test 'set_preference should correclty save valid preferences' do
     sign_in users(:standard_user)
 
@@ -675,38 +401,5 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal 'failed', parsed_body['status']
       assert_not_nil parsed_body['message']
     end
-  end
-
-  private
-
-  def create_other_user
-    other_community = Community.create(host: 'other.qpixel.com', name: 'Other')
-    RequestContext.redis.hset('network/community_registrations', 'other@example.com', other_community.id)
-    other_user = User.create!(email: 'other@example.com', password: 'abcdefghijklmnopqrstuvwxyz', username: 'other_user')
-    other_user.community_users.create!(community: other_community)
-    other_user
-  end
-
-  # @param type [String] deletion type (user or profile)
-  # @param user [User] user to soft delete
-  def try_soft_delete_user(type, user)
-    delete :soft_delete, params: { id: user.id,
-                                   type: type,
-                                   format: :json }
-  end
-
-  # @param user [User] user to undelete
-  def try_undelete_user(user)
-    post :undelete, params: { id: user.id,
-                             format: :json }
-  end
-
-  def try_save_preference(name, value, community: nil)
-    post :set_preference, params: {
-      community: community,
-      name: name,
-      value: value,
-      format: :json
-    }
   end
 end

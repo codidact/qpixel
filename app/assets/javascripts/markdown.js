@@ -21,7 +21,7 @@ $(() => {
       const preSelectionEnd = $field[0].selectionEnd;
       QPixel.MD.insertIntoField($field, this.start, this.end);
       $field[0].selectionStart = preSelectionStart + this.start.length;
-      $field[0].selectionEnd = preSelectionEnd + this.end.length;
+      $field[0].selectionEnd = preSelectionEnd + this.start.length;
     }
   }
 
@@ -102,7 +102,10 @@ $(() => {
     hr: new InlineAction('\n\n-----\n\n'),
     table: new InlineAction('\n\n| Title1 | Title2 |\n|- | - |\n| row1_1 | row1_2 |\n\n'),
     mathjax: new InlineAction('$', '$'),
-    spoiler: new InlineAction('\n\n<details>\n<summary>Spoiler</summary>\n', '\n</details>\n\n'),
+    spoiler: new InlineAction(
+      '\n\n<details>\n<summary>Spoiler</summary>\n' +
+      '<!-- An empty line is required for markdown to render -->\n\n',
+      '\n</details>\n\n'),
   };
 
   $(document).on('click', '.js-markdown-tool', (ev) => {

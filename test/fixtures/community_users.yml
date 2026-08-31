@@ -157,3 +157,24 @@ sample_merge_target:
   is_admin: false
   is_moderator: false
   reputation: 24
+
+high_rep_spammer:
+  user: high_rep_spammer
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1000
+
+bad_ip_prefix:
+  user: bad_ip_prefix
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
+
+bad_ip_cidr:
+  user: bad_ip_cidr
+  community: sample
+  is_admin: false
+  is_moderator: false
+  reputation: 1
