@@ -8,7 +8,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     super do |user|
       unless user.errors.any?
-        rate_limit = AppConfig.server_settings['registration_rate_limit']
+        rate_limit = if Rails.env.development?
+                       0
+                     else
+                       AppConfig.server_settings['registration_rate_limit']
+                     end
         ip_list = [user.current_sign_in_ip, request.remote_ip].compact
         previous_ip_users = User.where(current_sign_in_ip: ip_list).or(User.where(last_sign_in_ip: ip_list))
                                 .where(created_at: rate_limit.seconds.ago..DateTime.now)

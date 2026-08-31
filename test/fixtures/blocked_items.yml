@@ -5,9 +5,25 @@ email:
   value: blocked@mail.com
   automatic: true
   reason: got fed up with them
+  expires: 2100-01-01T00:00:00
 
 ip:
   item_type: ip
   value: 8.8.8.8
   automatic: false
   reason: Why are we accessed by a DNS server?
+  expires: 2100-01-01T00:00:00
+
+ip_prefix:
+  item_type: ip_prefix
+  value: '2407:f8:200'
+  automatic: false
+  reason: Because I said so
+  expires: 2100-01-01T00:00:00
+
+ip_cidr:
+  item_type: ip_cidr
+  value: '2407:f8:300::/48'
+  automatic: false
+  reason: Because I said so
+  expires: 2100-01-01T00:00:00

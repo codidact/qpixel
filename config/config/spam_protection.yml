@@ -1,0 +1,14 @@
+# When a user is deleted, helpful spam flags against the user's post will additionally cause the user to be fail-banned.
+# Users with equal to or more than this reputation value in any community are exempt from this check.
+deletion_block_max_rep: 100
+
+# Users are blocked from posting something identical to any of their previous posts, unless they have equal to or
+# greater than this number of non-deleted posts anywhere on the network.
+identical_post_spam_threshold: 10
+
+# Users are blocked from posting if there is an active (i.e. not reviewed) spam flag against any of their posts. Users
+# with equal to or greater than this number of non-deleted posts in any community are exempt from this check.
+spam_flag_posts_threshold: 10
+
+# Helpful spam flags will also block posting as above for up to this number of days after the flag was cast.
+spam_flag_time_threshold: 7

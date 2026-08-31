@@ -9,6 +9,8 @@ en:
       You can't create a :type without a category.
     type_requires_parent: >
       You can't create a :type without a parent post.
+    spam_blocked: >
+      Couldn't create your post. Try again later.
     not_public_editable: >
       This type of post can only be edited by its author and the site moderators.
     cant_close_post: >
