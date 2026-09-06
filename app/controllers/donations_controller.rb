@@ -1,15 +1,17 @@
 class DonationsController < ApplicationController
   layout 'stripe'
+
   skip_forgery_protection only: [:callback]
   skip_before_action :set_globals, only: [:callback]
   skip_before_action :check_if_warning_or_suspension_pending, only: [:callback]
   skip_before_action :stop_the_awful_troll, only: [:callback]
   skip_before_action :distinguish_fake_community, only: [:callback]
 
+  before_action :set_referrer, only: [:intent, :success]
+
   def index; end
 
   def intent
-    @referrer = params[:return_to]
     currencies = ['GBP', 'USD', 'EUR']
     @currency = currencies.include?(params[:currency]) ? params[:currency] : 'GBP'
     @symbol = { 'GBP' => '£', 'USD' => '$', 'EUR' => '€' }[@currency]
@@ -40,7 +42,6 @@ class DonationsController < ApplicationController
   def success
     @amount = params[:amount]
     @symbol = params[:currency]
-    @referrer = params[:return_to]
 
     Stripe::PaymentIntent.update(params[:intent], { metadata: { public_name: params[:public_name],
                                                                 public_comment: params[:public_comments] } })
@@ -64,11 +65,11 @@ class DonationsController < ApplicationController
       respond_to do |format|
         format.json do
           render status: :bad_request,
-                 json: { error: 'Check yo JSON syntax. Fam.' }
+                 json: { error: 'Check your JSON syntax.' }
         end
         format.any do
           render status: :bad_request,
-                 plain: 'Check yo JSON syntax. Fam.'
+                 plain: 'Check your JSON syntax.'
         end
       end
       return
@@ -128,5 +129,15 @@ class DonationsController < ApplicationController
       render status: :accepted,
              json: { status: 'Accepted, not processed.' }
     end
+  end
+
+  private
+
+  def set_referrer
+    return_to = params[:return_to]
+
+    return unless return_to.present? && helpers.safe_uri?(return_to)
+
+    @referrer = return_to
   end
 end
