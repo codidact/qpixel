@@ -26,6 +26,10 @@ class ApplicationRecord < ActiveRecord::Base
     end.join(join)
   end
 
+  def helpers
+    ApplicationController.helpers
+  end
+
   def self.sanitize_for_search(term, **cols)
     cols = cols.map do |k, v|
       if v.is_a?(Array)

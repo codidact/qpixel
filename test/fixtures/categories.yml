@@ -69,3 +69,12 @@ homepage:
   is_homepage: true
   tag_set: main
   license: cc_by_sa
+
+single_post_type:
+  community: sample
+  name: Singular
+  short_wiki: Has only one top-level post type
+  display_post_types:
+    - <%= Question.post_type_id %>
+  tag_set: main
+  license: cc_by_sa

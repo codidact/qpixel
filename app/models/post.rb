@@ -3,6 +3,7 @@ class Post < ApplicationRecord
   include Lockable
   include PostNormalizations
   include PostValidations
+  include PostCreationValidations
   include SoftDeletable
   include Timestamped
   include UserSortable
@@ -293,6 +294,8 @@ class Post < ApplicationRecord
   ##
   # Before-validation callback. Update the tags association from the tags_cache.
   def update_tag_associations
+    return if category.nil?
+
     tags_cache.each do |tag_name|
       tag, name_used = Tag.find_or_create_synonymized name: tag_name, tag_set: category.tag_set
       unless tags.include? tag

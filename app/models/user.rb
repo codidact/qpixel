@@ -453,7 +453,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason, length: 180.days, automatic: true)
+  def block(reason, length: 10.years, automatic: true)
     user_email = email
     user_ip = [last_sign_in_ip]
 

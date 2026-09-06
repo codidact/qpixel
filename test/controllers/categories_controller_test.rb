@@ -138,9 +138,18 @@ class CategoriesControllerTest < ActionController::TestCase
     assert_redirected_to category_path(assigns(:category))
   end
 
-  test 'should require authentication to get post types' do
+  test ':post_types should require authentication to get post types' do
     get :post_types, params: { id: categories(:main) }
     assert_redirected_to_sign_in
+  end
+
+  test ':post_types should redirect to post creation if there is only one top-level type' do
+    category = categories(:single_post_type)
+
+    sign_in users(:standard_user)
+    get :post_types, params: { id: category }
+    assert_redirected_to new_category_post_path(post_type: category.top_level_post_types.first,
+                                                category: category)
   end
 
   private

@@ -1,4 +1,11 @@
-registration_rate_limit: 300
+# Minimum number of seconds between registration attempts from the same IP.
+registration_rate_limit: 3600
+
+# Number of minutes that sudo mode will last for before asking for password re-entry.
 user_sudo_duration: 30
+
+# Base domain for the network: if you have communities for a.example.com and b.example.com, this should be example.com.
 network_base_domain: codidact.com
+
+# File path on your server to which database backups will be saved while awaiting upload to S3.
 db_backups_path: /var/sql-backups

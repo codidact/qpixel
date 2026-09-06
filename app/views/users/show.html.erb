@@ -63,7 +63,7 @@
       <div class="button-list h-p-2">
         <% if user_signed_in? %>
           <%= link_to new_subscription_path(type: 'user', qualifier: @user.id, return_to: request.path),
-                      class: "button is-outlined is-small" do %>
+                      class: 'button is-outlined is-small' do %>
             <i class="fas fa-envelope"></i> Subscribe to user
           <% end %>
         <% end %>
@@ -78,7 +78,7 @@
         <h2 class="user-profile-heading">Posts</h2>
         <% if @posts.size > 0 %>
           <%= link_to user_posts_path(@user),
-                      class: "button is-muted",
+                      class: 'button is-muted',
                       'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
             See all <%= @total_post_count %> &raquo;
           <% end %>
@@ -93,7 +93,7 @@
           <% end %>
         </div>
         <%= link_to user_posts_path(@user),
-                    class: "button is-muted",
+                    class: 'button is-muted',
                     'aria-label': "View all posts by #{rtl_safe_username(@user)}" do %>
           See all <%= @total_post_count %> &raquo;
         <% end %>
@@ -135,7 +135,8 @@
         <td colspan="2">
           <i class="fas fa-fw fa-reply-all"></i>
           <%= link_to search_path(search: "user:#{@user.id} post_type:2"),
-              'aria-label': is_me ? 'View your answers' : "View answers from #{rtl_safe_username(@user)}" do %>
+                      'aria-label': is_me ? t('users.labels.view_answers_self')
+                                          : "View answers from #{rtl_safe_username(@user)}" do %>
             Answers
           <% end %>
         </td>
@@ -144,8 +145,8 @@
       <tr>
         <td colspan="2"><i class="fas fa-fw fa-star-half-alt"></i>
           <%= link_to is_me ? my_vote_summary_path : vote_summary_path,
-            'aria-label':
-              is_me ? 'View your received votes' : "View received votes for #{rtl_safe_username(@user)}" do %>
+                      'aria-label': is_me ? t('users.labels.view_votes_self')
+                                          : "View received votes for #{rtl_safe_username(@user)}" do %>
             Received votes
           <% end %>
           <br>
@@ -180,8 +181,9 @@
         <% end %>
         <div class="widget--footer">
           <%= link_to is_me ? abilities_path : abilities_path(for: @user.id),
-            class: 'has-font-weight-bold',
-            'aria-label': is_me ? 'View your abilities' : "View abilities of #{rtl_safe_username(@user)}" do %>
+                      class: 'has-font-weight-bold',
+                      'aria-label': is_me ? t('users.labels.view_abilities_self')
+                                          : "View abilities of #{rtl_safe_username(@user)}" do %>
             Abilities &raquo;
           <% end %>
         </div>
@@ -199,7 +201,8 @@
       <tr>
         <td colspan="2">
           <%= link_to user_posts_path,
-            'aria-label': is_me ? 'View your posts' : "View posts for #{rtl_safe_username(@user)}" do %>
+                      'aria-label': is_me ? t('users.labels.view_posts_self') 
+                                          : "View posts for #{rtl_safe_username(@user)}" do %>
             Total
           <% end %>
         </td>
@@ -210,7 +213,8 @@
       <tr>
         <td colspan="2">
           <%= link_to search_path(search: "user:#{@user.id} post_type:1"),
-            'aria-label': is_me ? 'View your questions' : "View questions from #{rtl_safe_username(@user)}" do %>
+                      'aria-label': is_me ? t('users.labels.view_questions_self')
+                                          : "View questions from #{rtl_safe_username(@user)}" do %>
             Questions
           <% end %>
         </td>
@@ -221,7 +225,8 @@
       <tr>
         <td colspan="2">
           <%= link_to search_path(search: "user:#{@user.id} post_type:2"),
-            'aria-label': is_me ? 'View your answers' : "View answers from #{rtl_safe_username(@user)}" do %>
+                      'aria-label': is_me ? t('users.labels.view_answers_self')
+                                          : "View answers from #{rtl_safe_username(@user)}" do %>
             Answers
           <% end %>
         </td>
@@ -232,7 +237,8 @@
       <tr>
         <td colspan="2">
           <%= link_to search_path(search: "user:#{@user.id} post_type:5"),
-            'aria-label': is_me ? 'View your articles' : "View articles from #{rtl_safe_username(@user)}" do %>
+                      'aria-label': is_me ? t('users.labels.view_articles_self')
+                                          : "View articles from #{rtl_safe_username(@user)}" do %>
             Articles
           <% end %>
         </td>

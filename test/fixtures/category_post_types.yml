@@ -75,3 +75,9 @@ moderator_tags_answer:
   post_type: answer
   upvote_rep: 0
   downvote_rep: 0
+
+single_post_type_question:
+  category: single_post_type
+  post_type: question
+  upvote_rep: 5
+  downvote_rep: -1
