@@ -22,7 +22,7 @@ class DonationsController < ApplicationController
     end
 
     if amount < 0.50
-      flash[:danger] = "Sorry, we can't accept amounts below #{symbol}0.50. We appreciate your generosity, but the " \
+      flash[:danger] = "Sorry, we can't accept amounts below #{@symbol}0.50. We appreciate your generosity, but the " \
                        'processing fees make it prohibitive.'
       redirect_to donate_path
       return
