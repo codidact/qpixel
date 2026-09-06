@@ -46,6 +46,19 @@ class DonationsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:intent)&.id
   end
 
+  test ':callback should correctly handle missing events' do
+    Stripe::Webhook.stub(:construct_event, nil) do
+      post :callback, params: { format: :json }
+
+      assert_response(:internal_server_error)
+      assert_nothing_raised do
+        parsed = JSON.parse(response.body)
+        assert_not_nil(parsed)
+        assert_equal 'Webhook event not created.', parsed['error']
+      end
+    end
+  end
+
   private
 
   def referrer_test_cases

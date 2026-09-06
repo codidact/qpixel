@@ -123,11 +123,11 @@ class DonationsController < ApplicationController
     respond_to do |format|
       format.json do
         render status: :internal_server_error,
-               json: { error: 'Webhook event not created. ???' }
+               json: { error: 'Webhook event not created.' }
       end
       format.any do
         render status: :internal_server_error,
-               plain: 'Webhook event not created. ???'
+               plain: 'Webhook event not created.'
       end
     end
   end
