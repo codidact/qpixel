@@ -91,7 +91,7 @@ module AdvertisementHelper
       icon = Magick::ImageList.new("./app/assets/images/#{File.basename(expanded_path)}")
     else
       icon = Magick::ImageList.new
-      icon_path_content = URI.open(icon_path).read # rubocop:disable Security/Open
+      icon_path_content = URI.parse(icon_path).open.read
       icon.from_blob(icon_path_content)
     end
 

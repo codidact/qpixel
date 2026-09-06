@@ -7,6 +7,8 @@ class AdvertisementHelperTest < ActionView::TestCase
   setup do
     @external_png = File.open(Rails.root.join('app/assets/images/logo.png'))
     stub_request(:get, 'https://example.com/external.png').to_return(body: @external_png)
+
+    FileUtils.rm_f(command_execution_test_filepath)
   end
 
   teardown do
@@ -23,5 +25,17 @@ class AdvertisementHelperTest < ActionView::TestCase
   test ':community_icon should correctly handle external URLs' do
     icon = community_icon('https://example.com/external.png')
     assert icon.is_a?(Magick::ImageList)
+  end
+
+  test ':community_icon should not allow system command execution' do
+    community_icon('| touch "tmp/oops.txt"')
+
+    assert_not File.exist?(command_execution_test_filepath)
+  end
+
+  private
+
+  def command_execution_test_filepath
+    Rails.root.join('tmp/oops.txt')
   end
 end
