@@ -46,6 +46,19 @@ class DonationsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:intent)&.id
   end
 
+  test ':callback should correctly handle signature errors' do
+    @request.set_header('Stripe-Signature', 'invalid')
+
+    post :callback, params: { format: :json }
+
+    assert_response(:bad_request)
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+      assert_equal "You're not Stripe. Go away.", parsed['error']
+    end
+  end
+
   test ':callback should correctly handle missing events' do
     Stripe::Webhook.stub(:construct_event, nil) do
       post :callback, params: { format: :json }
