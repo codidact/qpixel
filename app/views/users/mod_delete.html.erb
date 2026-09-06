@@ -19,12 +19,6 @@
       If other actions have not worked and the disruptions are severe, you can delete the profile on this community.
     </p>
 
-    <div class="notice is-danger">
-      <p>
-        <strong>Take care!</strong> You will not be able to reverse this action and you will not be asked to confirm.
-      </p>
-    </div>
-
     <%
         is_deleted = @user.community_user&.deleted? || false
         action_path = is_deleted ?
