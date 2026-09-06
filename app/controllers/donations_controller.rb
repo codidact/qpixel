@@ -62,42 +62,15 @@ class DonationsController < ApplicationController
     begin
       event = Stripe::Webhook.construct_event(payload, signature, secret)
     rescue JSON::ParserError
-      respond_to do |format|
-        format.json do
-          render status: :bad_request,
-                 json: { error: 'Check your JSON syntax.' }
-        end
-        format.any do
-          render status: :bad_request,
-                 plain: 'Check your JSON syntax.'
-        end
-      end
+      respond_to_invalid_json
       return
     rescue Stripe::SignatureVerificationError
-      respond_to do |format|
-        format.json do
-          render status: :bad_request,
-                 json: { error: "You're not Stripe. Go away." }
-        end
-        format.any do
-          render status: :bad_request,
-                 plain: "You're not Stripe. Go away."
-        end
-      end
+      respond_to_signature_error
       return
     end
 
     if event.nil?
-      respond_to do |format|
-        format.json do
-          render status: :internal_server_error,
-                 json: { error: 'Webhook event not created. ???' }
-        end
-        format.any do
-          render status: :internal_server_error,
-                 plain: 'Webhook event not created. ???'
-        end
-      end
+      respond_to_missing_event
       return
     end
 
@@ -132,6 +105,45 @@ class DonationsController < ApplicationController
   end
 
   private
+
+  def respond_to_invalid_json
+    respond_to do |format|
+      format.json do
+        render status: :bad_request,
+               json: { error: 'Check your JSON syntax.' }
+      end
+      format.any do
+        render status: :bad_request,
+               plain: 'Check your JSON syntax.'
+      end
+    end
+  end
+
+  def respond_to_missing_event
+    respond_to do |format|
+      format.json do
+        render status: :internal_server_error,
+               json: { error: 'Webhook event not created. ???' }
+      end
+      format.any do
+        render status: :internal_server_error,
+               plain: 'Webhook event not created. ???'
+      end
+    end
+  end
+
+  def respond_to_signature_error
+    respond_to do |format|
+      format.json do
+        render status: :bad_request,
+               json: { error: "You're not Stripe. Go away." }
+      end
+      format.any do
+        render status: :bad_request,
+               plain: "You're not Stripe. Go away."
+      end
+    end
+  end
 
   def set_referrer
     return_to = params[:return_to]

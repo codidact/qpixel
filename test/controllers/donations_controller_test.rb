@@ -50,11 +50,11 @@ class DonationsControllerTest < ActionController::TestCase
 
   def referrer_test_cases
     [
-      ["http://example.com/qa", true],
-      ["https://example.com/qa", true],
-      ["/relative_path", true],
+      ['http://example.com/qa', true],
+      ['https://example.com/qa', true],
+      ['/relative_path', true],
       ["javascript:alert('oops!')", false],
-      ["ftp://example.com/donwload", false],
+      ['ftp://example.com/donwload', false]
     ]
   end
 end
