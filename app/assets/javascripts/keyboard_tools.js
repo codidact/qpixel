@@ -43,11 +43,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       return return_obj;
     },
-    dialog: function (msg) {
+    dialog: function (...elements) {
       this.dialogClose();
       const d = document.createElement('div');
       d.classList.add('__keyboard_help');
-      d.innerText = msg;
+      d.append(...elements.map(e => {
+        if (typeof e == 'string') {
+          const p = document.createElement('p');
+          p.innerText = e;
+          return p;
+        }
+        else {
+          return e
+        }
+      }));
       document.body.appendChild(d);
     },
     dialogClose: function () {
@@ -99,32 +108,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   /**
-   * @param {number} len
-   * @returns {string}
-   */
-  const delimitShortcutsGroup = (len) => {
-    return `${'='.repeat(len)}\n`;
-  };
-
-  /**
-   * @param {KeyboardShortcut} shortcut
-   * @param {number} [gap]
-   * @returns {string}
-   */
-  const formatShortcut = ({ key, text }, gap = 4) => {
-    return `${key}${' '.repeat(gap - (key.length - 1))}${text}`;
-  };
-
-  /**
    * @param {KeyboardShortcut[]} shortcuts
-   * @param {number} [gap]
-   * @returns {string}
+   * @param {string} caption
+   * @returns {HTMLTableElement}
    */
-  const formatShortcuts = (shortcuts, gap = 4) => {
-    return shortcuts.filter((s) => s.if === void 0 || s.if)
-                    .map((s) => formatShortcut(s, gap))
-                    .join('\n');
+  const formatShortcuts = (caption, shortcuts) => {
+    const table = document.createElement('table');
+    table.classList.add('table', 'is-full-width');
+    const captionEl = document.createElement('caption');
+    captionEl.innerText = caption;
+    table.append(captionEl);
+    for (const { key, text } of shortcuts.filter(s => s.if ?? true)) {
+      const tr = document.createElement('tr');
+      const shortcode = document.createElement('td');
+      const kbd = document.createElement('kbd');
+      kbd.innerText = key;
+      shortcode.append(kbd);
+      const description = document.createElement('td');
+      description.innerText = text;
+      tr.append(shortcode, description);
+      table.append(tr);
+    }
+    return table;
   };
+
+  const categoryShortcuts = () => Object.keys(QPixel.Keyboard.categories())
+    .map((name, i) => ({ key: (i + 1).toString(), text: name }));
 
   const renderHelpMenu = () => {
     /** @type {KeyboardShortcut[]} */
@@ -148,15 +157,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     ];
 
     QPixel.Keyboard.dialog(
-      'Keyboard Shortcuts\n' +
-      delimitShortcutsGroup(33) +
-      formatShortcuts(generalShortcuts, 4) +
-      '\n\n' +
-      'Selection shortcuts:\n\n' +
-      formatShortcuts(selectionShortcuts, 4) +
-      '\n\n' +
-      'Selection shortcuts will select\n' +
-      'first post, if none selected'
+      formatShortcuts('Keyboard Shortcuts', generalShortcuts),
+      formatShortcuts('Selection shortcuts', selectionShortcuts),
+      'Selection shortcuts will select first post, if none selected'
     );
   };
 
@@ -175,9 +178,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     ];
 
     QPixel.Keyboard.dialog(
-      'Go to ...\n' +
-      delimitShortcutsGroup(26) +
-      formatShortcuts(shortcuts, 3)
+      'Go to ...',
+      formatShortcuts('Pages', shortcuts)
     );
   };
 
@@ -194,9 +196,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     ];
 
     QPixel.Keyboard.dialog(
-      'Use tool ...\n' +
-      delimitShortcutsGroup(17) +
-      formatShortcuts(shortcuts, 3)
+      'Use tool ...' +
+      formatShortcuts('Tools', shortcuts)
     );
   };
 
@@ -207,11 +208,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       { key: 'd', text: 'Down' },
       { key: 'c', text: 'Close' }
     ];
-    
+
     QPixel.Keyboard.dialog(
-      'Vote ...\n' +
-      delimitShortcutsGroup(9) +
-      formatShortcuts(shortcuts, 3)
+      'Vote ...',
+      formatShortcuts('Vote', shortcuts)
     );
   };
 
@@ -262,9 +262,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderToolsMenu();
         QPixel.Keyboard.state = 'tools';
       }
+    } else if (e.key === 's') {
+      window.location.href = '/posts/search';
     } else if (e.key === 'a') {
-      const cl = $('#answer_body_markdown');
-      cl[0].scrollIntoView({ behavior: 'smooth' });
+      const cl = /** @type {HTMLTextAreaElement} */(document.getElementById('post_body_markdown'));
+      cl.scrollIntoView({ behavior: 'smooth' });
       cl.focus();
       QPixel.Keyboard.dialogClose();
     } else if (e.key === 'Enter') {
@@ -296,48 +298,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (e.key === 'f') {
       window.location.href = '/mod/flags';
     } else if (e.key === 't') {
-      const data = Object.entries(QPixel.Keyboard.categories());
-      let string_response = '';
-      for (let i = 0; i < data.length; i++) {
-        string_response += formatShortcut({
-          key: (i + 1).toString(),
-          text: data[i][0]
-        }, 3) + '\n';
-      }
       QPixel.Keyboard.dialog(
-        'Go to tags of ...\n' +
-        delimitShortcutsGroup(18) +
-        string_response.trim()
+        'Go to tags of ...',
+        formatShortcuts("Categories", categoryShortcuts())
       );
       QPixel.Keyboard.state = 'goto/category-tags';
     } else if (e.key === 'e') {
-      const data = Object.entries(QPixel.Keyboard.categories());
-      let string_response = '';
-      for (let i = 0; i < data.length; i++) {
-        string_response += formatShortcut({
-          key: (i + 1).toString(),
-          text: data[i][0]
-        }, 3) + '\n';
-      }
       QPixel.Keyboard.dialog(
-        'Go to suggested edits of ...\n' +
-        delimitShortcutsGroup(28) +
-        string_response.trim()
+        'Go to suggested edits of ...\n',
+        formatShortcuts("Categories", categoryShortcuts())
       );
       QPixel.Keyboard.state = 'goto/category-edits';
     } else if (e.key === 'c') {
-      const data = Object.entries(QPixel.Keyboard.categories());
-      let string_response = '';
-      for (let i = 0; i < data.length; i++) {
-        string_response += formatShortcut({
-          key: (i + 1).toString(),
-          text: data[i][0]
-        }, 3) + '\n';
-      }
+      const data = Object.keys(QPixel.Keyboard.categories());
       QPixel.Keyboard.dialog(
-        'Go to category ...\n' +
-        delimitShortcutsGroup(18) +
-        string_response.trim()
+        'Go to category ...\n',
+        formatShortcuts("Categories", categoryShortcuts())
       );
       QPixel.Keyboard.state = 'goto/category';
     }

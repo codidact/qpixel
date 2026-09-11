@@ -12,12 +12,12 @@ interface PostValidatorMessage {
 
 type PostValidator = (postText: string) => [boolean, PostValidatorMessage[]];
 
- interface ProcessedTag {
+interface ProcessedTag {
   id: number | string
   text: string
   desc: string
   synonyms?: string | QPixelTagSynonym[]
- }
+}
 
 interface UserPreferences {
   community: Record<string, string | null>;
@@ -113,12 +113,12 @@ interface QPixelMD {
    * @param text the text with which to replace the selection
    */
   replaceSelection?: ($field: JQuery<HTMLInputElement | HTMLTextAreaElement>, text: string) => void;
-   /**
-    * Inserts text at a given {@link idx} in a given {@link str}
-    * @param str text to insert into
-    * @param idx position to insert at
-    * @param insert text to insert
-    */
+  /**
+   * Inserts text at a given {@link idx} in a given {@link str}
+   * @param str text to insert into
+   * @param idx position to insert at
+   * @param insert text to insert
+   */
   stringInsert?: (str: string, idx: number, insert: string) => string;
   /**
    * See [strip_markdown](app/helpers/application_helper.rb) application helper
@@ -182,7 +182,7 @@ interface QPixelKeyboard {
   user_id: number | null;
 
   categories: () => Record<string, string>;
-  dialog: (message: string) => void;
+  dialog: (...elements: (HTMLElement | string)[]) => void;
   dialogClose: () => void;
   updateSelected: () => void;
 }
@@ -203,7 +203,7 @@ type NotificationType = "warning" | "success" | "danger";
 
 type QPixelPopupCallback = (ev: JQuery.ClickEvent, popup: QPixelPopup) => void
 
-type QPixelPingablePopupCallback = (ev: JQuery.KeyUpEvent)=> Promise<void>
+type QPixelPingablePopupCallback = (ev: JQuery.KeyUpEvent) => Promise<void>
 
 declare class QPixelPopup {
   static destroyAll: () => void;
@@ -215,8 +215,8 @@ declare class QPixelPopup {
   static isSpecialKey: (keyCode: number) => boolean;
 
   constructor(
-    items: JQuery[], 
-    field: HTMLInputElement | HTMLTextAreaElement, 
+    items: JQuery[],
+    field: HTMLInputElement | HTMLTextAreaElement,
     callback: QPixelPopupCallback
   );
 
@@ -377,7 +377,7 @@ type QPixelPostType = {
   has_reactions: boolean
   answer_type_id: number | null
   has_only_specific_reactions: boolean
- }
+}
 
 interface QPixel {
   // constants
@@ -598,8 +598,8 @@ interface QPixel {
    * @param onFinally callback to call for all requests
    */
   handleJSONResponse?: <T extends QPixelResponseJSON>(data: T,
-                                                      onSuccess: (data: Extract<T, QPixelSuccessResponseJSON>) => void,
-                                                      onFinally?: (data: T) => void) => boolean
+    onSuccess: (data: Extract<T, QPixelSuccessResponseJSON>) => void,
+    onFinally?: (data: T) => void) => boolean
 
   /**
    * Attempts to archive a comment thread
