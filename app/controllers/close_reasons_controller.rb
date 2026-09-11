@@ -66,8 +66,7 @@ class CloseReasonsController < ApplicationController
 
   def set_close_reason
     @close_reason = CloseReason.accessible_to(current_user)
-                               .where(id: params[:id])
-                               .first
+                               .find_by(id: params[:id])
   end
 
   def set_close_reason!
