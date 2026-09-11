@@ -16,7 +16,7 @@ class CloseReason < ApplicationRecord
     elsif RequestContext.community_id.present?
       CloseReason.where(community_id: RequestContext.community_id)
     else
-      CloseReason.empty
+      CloseReason.none
     end
   end
 
