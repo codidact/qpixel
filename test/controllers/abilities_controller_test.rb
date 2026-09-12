@@ -124,7 +124,9 @@ class AbilitiesControllerTest < ActionController::TestCase
       assert network_abilities.any?
 
       network_abilities.each do |network_ability|
-        assert_equal network_ability.description, description
+        assert_equal network_ability.description,
+                     description,
+                     "Expected user #{user.name} to be able to update abilities network-wide"
       end
     end
   end

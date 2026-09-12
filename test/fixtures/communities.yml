@@ -2,6 +2,10 @@ sample:
   host: sample.qpixel.com
   name: Sample
 
+second:
+  host: second.example.com
+  name: Second
+
 fake:
   host: fake.qpixel.com
   name: Comms Sabotage
