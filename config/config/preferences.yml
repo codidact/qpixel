@@ -2,7 +2,7 @@
 # Schema:
 #
 # preference_name:
-#   type: boolean | string | integer | choice
+#   type: boolean | string | integer | choice | community_order
 #   description: Free-form description
 #   choice:
 #     - only
@@ -99,4 +99,11 @@ collapse_related_posts:
   description: >
     Collapse the Related Posts widget in the sidebar by default.
   default: 'false'
+  global: true
+
+community_order:
+  type: community_order
+  description: >
+    Order of communities in the dashboard and dropdown
+  default: ''
   global: true
