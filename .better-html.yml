@@ -1,0 +1,3 @@
+# https://github.com/Shopify/better-html#configuration
+
+allow_single_quoted_attributes: false
