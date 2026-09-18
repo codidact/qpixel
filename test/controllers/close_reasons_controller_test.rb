@@ -53,18 +53,39 @@ class CloseReasonsControllerTest < ActionController::TestCase
 
   test 'should get edit' do
     sign_in users(:global_admin)
-    get :edit, params: { id: close_reasons(:duplicate).id }
+    try_edit_close_reason close_reasons(:duplicate)
     assert_response(:success)
     assert_not_nil assigns(:close_reason)
   end
 
-  test 'edit should fail for non-global admin on global reason' do
+  test ':edit should fail for non-global admin on global reason' do
     sign_in users(:admin)
-    get :edit, params: { id: close_reasons(:global).id }
+    try_edit_close_reason close_reasons(:global)
     assert_response(:not_found)
   end
 
-  test 'should correctly update close reasons' do
+  test ':edit should correctly scope non-global reasons for non-global admins' do
+    sign_in users(:admin)
+    try_edit_close_reason close_reasons(:second_community)
+    assert_response(:not_found)
+  end
+
+  test ':update should correctly scope non-global reasons for non-global admins' do
+    com = communities(:second)
+    usr = users(:admin)
+
+    sign_in usr
+
+    close_reasons.select { |cr| cr.community&.id == com.id }.each do |reason|
+      try_update_close_reason(reason,
+                              active: false,
+                              name: "#{reason.name} updated")
+
+      assert_response(:not_found)
+    end
+  end
+
+  test ':update should correctly change close reasons' do
     sign_in users(:global_admin)
 
     close_reasons.each do |reason|
@@ -81,7 +102,7 @@ class CloseReasonsControllerTest < ActionController::TestCase
     end
   end
 
-  test 'should not update close reasons to invalid states' do
+  test ':update should not change close reasons to invalid states' do
     sign_in users(:global_admin)
     try_update_close_reason(close_reasons(:duplicate), name: '')
     assert_response(:bad_request)
@@ -97,6 +118,10 @@ class CloseReasonsControllerTest < ActionController::TestCase
                                             requires_other_post: true,
                                             active: true }.merge(opts),
                             global: global ? '1' : '0' }
+  end
+
+  def try_edit_close_reason(reason)
+    get :edit, params: { id: reason.id }
   end
 
   def try_update_close_reason(reason, **opts)

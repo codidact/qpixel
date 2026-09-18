@@ -39,6 +39,8 @@ module PostCreationValidations
     end
 
     def identical_post_spam
+      return if user.same_as?(User.system)
+
       threshold = AppConfig.spam_protection['identical_post_spam_threshold']
       prev_non_deleted_count = Post.unscoped.where(user: user, deleted: false).count
       unless prev_non_deleted_count >= threshold

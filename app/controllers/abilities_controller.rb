@@ -18,8 +18,7 @@ class AbilitiesController < ApplicationController
 
   def update
     if push_to_network?(@ability)
-      abilities = Ability.unscoped.where(internal_id: @ability.internal_id,
-                                         description: @ability.description)
+      abilities = Ability.unscoped.where(internal_id: @ability.internal_id)
 
       if do_update_network(@ability, abilities)
         do_delete_draft(current_user, URI(request.referer || '').path)

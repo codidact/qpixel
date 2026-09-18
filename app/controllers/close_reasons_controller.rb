@@ -1,15 +1,13 @@
 class CloseReasonsController < ApplicationController
   before_action :verify_moderator
   before_action :check_create_access, only: [:new, :create]
-  before_action :set_close_reason, only: [:edit, :update]
-  before_action :verify_admin_for_global_reasons, only: [:edit, :update]
+  before_action :set_close_reason!, only: [:edit, :update]
 
   def index
-    @close_reasons = if current_user.global_admin? && params[:global] == '1'
-                       CloseReason.unscoped.where(community_id: nil)
-                     else
-                       CloseReason.unscoped.where(community_id: @community.id)
-                     end
+    community_id = params[:global] == '1' ? nil : @community.id
+
+    @close_reasons = CloseReason.accessible_to(current_user)
+                                .where(community_id: community_id)
   end
 
   def edit; end
@@ -67,16 +65,17 @@ class CloseReasonsController < ApplicationController
   end
 
   def set_close_reason
-    @close_reason = CloseReason.unscoped.find(params[:id])
+    @close_reason = CloseReason.accessible_to(current_user)
+                               .find_by(id: params[:id])
+  end
+
+  def set_close_reason!
+    set_close_reason
+
+    not_found! unless @close_reason
   end
 
   def check_create_access
     not_found! unless current_user&.global_admin? || params[:global] != '1'
-  end
-
-  def verify_admin_for_global_reasons
-    if !current_user.global_admin? && @close_reason.community.nil?
-      not_found!
-    end
   end
 end

@@ -621,3 +621,17 @@ without_new_thread_followers:
   community: sample
   category: main
   license: cc_by_sa
+
+with_sanitized_html:
+  post_type: question
+  title: This post contains HTML in body that is sanitized away
+  body: |
+    This is the body of the post used to test HTML sanitization
+    <del>oops</del>
+  body_markdown: |
+    <p>
+      This is the body of the post used to test HTML sanitization
+      <del>oops</del>
+    </p>
+  community: sample
+  user: standard_user
