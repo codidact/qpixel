@@ -207,7 +207,7 @@ class ActiveSupport::TestCase
   end
 
   def assert_nil_unless(condition, actual)
-    assert_operator nil, condition ? '!=' : '==', actual
+    assert_operator(nil, condition ? '!=' : '==', actual)
   end
 
   def assert_redirected_to_sign_in

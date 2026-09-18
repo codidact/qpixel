@@ -45,7 +45,7 @@ class AbilitiesControllerTest < ActionController::TestCase
       [{ auth: true, user: nil, for: nil }, true],
       [{ auth: true, user: nil, for: tgt_usr }, false],
       [{ auth: false, user: src_usr, for: nil }, true],
-      [{ auth: false, user: src_usr, for: tgt_usr }, true],
+      [{ auth: false, user: src_usr, for: tgt_usr }, true]
     ]
 
     expected.each do |test_case|
