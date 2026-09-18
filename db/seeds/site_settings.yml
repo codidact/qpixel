@@ -801,6 +801,13 @@
   description: >
     Load Stripe JS API on all pages instead of just donation pages. May improve security and fraud detection.
 
+- name: RequireSignInToViewUserAbilities
+  value: true
+  value_type: boolean
+  category: AnonymousAccess
+  description: >
+    Whether anonymous users can view individual ability pages for specific users.
+
 - name: RestrictedAccess
   value: false
   value_type: boolean

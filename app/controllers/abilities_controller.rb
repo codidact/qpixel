@@ -1,10 +1,18 @@
 class AbilitiesController < ApplicationController
   include DraftManagement
 
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, if: ->(c) { require_authenticate_user?(c) }
   before_action :set_ability, only: [:show, :edit, :update]
   before_action :set_user
   before_action :verify_moderator, only: [:edit, :recalc, :update]
+
+  def require_authenticate_user?(callback)
+    if callback.action_name == 'show'
+      return SiteSetting['RequireSignInToViewUserAbilities'] && params[:for].present?
+    end
+
+    callback.action_name != 'index'
+  end
 
   def index
     @abilities = Ability.all
