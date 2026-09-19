@@ -8,6 +8,10 @@
 <p>
   All communities, with their categories. You can also see the communities from the dropdown arrow at the top right of
   each page.
+  <% if user_signed_in? %>
+    You may change the order in which these communities appear in
+    <%= link_to 'your preferences', user_preferences_path %>.
+  <% end %>
 </p>
 <div class="grid community-list">
   <% @communities.each do |c| %>

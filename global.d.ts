@@ -1,3 +1,5 @@
+declare var Sortable: typeof import("sortablejs");
+
 interface ElementOffset {
   top: number;
   left: number;
