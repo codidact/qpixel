@@ -1,4 +1,4 @@
-job_type :rbenv_runner, "cd :path && /home/ubuntu/.rbenv/shims/bundle :runner_command -e :environment ':task' :output"
+job_type :rbenv_runner, "cd :path && /home/ubuntu/.rbenv/shims/bundle exec :runner_command -e :environment ':task' :output"
 
 every 1.day, at: '02:00' do
   rbenv_runner 'scripts/send_subscription_emails.rb'
