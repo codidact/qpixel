@@ -48,9 +48,9 @@ every 6.hours do
   rbenv_runner 'scripts/recalc_abilities.rb'
 end
 
-every 30.minutes do
-  rbenv_runner 'scripts/run_summary_mailer.rb'
-end
+# every 30.minutes do
+#   rbenv_runner 'scripts/run_summary_mailer.rb'
+# end
 
 # If you want to use the built-in database backup script, uncomment this:
 # every 1.day, at: '16:00' do
