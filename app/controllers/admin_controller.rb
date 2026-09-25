@@ -4,6 +4,7 @@ class AdminController < ApplicationController
   before_action :verify_global_admin, only: [:admin_email, :send_admin_email, :new_site, :create_site, :setup,
                                              :setup_save, :failban, :all_email, :send_all_email]
   before_action :verify_developer, only: [:change_users, :impersonate]
+  before_action :set_communities, only: [:audit_logs]
   before_action :set_user, only: [:change_users, :failban, :impersonate]
 
   skip_before_action :check_if_warning_or_suspension_pending, only: [:change_back, :verify_elevation]
@@ -120,6 +121,10 @@ class AdminController < ApplicationController
       if params[key].present?
         @logs = @logs.where(key => params[key])
       end
+    end
+
+    if params[:community].present?
+      @logs = @logs.where(community_id: params[:community])
     end
 
     if params[:from].present?
@@ -273,6 +278,14 @@ class AdminController < ApplicationController
   end
 
   private
+
+  def set_communities
+    @communities = if current_user&.global_admin?
+                     Community.unscoped.order(name: :asc)
+                   else
+                     Community.none
+                   end
+  end
 
   def set_user
     @user = User.find(params[:id])
