@@ -26,6 +26,9 @@
     <strong><%= t('g.type').capitalize %>:</strong>
     <%= log.log_type.humanize %><br/>
 
+    <strong><%= t('g.community').capitalize %></strong>
+    <%= link_to log.community.name, log.community.host %><br/>
+
     <strong><%= t('g.user').capitalize %>:</strong>
     <%= user_link(log.user) %><br/>
 
