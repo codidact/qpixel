@@ -132,6 +132,46 @@ class AdminControllerTest < ActionController::TestCase
     assert_not_nil assigns(:logs)
   end
 
+  test ':audit_logs should correctly check community access' do
+    first_comm = communities(:sample)
+    second_comm = communities(:second)
+
+    expected = [
+      [:admin, false],
+      [:global_admin, true]
+    ]
+
+    expected.each do |test_case|
+      user = users(test_case.first)
+      is_unscoped = test_case.second
+
+      sign_in(user)
+
+      get :audit_logs, params: { community: first_comm.id }
+      assert_response(:success)
+      @logs = assigns(:logs)
+      assert_not_nil(@logs)
+
+      assert @logs.any?
+      assert @logs.all? { |l| l.community.id == first_comm.id }
+
+      get :audit_logs, params: { community: second_comm.id }
+      assert_response(:success)
+      @logs = assigns(:logs)
+      assert_not_nil(@logs)
+
+      if is_unscoped
+        assert @logs.any?
+        assert @logs.all? { |l| l.community.id == second_comm.id }
+      else
+        assert @logs.none?
+      end
+
+      sign_out(user)
+    end
+
+  end
+
   test 'should do email query' do
     sign_in users(:admin)
     post :do_email_query, params: { email: users(:standard_user).email }
