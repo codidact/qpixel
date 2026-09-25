@@ -153,7 +153,7 @@ class AdminControllerTest < ActionController::TestCase
       assert_not_nil(@logs)
 
       assert @logs.any?
-      assert @logs.all? { |l| l.community.id == first_comm.id }
+      assert(@logs.all? { |l| l.community.id == first_comm.id })
 
       get :audit_logs, params: { community: second_comm.id }
       assert_response(:success)
@@ -162,14 +162,13 @@ class AdminControllerTest < ActionController::TestCase
 
       if is_unscoped
         assert @logs.any?
-        assert @logs.all? { |l| l.community.id == second_comm.id }
+        assert(@logs.all? { |l| l.community.id == second_comm.id })
       else
         assert @logs.none?
       end
 
       sign_out(user)
     end
-
   end
 
   test 'should do email query' do
