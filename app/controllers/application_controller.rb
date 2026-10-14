@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
   end
 
   def dashboard
-    @communities = Community.all
+    @communities = Community.all.user_preferred_order(current_user)
     @edits = Post.unscoped do
       SuggestedEdit.unscoped.joins(:post).where(active: true).group(Arel.sql('posts.category_id')).count
     end
