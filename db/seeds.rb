@@ -186,6 +186,18 @@ def seed_objects(type, seed)
   end
 
   if type == SiteSetting
+    taken = objs.select { |o| o.errors.any? { |e| e.match?(:name, :taken) } }
+
+    taken.each do |obj|
+      existing = SiteSetting.find_by(name: obj.name)
+
+      next unless existing.present?
+
+      existing.update(category: obj.category)
+    end
+  end
+
+  if type == SiteSetting
     seeds.each do |seed|
       community_id = seed[:community]&.id
       $site_settings_map[community_id] ||= []

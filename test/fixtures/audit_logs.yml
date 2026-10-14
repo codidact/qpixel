@@ -36,3 +36,11 @@ vote_rate_limit_log:
   comment: >
     limit: 10
     vote: 1
+
+second_community_log:
+  community: second
+  log_type: admin_audit
+  event_type: impersonation_end
+  related_type: User
+  related: moderator
+  user: admin

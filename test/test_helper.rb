@@ -206,6 +206,10 @@ class ActiveSupport::TestCase
     assert_equal expected, JSON.parse(response.body)['message']
   end
 
+  def assert_nil_unless(condition, actual)
+    assert_operator(nil, condition ? '!=' : '==', actual)
+  end
+
   def assert_redirected_to_sign_in
     assert_response(:found)
     assert_redirected_to(new_user_session_path)

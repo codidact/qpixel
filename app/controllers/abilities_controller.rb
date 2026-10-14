@@ -1,7 +1,7 @@
 class AbilitiesController < ApplicationController
   include DraftManagement
 
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, if: :require_authenticate_user?
   before_action :set_ability, only: [:show, :edit, :update]
   before_action :set_user
   before_action :verify_moderator, only: [:edit, :recalc, :update]
@@ -73,6 +73,16 @@ class AbilitiesController < ApplicationController
     return false unless current_user.present?
 
     current_user.can_push_to_network?(ability)
+  end
+
+  # Should the user be required to authenticate?
+  # @return [Boolean] check result
+  def require_authenticate_user?
+    if action_name == 'show'
+      return SiteSetting['RequireSignInToViewUserAbilities'] && params[:for].present?
+    end
+
+    action_name != 'index'
   end
 
   def set_ability
