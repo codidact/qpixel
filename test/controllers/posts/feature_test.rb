@@ -6,7 +6,7 @@ class PostsControllerTest < ActionController::TestCase
   test 'can feature post' do
     sign_in users(:moderator)
     before_audits = AuditLog.count
-    post :feature, params: { id: posts(:question_one).id }
+    try_feature posts(:question_one)
 
     assert_response(:success)
     assert_not_nil assigns(:post)
@@ -15,16 +15,22 @@ class PostsControllerTest < ActionController::TestCase
   end
 
   test 'feature requires authentication' do
-    post :feature, params: { id: posts(:question_one).id }
-    assert_redirected_to_sign_in
+    try_feature posts(:question_one)
+
+    assert_json_failure(:unauthorized)
+    assert_json_response_field('error', I18n.t('users.errors.unauthorized'))
   end
 
   test 'regular user cannot feature' do
     sign_in users(:deleter)
-    post :feature, params: { id: posts(:question_one).id, format: :json }
+    try_feature posts(:question_one)
 
-    assert_response(:not_found)
-    assert_valid_json_response
-    assert_equal ['no_privilege'], JSON.parse(response.body)['errors']
+    assert_json_failure(:not_found)
+    assert_json_response_field('errors', ['not_found'])
+  end
+
+  def try_feature(target)
+    post :feature, params: { id: target.id,
+                             format: :json }
   end
 end

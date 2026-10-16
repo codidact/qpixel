@@ -6,7 +6,7 @@ class PostsController < ApplicationController
   before_action :authenticate_user!, except: [:document, :help_center, :show]
   before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock, :legal_delete]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
-  before_action :verify_moderator, only: [:toggle_comments]
+  before_action :verify_moderator, only: [:feature, :toggle_comments]
   before_action :edit_checks, only: [:edit, :update]
   before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_staff, only: [:legal_delete]
@@ -612,8 +612,6 @@ class PostsController < ApplicationController
   end
 
   def feature
-    return not_found!(errors: ['no_privilege']) unless current_user&.at_least_moderator?
-
     data = {
       label: @post.parent.nil? ? @post.title : @post.parent.title,
       link: helpers.generic_show_link(@post),

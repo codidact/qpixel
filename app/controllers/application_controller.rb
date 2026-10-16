@@ -398,11 +398,14 @@ class ApplicationController < ActionController::Base
     unless user_signed_in?
       respond_to do |format|
         format.html do
-          flash[:error] = 'You need to sign in or sign up to continue.'
+          flash[:error] = I18n.t('users.errors.unauthorized')
           redirect_to_sign_in
         end
         format.json do
-          render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
+          render json: { status: 'failed',
+                         success: false,
+                         error: I18n.t('users.errors.unauthorized') },
+                 status: :unauthorized
         end
       end
     end
