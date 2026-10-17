@@ -247,7 +247,7 @@ class Post < ApplicationRecord
   # Is the post currently featured?
   # @return [Boolean] check result
   def featured?
-    PinnedLink.current.where(post: self).any?
+    PinnedLink.current.where(post: self, active: true).any?
   end
 
   # Is a given user following the post?
