@@ -32,6 +32,34 @@ class PinnedLink < ApplicationRecord
   validate :check_period
   validate :check_post_or_url
 
+  # Creates an audit log for a pinned link create event
+  # @param user [User] user that created the link
+  # @param created [PinnedLink] created link
+  def self.audit_create(user, created)
+    attrs = @link.attributes_print
+    comment = "<<PinnedLink #{attrs}>>"
+
+    AuditLog.moderator_audit(event_type: 'pinned_link_create',
+                             related: created,
+                             user: user,
+                             comment: comment)
+  end
+
+  # Creates an audit log for a pinned link update event
+  # @param user [User] user that updated the link
+  # @param before [PinnedLink] state before the update
+  # @param after [PinnedLink] state after the update
+  def self.audit_update(user, before, after)
+    old_attrs = before.attributes_print
+    new_attrs = after.attributes_print
+    comment = "from <<PinnedLink #{old_attrs}>>\nto <<PinnedLink #{new_attrs}>>"
+
+    AuditLog.moderator_audit(event_type: 'pinned_link_update',
+                             related: after,
+                             user: user,
+                             comment: comment)
+  end
+
   # Is the link not timed or started in the past & hasn't ended yet?
   # @param now [DateTime, nil] timestamp to compare to
   # @return [Boolean] check result
