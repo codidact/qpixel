@@ -173,7 +173,7 @@ class PostTest < ActiveSupport::TestCase
 
   test 'featured? should correctly determine if the post is featured' do
     posts.each do |post|
-      assert_equal post.featured?, pinned_links.any? { |l| l.post&.same_as?(post) }
+      assert_equal(post.featured?, pinned_links.any? { |l| l.post&.same_as?(post) })
     end
   end
 
