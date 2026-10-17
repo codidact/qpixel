@@ -1,0 +1,20 @@
+<%#
+    Renders a single post tool
+
+    Variables:
+      post   : the Post instance to render the tool for
+      name   : unique name of the tool
+      method : HTTP method to use for the tool's action
+  %>
+
+<details>
+  <summary><%= t("posts.tools.#{name}") %></summary>
+  <p><%= t("posts.tools.#{name}_blurb") %></p>
+  <%= form_tag send("post_#{name}_url", post),
+               method: method,
+               remote: true,
+               class: "js-#{name}-post" do %>
+    <%= submit_tag t("posts.tools.#{name}_action"),
+                   class: 'button is-filled' %>
+  <% end %>
+</details>
