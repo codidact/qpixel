@@ -36,7 +36,7 @@ class PinnedLink < ApplicationRecord
   # @param user [User] user that created the link
   # @param created [PinnedLink] created link
   def self.audit_create(user, created)
-    attrs = @link.attributes_print
+    attrs = created.attributes_print
     comment = "<<PinnedLink #{attrs}>>"
 
     AuditLog.moderator_audit(event_type: 'pinned_link_create',
