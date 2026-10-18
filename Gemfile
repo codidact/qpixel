@@ -92,6 +92,7 @@ gem 'premailer-rails', '~> 1.11'
 group :test do
   gem 'minitest', '~> 5.25.2'
   gem 'minitest-ci', '~> 3.4.0'
+  gem 'minitest-stub_any_instance', '~> 1.0.3'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'simplecov', '~> 0.21'
   gem 'simplecov_json_formatter', '~> 0.1'
