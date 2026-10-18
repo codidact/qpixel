@@ -102,15 +102,10 @@
         </details>
       <% end %>
       <% if at_least_moderator? %>
-        <details>
-          <summary>Feature post</summary>
-          <p>
-            You can feature this post by linking it in the sidebar. You can edit the link options later in the moderator tools.
-          </p>
-          <%= form_tag post_feature_url(post), remote: true, class: 'js-feature-post' do %>
-            <%= submit_tag 'Feature post', class: 'button is-filled'  %>
-          <% end %>
-        </details>
+        <%= render 'post_tool', name: 'feature', method: :post, post: post %>
+        <% if post.featured? %>
+          <%= render 'post_tool', name: 'unfeature', method: :delete, post: post %>
+        <% end %>
       <% end %>
       <% if current_user&.privilege?('flag_curate') && top_level_post_types.include?(post.post_type_id) %>
         <details>

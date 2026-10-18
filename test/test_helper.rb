@@ -202,6 +202,10 @@ class ActiveSupport::TestCase
     end
   end
 
+  def assert_json_response_field(field, expected)
+    assert_equal expected, JSON.parse(response.body)[field]
+  end
+
   def assert_json_response_message(expected)
     assert_equal expected, JSON.parse(response.body)['message']
   end

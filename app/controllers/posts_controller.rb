@@ -4,9 +4,9 @@ class PostsController < ApplicationController
   include DraftManagement
 
   before_action :authenticate_user!, except: [:document, :help_center, :show]
-  before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock, :legal_delete]
+  before_action :set_post, only: [:toggle_comments, :feature, :unfeature, :lock, :unlock, :legal_delete]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
-  before_action :verify_moderator, only: [:toggle_comments]
+  before_action :verify_moderator, only: [:feature, :toggle_comments, :unfeature]
   before_action :edit_checks, only: [:edit, :update]
   before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_staff, only: [:legal_delete]
@@ -612,8 +612,6 @@ class PostsController < ApplicationController
   end
 
   def feature
-    return not_found!(errors: ['no_privilege']) unless current_user&.at_least_moderator?
-
     data = {
       label: @post.parent.nil? ? @post.title : @post.parent.title,
       link: helpers.generic_show_link(@post),
@@ -621,13 +619,38 @@ class PostsController < ApplicationController
       active: true,
       community: RequestContext.community
     }
-    @link = PinnedLink.create data
 
-    attr = @link.attributes_print
-    AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
-                             comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
-    flash[:success] = helpers.i18ns('posts.post_has_been_featured')
+    @link = PinnedLink.create(data)
+
+    PinnedLink.audit_create(current_user, @link)
+    flash[:success] = helpers.i18ns('posts.success.feature')
     render json: { status: 'success', success: true }
+  end
+
+  def unfeature
+    success = true
+
+    ApplicationRecord.transaction do
+      PinnedLink.where(active: true, post: @post).each do |pinned_link|
+        before = pinned_link.dup
+        success = pinned_link.update(active: false)
+
+        if success
+          PinnedLink.audit_update(current_user, before, pinned_link)
+        else
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
+
+    flash_key = success ? :success : :danger
+    res_status = success ? :ok : :internal_server_error
+    i18ns_key = success ? 'success.unfeature' : 'errors.unfeature_generic'
+    flash[flash_key] = helpers.i18ns("posts.#{i18ns_key}")
+    status = success ? 'success' : 'failed'
+
+    render json: { status: status, success: success },
+           status: res_status
   end
 
   def save_draft

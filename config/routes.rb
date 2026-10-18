@@ -161,6 +161,7 @@ Rails.application.routes.draw do
     post   ':id/lock',                     to: 'posts#lock', as: :post_lock
     post   ':id/unlock',                   to: 'posts#unlock', as: :post_unlock
     post   ':id/feature',                  to: 'posts#feature', as: :post_feature
+    delete ':id/feature',                  to: 'posts#unfeature', as: :post_unfeature
     post   ':id/promote',                  to: 'moderator#nominate_promotion', as: :promote_post
     delete ':id/promote',                  to: 'moderator#remove_promotion', as: :remove_post_promotion
     delete ':id/legal-delete',             to: 'posts#legal_delete', as: :legal_delete_post
