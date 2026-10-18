@@ -35,7 +35,7 @@ class PostsControllerTest < ActionController::TestCase
 
     link.stub(:update, false) do
       PinnedLink.stub_any_instance(:update, false) do
-        sign_in users(:global_admin)
+        sign_in(user)
         try_unfeature(post)
         assert_json_failure(:internal_server_error)
       end
@@ -45,6 +45,6 @@ class PostsControllerTest < ActionController::TestCase
   # @param target [Post] post to unfeature
   def try_unfeature(target)
     delete :unfeature, params: { id: target.id,
-                               format: :json }
+                                 format: :json }
   end
 end
