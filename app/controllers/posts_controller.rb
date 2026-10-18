@@ -644,10 +644,13 @@ class PostsController < ApplicationController
     end
 
     flash_key = success ? :success : :danger
+    res_status = success ? :ok : :internal_server_error
     i18ns_key = success ? 'success.unfeature' : 'errors.unfeature_generic'
     flash[flash_key] = helpers.i18ns("posts.#{i18ns_key}")
     status = success ? 'success' : 'failed'
-    render json: { status: status, success: success }
+
+    render json: { status: status, success: success },
+           status: res_status
   end
 
   def save_draft
