@@ -11,6 +11,8 @@ en:
     errors:
       feature_generic: >
         Failed to feature the post.
+      feature_conflict: >
+        The post is already featured.
       unfeature_generic: >
         Failed to unfeature the post.
     tools:

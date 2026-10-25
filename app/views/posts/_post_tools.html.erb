@@ -102,10 +102,11 @@
         </details>
       <% end %>
       <% if at_least_moderator? %>
-        <%= render 'post_tool', name: 'feature', method: :post, post: post %>
-        <% if post.featured? %>
-          <%= render 'post_tool', name: 'unfeature', method: :delete, post: post %>
-        <% end %>
+        <% is_featured = post.featured? %>
+        <%= render 'post_tool', name: is_featured ? 'unfeature' : 'feature',
+                                method: is_featured ? :delete : :post,
+                                post: post,
+                                remote: false %>
       <% end %>
       <% if current_user&.privilege?('flag_curate') && top_level_post_types.include?(post.post_type_id) %>
         <details>
