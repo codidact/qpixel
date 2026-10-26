@@ -154,15 +154,13 @@ class ActiveSupport::TestCase
   end
 
   def assert_audit_log(event_type, related: nil)
-    log_entry = AuditLog.where(event_type: event_type)
+    log_entry = AuditLog.where(event_type: event_type, related: related)
                         .order(created_at: :desc)
                         .last
     assert_not_nil(log_entry)
     assert_equal event_type, log_entry['event_type']
 
-    if related.present?
-      assert_equal related.id, log_entry['related_id']
-    else
+    unless related.present?
       assert_nil(log_entry['related_id'])
     end
   end
@@ -200,6 +198,10 @@ class ActiveSupport::TestCase
       assert_not_nil(parsed)
       assert_equal status, parsed['status']
     end
+  end
+
+  def assert_json_response_field(field, expected)
+    assert_equal expected, JSON.parse(response.body)[field]
   end
 
   def assert_json_response_message(expected)

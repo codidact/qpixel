@@ -171,6 +171,12 @@ class PostTest < ActiveSupport::TestCase
     end
   end
 
+  test 'featured? should correctly determine if the post is featured' do
+    posts.each do |post|
+      assert_equal(post.featured?, pinned_links.any? { |l| l.post&.same_as?(post) })
+    end
+  end
+
   test 'top_level? should correctly determine if the post is top level' do
     post_types.each do |type|
       Post.where(post_type: type).each do |post|

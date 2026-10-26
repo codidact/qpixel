@@ -1,0 +1,37 @@
+<%#
+    Renders a widget listing currently pinned links
+
+    Variables:
+      links : ActiveRecord::Relation<PinnedLink> collection of pinned links to display
+  %>
+
+<% has_timed = links.any?(&:timed?) %>
+
+<% cache_unless has_timed, links do %>
+  <div class="widget has-margin-4 is-teal">
+    <div class="widget--header">Featured</div>
+    <% links.each do |pl| %>
+      <div class="widget--body">
+        <% pl_link = pl.post.nil? ? pl.link : generic_share_link(pl.post) %>
+        <% pl_label = pl.post.nil? ? pl.label : (pl.post.parent.nil? ? pl.post.title : pl.post.parent.title) %>
+        <%= link_to pl_link, class: 'h-fw-bold' do %>
+          <%= pl_label %>
+        <% end %>
+        <% unless pl.shown_before.nil? %>
+          <div>
+            &mdash;
+            <% if !pl.shown_after.nil? %>
+              <% if pl.shown_after < DateTime.now %>
+                ends in  <%= time_ago_in_words(pl.shown_before) %>
+              <% else %>
+                starts in <%= time_ago_in_words(pl.shown_after) %>
+              <% end %>
+            <% else %>
+              in <%= time_ago_in_words(pl.shown_before) %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

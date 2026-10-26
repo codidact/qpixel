@@ -1,0 +1,9 @@
+en:
+  pinned_links:
+    success:
+      create: >
+        Your pinned link has been created.
+        It may take some time for the changes to take effect due to caching.
+      update: >
+        The pinned link has been updated.
+        It may take some time for the changes to take effect due to caching.

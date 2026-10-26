@@ -7,6 +7,7 @@ class Post < ApplicationRecord
   include SoftDeletable
   include Timestamped
   include UserSortable
+  include Identity
 
   belongs_to :user, optional: true
   belongs_to :post_type
@@ -241,6 +242,12 @@ class Post < ApplicationRecord
   # @return [Boolean] check result
   def deleted_by_owner?
     deleted_by&.same_as?(user)
+  end
+
+  # Is the post currently featured?
+  # @return [Boolean] check result
+  def featured?
+    PinnedLink.current.where(post: self, active: true).any?
   end
 
   # Is a given user following the post?
