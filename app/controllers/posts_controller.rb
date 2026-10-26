@@ -649,7 +649,7 @@ class PostsController < ApplicationController
     success = true
 
     ApplicationRecord.transaction do
-      PinnedLink.where(active: true, post: @post).each do |pinned_link|
+      PinnedLink.current.where(active: true, post: @post).each do |pinned_link|
         before = pinned_link.dup
         success = pinned_link.update(active: false)
 
