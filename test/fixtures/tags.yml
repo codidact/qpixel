@@ -58,3 +58,20 @@ with_wiki:
   tag_set: main
   wiki: <p>This tag has a wiki</p>
   wiki_markdown: This tag has a wiki
+
+chain_l1:
+  name: level-1-tag
+  community: sample
+  tag_set: main
+
+chain_l2:
+  name: level-2-tag
+  community: sample
+  tag_set: main
+  parent: chain_l1
+
+chain_l3:
+  name: level-3-tag
+  community: sample
+  tag_set: main
+  parent: chain_l2
