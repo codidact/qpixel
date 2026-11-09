@@ -28,6 +28,10 @@ class Tag < ApplicationRecord
     message: I18n.t('tags.validation.errors.no_duplicate_names')
   }
 
+  # lifecycle
+  after_save :clear_upwards_chain_children_cache
+  after_destroy :clear_upwards_chain_children_cache
+
   # scopes
   scope :list_includes, -> { includes(:tag_synonyms) }
 
@@ -84,10 +88,29 @@ class Tag < ApplicationRecord
     end
   end
 
+  # Calls a given block on each tag in a chain starting from a tag with a given id
+  # @param tag_id [String, nil] tag to start traversing from
+  # @yieldparam tag [Tag] chain element being traversed
+  def self.each_upwards(tag_id, &block)
+    unless block_given?
+      raise ArgumentError, "Can't traverse an upwards chain without a block given"
+    end
+
+    while tag_id.present?
+      tag = Tag.find_by(id: tag_id)
+
+      block.call(tag) if tag
+
+      tag_id = tag&.parent_id
+    end
+  end
+
   def all_children
-    query = File.read(Rails.root.join('db/scripts/tag_children.sql'))
-    query = query.gsub('$ParentId', id.to_s)
-    ActiveRecord::Base.connection.execute(query).to_a.map(&:first)
+    Rails.cache.fetch "tags/#{id}/all_children" do
+      query = File.read(Rails.root.join('db/scripts/tag_children.sql'))
+      query = query.gsub('$ParentId', id.to_s)
+      ActiveRecord::Base.connection.execute(query).to_a.map(&:first)
+    end
   end
 
   def parent_chain
@@ -97,6 +120,24 @@ class Tag < ApplicationRecord
         enum.yield parent_group
         parent_group = parent_group.group
       end
+    end
+  end
+
+  def clear_upwards_chain_children_cache
+    return if parent_id_previously_was == parent_id && !destroyed?
+
+    if parent_id_previously_was != parent_id
+      Tag.each_upwards(parent_id_previously_was) do |tag|
+        Rails.cache.delete "tags/#{tag.id}/all_children"
+      end
+    end
+
+    if destroyed?
+      Rails.cache.delete "tags/#{id}/all_children"
+    end
+
+    Tag.each_upwards(parent_id) do |tag|
+      Rails.cache.delete "tags/#{tag.id}/all_children"
     end
   end
 
