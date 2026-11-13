@@ -20,21 +20,21 @@ class CommentThreadTest < ActiveSupport::TestCase
     SiteSetting['MaxThreadTitleLength'] = 400
     title = 'a' * 401
     thread = CommentThread.new(post: posts(:question_one), title: title)
-    assert thread.errors[:title].first = "can't be more than 255 characters"
+    assert thread.errors[:title][0] = "can't be more than 255 characters"
   end
 
   test 'should correctly handle not exceeding site setting max title length but exceeding 255' do
     SiteSetting['MaxThreadTitleLength'] = 400
     title = 'a' * 400
     thread = CommentThread.new(post: posts(:question_one), title: title)
-    assert thread.errors[:title].first = "can't be more than 255 characters"
+    assert thread.errors[:title][0] = "can't be more than 255 characters"
   end
 
   test 'should correctly handle exceeding site setting max title length but not exceeding 255' do
     SiteSetting['MaxThreadTitleLength'] = 200
     title = 'a' * 201
     thread = CommentThread.new(post: posts(:question_one), title: title)
-    assert thread.errors[:title].first = "can't be more than 200 characters"
+    assert thread.errors[:title][0] = "can't be more than 200 characters"
   end
 
   test 'should correctly handle not exceeding site setting max title length and not exceeding 255' do
