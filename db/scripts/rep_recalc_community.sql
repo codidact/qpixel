@@ -1,4 +1,5 @@
-SET @cid = 3;
+-- Uncomment this for manual use. Scripts are expected to gsub @cid instead.
+--SET @cid = 3;
 
 UPDATE community_users
 INNER JOIN ( SELECT * FROM (
