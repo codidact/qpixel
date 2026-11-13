@@ -163,6 +163,24 @@ class CommentsControllerTest < ActionController::TestCase
                  'Post author notification of mention in comment has incorrect wording'
   end
 
+  test 'should correctly notify thread follower of non-pinging comment in thread' do
+    sign_in users(:editor)
+    before_thread_follower_notifs = users(:deleter).notifications.count
+
+    try_create_comment(comment_threads(:normal))
+
+    assert_response(:found)
+    assert_redirected_to comment_thread_path(assigns(:comment_thread))
+    assert_not_nil assigns(:post)
+    assert_not_nil assigns(:comment_thread)
+    assert_not_nil assigns(:comment)&.id
+    assert_equal before_thread_follower_notifs + 1, users(:deleter).notifications.count,
+                 'Thread follower notification not created when it should have been'
+    assert_equal "There are new comments in a followed thread 'sample' on the post 'Q1 - This is test question number one'",
+                 users(:deleter).notifications.last.content,
+                 'Thread follower notification of comment has incorrect wording'
+  end
+
   test 'should correctly redirect depending on the inline parameter' do
     thread = comment_threads(:normal)
     editor = users(:editor)
