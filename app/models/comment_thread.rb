@@ -81,8 +81,8 @@ class CommentThread < ApplicationRecord
   end
 
   def maximum_title_length
-    max_len = SiteSetting['MaxThreadTitleLength'] || 255
-    if title.length > [max_len, 255].min
+    max_len = [SiteSetting['MaxThreadTitleLength'] || 255, 255].min
+    if title.length > max_len
       errors.add(:title, "can't be more than #{max_len} characters")
     end
   end
