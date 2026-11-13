@@ -28,7 +28,7 @@ gem 'tzinfo-data', '~> 1.2022.3'
 gem 'devise', '~> 5.0'
 gem 'devise_saml_authenticatable', '~> 1.9'
 gem 'msgpack', '~> 1.8' # required for ActiveSupport::MessageEncryptor
-gem 'omniauth', '~> 2.1'
+gem 'omniauth', '~> 2.2'
 
 # Markdown support in both directions.
 gem 'commonmarker', '~> 0.23'
