@@ -253,7 +253,7 @@ class ApplicationController < ActionController::Base
   def pull_pinned_links_and_hot_questions
     @pinned_links = Rails.cache.fetch_collection('pinned_links', expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
-        PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
+        PinnedLink.where(active: true).current.all
       end
     end
 
@@ -398,11 +398,14 @@ class ApplicationController < ActionController::Base
     unless user_signed_in?
       respond_to do |format|
         format.html do
-          flash[:error] = 'You need to sign in or sign up to continue.'
+          flash[:error] = I18n.t('users.errors.unauthorized')
           redirect_to_sign_in
         end
         format.json do
-          render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
+          render json: { status: 'failed',
+                         success: false,
+                         error: I18n.t('users.errors.unauthorized') },
+                 status: :unauthorized
         end
       end
     end

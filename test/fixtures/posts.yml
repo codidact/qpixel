@@ -608,6 +608,17 @@ deleted_high_rep_spam:
   deleted_at: 2019-01-01T00:00:00.000000Z
   deleted_by: moderator
 
+without_pinned_links:
+  post_type: question
+  title: This post does not have pinned links (is not featured)
+  body: This is the body of the post used to test pinned links
+  body_markdown: <p>This is the body of the post used to test pinned links</p>
+  score: 0.5
+  user: standard_user
+  community: sample
+  category: main
+  license: cc_by_sa
+
 without_new_thread_followers:
   post_type: question
   title: This post does not have any new thread followers

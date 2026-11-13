@@ -1,5 +1,31 @@
 en:
   posts:
+    # TODO: align the rest with other local strings' structure
+    success:
+      feature: >
+        The post has been featured.
+        It may take some time for the changes to take effect due to caching.
+      unfeature: >
+        The post has been unfeatured.
+        It may take some time for the changes to take effect due to caching.
+    errors:
+      feature_generic: >
+        Failed to feature the post.
+      feature_conflict: >
+        The post is already featured.
+      unfeature_generic: >
+        Failed to unfeature the post.
+    tools:
+      feature: Feature post
+      feature_action: Feature
+      feature_blurb: >
+        You can feature this post by linking it in the sidebar.
+        You can edit the link options later in the moderator tools.
+      unfeature: Unfeature post
+      unfeature_action: Unfeature
+      unfeature_blurb: >
+        This post will no longer be linked in the sidebar.
+        You can always feature it again in the moderator tools.
     #alert/notice
     create_requires_post: >
       Can't create a post without content. Please try again later or contact us.
@@ -21,8 +47,6 @@ en:
       Can't reopen this post right now. Try again later.
     no_edit_changes: >
       No changes were saved because you didn't edit the post.
-    post_has_been_featured: >
-      Post has been featured. Due to caching, it may take some time until the changes apply.
     cant_delete_post: >
       Can't delete this post right now. Try again later.
     already_deleted: >
