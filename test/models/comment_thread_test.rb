@@ -27,10 +27,10 @@ class CommentThreadTest < ActiveSupport::TestCase
     cases.each do |max, title, valid, error_message|
       SiteSetting['MaxThreadTitleLength'] = max
       thread = CommentThread.new(post: posts(:question_one), title: title)
-      assert thread.valid? == valid
+      assert_equal(valid, thread.valid?)
 
       unless valid
-        assert thread.errors[:title][0] == error_message
+        assert_equal(error_message, thread.errors[:title][0])
       end
     end
   end
