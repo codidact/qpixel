@@ -21,7 +21,7 @@ class CommentThreadTest < ActiveSupport::TestCase
       [400, 'a' * 401, false, "can't be more than 255 characters"],
       [400, 'a' * 400, false, "can't be more than 255 characters"],
       [200, 'a' * 201, false, "can't be more than 200 characters"],
-      [200, 'a' * 200, true, ''],
+      [200, 'a' * 200, true, '']
     ]
 
     cases.each do |max, title, valid, error_message|
