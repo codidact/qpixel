@@ -16,6 +16,25 @@ class CommentThreadTest < ActiveSupport::TestCase
     end
   end
 
+  test 'should correctly handle site setting max title length' do
+    cases = [
+      [400, 'a' * 401, false, "can't be more than 255 characters"],
+      [400, 'a' * 400, false, "can't be more than 255 characters"],
+      [200, 'a' * 201, false, "can't be more than 200 characters"],
+      [200, 'a' * 200, true, '']
+    ]
+
+    cases.each do |max, title, valid, error_message|
+      SiteSetting['MaxThreadTitleLength'] = max
+      thread = CommentThread.new(post: posts(:question_one), title: title)
+      assert_equal(valid, thread.valid?)
+
+      unless valid
+        assert_equal(error_message, thread.errors[:title][0])
+      end
+    end
+  end
+
   test 'remove_follower should correctly bump last_activity' do
     std_usr = users(:standard_user)
     thread = comment_threads(:without_activity)
