@@ -16,32 +16,23 @@ class CommentThreadTest < ActiveSupport::TestCase
     end
   end
 
-  test 'should correctly handle exceeding site setting max title length greater than 255' do
-    SiteSetting['MaxThreadTitleLength'] = 400
-    title = 'a' * 401
-    thread = CommentThread.new(post: posts(:question_one), title: title)
-    assert thread.errors[:title][0] = "can't be more than 255 characters"
-  end
+  test 'should correctly handle site setting max title length' do
+    cases = [
+      [400, 'a' * 401, false, "can't be more than 255 characters"],
+      [400, 'a' * 400, false, "can't be more than 255 characters"],
+      [200, 'a' * 201, false, "can't be more than 200 characters"],
+      [200, 'a' * 200, true, ''],
+    ]
 
-  test 'should correctly handle not exceeding site setting max title length but exceeding 255' do
-    SiteSetting['MaxThreadTitleLength'] = 400
-    title = 'a' * 400
-    thread = CommentThread.new(post: posts(:question_one), title: title)
-    assert thread.errors[:title][0] = "can't be more than 255 characters"
-  end
+    cases.each do |max, title, valid, error_message|
+      SiteSetting['MaxThreadTitleLength'] = max
+      thread = CommentThread.new(post: posts(:question_one), title: title)
+      assert thread.valid? == valid
 
-  test 'should correctly handle exceeding site setting max title length but not exceeding 255' do
-    SiteSetting['MaxThreadTitleLength'] = 200
-    title = 'a' * 201
-    thread = CommentThread.new(post: posts(:question_one), title: title)
-    assert thread.errors[:title][0] = "can't be more than 200 characters"
-  end
-
-  test 'should correctly handle not exceeding site setting max title length and not exceeding 255' do
-    SiteSetting['MaxThreadTitleLength'] = 200
-    title = 'a' * 200
-    thread = CommentThread.new(post: posts(:question_one), title: title)
-    assert thread.valid?
+      unless valid
+        assert thread.errors[:title][0] == error_message
+      end
+    end
   end
 
   test 'remove_follower should correctly bump last_activity' do
