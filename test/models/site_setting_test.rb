@@ -68,4 +68,22 @@ class SiteSettingTest < ActiveSupport::TestCase
     assert_not site_settings(:string).numeric?
     assert_not site_settings(:text).numeric?
   end
+
+  test 'all_communities should correctly cache settings' do
+    community = RequestContext.community
+
+    SiteSetting.create(community: community, name: 'answer', value: '42', value_type: 'string')
+
+    values = SiteSetting.all_communities('answer')
+    cached = Rails.cache.fetch("SiteSettings/#{community.id}/answer", include_community: false)
+    assert_equal '42', values[community.id]
+    assert_equal '42', cached
+
+    SiteSetting['answer'] = 'unknown'
+
+    new_values = SiteSetting.all_communities('answer')
+    new_cached = Rails.cache.fetch("SiteSettings/#{community.id}/answer", include_community: false)
+    assert_equal 'unknown', new_values[community.id]
+    assert_equal 'unknown', new_cached
+  end
 end

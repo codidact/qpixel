@@ -78,7 +78,7 @@ class SiteSetting < ApplicationRecord
 
   def self.all_communities(name)
     communities = Community.all
-    keys = (communities.map { |c| [c.id, "SiteSetting/#{c.id}/#{name}"] } + [[nil, "SiteSetting//#{name}"]]).to_h
+    keys = (communities.map { |c| [c.id, "SiteSettings/#{c.id}/#{name}"] } + [[nil, "SiteSettings//#{name}"]]).to_h
     cached = Rails.cache.read_multi(*keys.values, include_community: false)
     missing = keys.reject { |_k, v| cached.include?(v) }.map { |k, _v| k }
     settings = if missing.empty?
