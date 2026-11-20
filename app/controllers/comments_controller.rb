@@ -96,10 +96,12 @@ class CommentsController < ApplicationController
         next if existing_notification.exists?
 
         wording = if @post.nil?
-          "There are new comments in a private thread '#{@comment_thread.title}'"
-        else
-          "There are new comments in a followed thread '#{@comment_thread.title}' on the post '#{@comment.root.title}'"
-        end
+                    "There are new comments in a private thread '#{@comment_thread.title}'"
+                  else
+                    "There are new comments in a followed thread '#{@comment_thread.title}' on the post '#{
+                      @comment.root.title
+                    }'"
+                  end
 
         follower.user.create_notification(wording, helpers.comment_link(@comment))
       end
