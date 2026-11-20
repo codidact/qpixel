@@ -1,5 +1,6 @@
 # rubocop:disable Metrics/ClassLength
 # Provides mainly web actions for using and making comments.
+
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:post, :show, :thread, :thread_content]
 
@@ -27,6 +28,8 @@ class CommentsController < ApplicationController
   before_action :check_unrestrict_access, only: [:thread_unrestrict]
   before_action :check_if_target_post_locked, only: [:create, :create_thread]
   before_action :check_if_parent_post_locked, only: [:update, :destroy]
+  before_action :check_if_thread_is_private, only: [:update, :destroy, :undelete]
+  before_action :check_if_not_mod_and_thread_is_private, only: [:thread_rename, :thread_restrict, :thread_unrestrict]
   before_action :verify_moderator, only: [:thread_followers]
 
   def create_thread
@@ -92,9 +95,15 @@ class CommentsController < ApplicationController
                                         .where('link LIKE ?', "#{thread_url}%")
         next if existing_notification.exists?
 
-        follower.user.create_notification("There are new comments in a followed thread '#{@comment_thread.title}' " \
-                                          "on the post '#{@comment.root.title}'",
-                                          helpers.comment_link(@comment))
+        wording = if @post.nil?
+                    "There are new comments in a private thread '#{@comment_thread.title}'"
+                  else
+                    "There are new comments in a followed thread '#{@comment_thread.title}' on the post '#{
+                      @comment.root.title
+                    }'"
+                  end
+
+        follower.user.create_notification(wording, helpers.comment_link(@comment))
       end
     else
       flash[:danger] = @comment.errors.full_messages.join(', ')
@@ -374,17 +383,19 @@ class CommentsController < ApplicationController
   end
 
   def check_post_access
-    if !@post.comments_allowed? && current_user&.standard?
-      respond_to do |format|
-        format.html { render template: 'errors/forbidden', status: :forbidden }
-        format.json do
-          message = helpers.comments_post_error_msg(@post)
-          render json: { status: 'failed', message: message },
-                 status: :forbidden
+    unless @post.nil?
+      if !@post.comments_allowed? && current_user&.standard?
+        respond_to do |format|
+          format.html { render template: 'errors/forbidden', status: :forbidden }
+          format.json do
+            message = helpers.comments_post_error_msg(@post)
+            render json: { status: 'failed', message: message },
+                   status: :forbidden
+          end
         end
+      elsif !@post.can_access?(current_user)
+        not_found!
       end
-    elsif !@post.can_access?(current_user)
-      not_found!
     end
   end
 
@@ -448,7 +459,7 @@ class CommentsController < ApplicationController
   end
 
   def check_if_target_post_locked
-    check_if_locked(Post.find(params[:post_id]))
+    params[:post_id].present? && check_if_locked(Post.find(params[:post_id]))
   end
 
   # @param thread [CommentThread] thread to extract pings for
@@ -494,6 +505,19 @@ class CommentsController < ApplicationController
                              comment: audit_comment,
                              related: comment,
                              user: current_user)
+  end
+
+  def check_if_thread_is_private
+    if @comment_thread&.is_private
+      flash[:danger] = 'This action is not permitted.'
+      redirect_to comment_thread_path(@comment_thread.id)
+    end
+  end
+
+  def check_if_not_mod_and_thread_is_private
+    unless current_user.is_moderator
+      check_if_thread_is_private
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength

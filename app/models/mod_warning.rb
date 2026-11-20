@@ -4,7 +4,10 @@ class ModWarning < ApplicationRecord
   # Warning class name not accepted by Rails, hence this needed
   self.table_name = 'warnings'
 
-  belongs_to :community_user
+  scope :global, -> { where(is_suspension: true, is_global: true) }
+
+  belongs_to :community_user, optional: true
+  belongs_to :user, optional: true
   belongs_to :author, class_name: 'User'
 
   scope :active, -> { where(active: true) }
@@ -20,6 +23,10 @@ class ModWarning < ApplicationRecord
   # @return [Boolean] check result
   def suspension_active?
     active && suspension? && !suspension_end.past?
+  end
+
+  def global_suspension?
+    is_suspension && is_global
   end
 
   def body_as_html

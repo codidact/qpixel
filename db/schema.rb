@@ -178,6 +178,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_14_135514) do
     t.integer "reply_count", default: 0, null: false
     t.string "title"
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "community_id", null: false
+    t.boolean "is_private", default: false
     t.index ["archived_by_id"], name: "index_comment_threads_on_archived_by_id"
     t.index ["community_id"], name: "index_comment_threads_on_community_id"
     t.index ["deleted_by_id"], name: "index_comment_threads_on_deleted_by_id"
@@ -788,6 +790,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_14_135514) do
     t.boolean "enabled_2fa", default: false
     t.string "encrypted_password"
     t.integer "failed_attempts", default: 0, null: false
+    t.datetime "global_suspension_end", precision: nil
+    t.boolean "is_globally_suspended", default: false
     t.boolean "is_global_admin"
     t.boolean "is_global_moderator"
     t.datetime "last_sign_in_at", precision: nil
@@ -849,12 +853,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_14_135514) do
     t.text "body"
     t.bigint "community_user_id"
     t.datetime "created_at", precision: nil, null: false
+    t.boolean "is_global", default: false
     t.boolean "is_suspension"
     t.boolean "read", default: false
     t.datetime "suspension_end", precision: nil
     t.datetime "updated_at", precision: nil, null: false
+    t.bigint "user_id"
     t.index ["author_id"], name: "index_warnings_on_author_id"
     t.index ["community_user_id"], name: "index_warnings_on_community_user_id"
+    t.index ["user_id"], name: "index_warnings_on_user_id"
   end
 
   add_foreign_key "abilities", "communities"

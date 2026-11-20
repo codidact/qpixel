@@ -7,11 +7,23 @@
 
 <div class="notice is-danger h-m-b-4">
   <p>
-    <% if user.community_user.suspension_public_comment.blank? %>
-      This user has been <strong>temporarily suspended</strong>.
+    <% if user.globally_suspended? %>
+      This user has been <strong>temporarily suspended network-wide</strong>.
+      The suspension ends
+      <span title="<%= user.global_suspension_end.iso8601 %>">
+        in <%= time_ago_in_words(user.global_suspension_end) %>
+      </span>.
     <% else %>
-      This user has been <strong>temporarily suspended</strong> <%= user.community_user.suspension_public_comment %>.
+      <% if user.community_user.suspension_public_comment.blank? %>
+        This user has been <strong>temporarily suspended</strong>.
+      <% else %>
+        This user has been <strong>temporarily suspended</strong> <%= user.community_user.suspension_public_comment %>.
+      <% end %>
     <% end %>
 
-    The suspension ends <span title="<%= user.community_user.suspension_end.iso8601 %>">in <%= time_ago_in_words(user.community_user.suspension_end) %></span>.</p>
+    The suspension ends
+    <span title="<%= user.community_user.suspension_end.iso8601 %>">
+      in <%= time_ago_in_words(user.community_user.suspension_end) %>
+    </span>.
+  </p>
 </div>

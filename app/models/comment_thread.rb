@@ -1,15 +1,16 @@
 class CommentThread < ApplicationRecord
+  include CommunityRelated
   include Lockable
-  include PostRelated
   include SoftDeletable
 
+  belongs_to :post, optional: true
   has_many :comments
   has_many :thread_follower
   belongs_to :archived_by, class_name: 'User', optional: true
 
   scope :priority_order, -> { order(deleted: :asc, archived: :asc, updated_at: :desc, reply_count: :desc) }
-  scope :initially_visible, -> { where(deleted: false, archived: false).where('reply_count > 0') }
-  scope :publicly_available, -> { where(deleted: false).where('reply_count > 0') }
+  scope :initially_visible, -> { where(deleted: false, archived: false, is_private: false).where('reply_count > 0') }
+  scope :publicly_available, -> { where(deleted: false, is_private: false).where('reply_count > 0') }
   scope :archived, -> { where(archived: true) }
 
   validate :maximum_title_length
@@ -42,12 +43,17 @@ class CommentThread < ApplicationRecord
     ThreadFollower.where(comment_thread: self, user: user).any?
   end
 
+  def second_follower
+    ThreadFollower.where(comment_thread: self).second
+  end
+
   # Does a given user have access to the thread?
   # @param user [User] user to check access for
   # @return [Boolean] check result
   def can_access?(user)
     (!deleted? || user&.privilege?('flag_curate') || user&.post_privilege?('flag_curate', post)) &&
-      post.can_access?(user)
+      (!post || post.can_access?(user)) &&
+      (!is_private || followed_by?(user) || user&.at_least_moderator?)
   end
 
   # Gets last activity date and time on the thread
@@ -60,6 +66,8 @@ class CommentThread < ApplicationRecord
   # Gets a list of user IDs who should be pingable in the thread.
   # @return [Array<Integer>]
   def pingable
+    return [] unless post.present? # Detached threads do not support individual pings
+
     # post author +
     # answer authors +
     # last 500 history event users +

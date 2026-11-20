@@ -23,7 +23,13 @@
         <td>&mdash;</td>
       <% elsif i.class == Comment %>
         <td class="wrap-word">Comment</td>
-        <td><%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %></td>
+        <td>
+          <% if i.post.nil? %>
+              <%= link_to 'Private', comment_link(i), 'aria-label': 'Location of comment in private thread' %>
+          <% else %>
+              <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
+          <% end %>
+        </td>
         <td class="h-fs-caption">
           <%= i.content&.truncate(300) %><br>
           <%= link_to '(more)', comment_link(i), 'aria-label': 'More information about comment' %>
@@ -62,11 +68,13 @@
       <% elsif mod && i.class == Flag %>
         <td class="wrap-word">Flag</td>
         <td>
-    <% if i.post_type == 'Post' %>
-          <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
-    <% elsif i.post_type == 'Comment' %>
-    <%= link_to "Comment thread: " + i.post.comment_thread.title, comment_link(i.post) %>
-    <% end %>
+          <% if i.post_type == 'Post' %>
+            <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
+          <% elsif i.post_type == 'Comment' %>
+            <%= link_to "Comment thread: " + i.post.comment_thread.title, comment_link(i.post) %>
+          <% elsif i.post_type == 'User' %>
+            <%= link_to 'User #' + i.post.id.to_s, user_path(i.post) %>
+          <% end %>
         </td>
         <td class="h-fs-caption">
           <%= i.reason&.truncate(300) %><br>

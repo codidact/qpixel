@@ -8,6 +8,7 @@
 
 <% ckb ||= false %>
 <% small ||= false %>
+<% external_url ||= false%>
 
 <% if user.nil? || (deleted_user?(user) && standard?) %>
   <div class="user-card deleted-content">
@@ -31,7 +32,7 @@
            data = {'ckb-item-link': ''}
          end
       %>
-      <%= link_to user_path(user),
+      <%= link_to external_url ? user_url(user) : user_path(user),
                   dir: 'ltr',
                   class: small ? :'user-card--link-small' : 'user-card--link',
                   data: data do %>

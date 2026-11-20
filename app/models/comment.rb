@@ -1,6 +1,6 @@
 # Represents a comment. Comments are attached to both a post and a user.
 class Comment < ApplicationRecord
-  include PostRelated
+  include CommunityRelated
   include SoftDeletable
   include Timestamped
   include Identity
@@ -9,6 +9,7 @@ class Comment < ApplicationRecord
 
   scope :by, ->(user) { where(user: user) }
 
+  belongs_to :post, optional: true
   belongs_to :user
   belongs_to :comment_thread
   belongs_to :references_comment, class_name: 'Comment', optional: true

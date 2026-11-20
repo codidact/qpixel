@@ -292,7 +292,10 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_warning_or_suspension_pending
-    return unless ModWarning.to(current_user).active.any?
+    return unless ModWarning.to(current_user)
+                            .or(ModWarning.where(user: current_user, is_global: true))
+                            .active
+                            .any?
 
     flash.clear
 

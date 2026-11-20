@@ -11,15 +11,17 @@ class UsersController < ApplicationController
                                             :me, :my_activity, :my_network, :my_vote_summary,
                                             :preferences, :set_preference,
                                             :disconnect_sso, :confirm_disconnect_sso]
-
   before_action :redirect_to_sign_in, only: [:filters], unless: [:user_signed_in?, :json_request?]
-
-  before_action :verify_moderator, only: [:annotate, :annotations, :full_log, :mod, :mod_delete, :mod_privilege_action,
-                                          :mod_privileges, :role_toggle, :soft_delete, :undelete]
-  before_action :verify_global_moderator, only: [:mod_delete_network_account, :mod_failban]
-  before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :full_log, :mod, :mod_delete,
-                                  :mod_delete_network_account, :mod_failban, :mod_privilege_action, :mod_privileges,
-                                  :network, :posts, :role_toggle, :show, :soft_delete, :undelete, :vote_summary]
+  before_action :verify_moderator, only: [:annotate, :annotations, :full_log, :mod, :mod_clear_profile, :mod_contact,
+                                          :mod_delete, :mod_escalate, :mod_escalation, :mod_message,
+                                          :mod_privilege_action, :mod_privileges, :mod_reset_profile, :role_toggle,
+                                          :soft_delete, :undelete]
+  before_action :verify_global_moderator, only: [:mod_delete_network_account, :mod_failban, :global_log]
+  before_action :set_user, only: [:activity, :annotate, :annotations, :avatar, :full_log, :global_log, :mod,
+                                  :mod_clear_profile, :mod_contact, :mod_delete, :mod_delete_network_account,
+                                  :mod_escalate, :mod_escalation, :mod_failban, :mod_message, :mod_privilege_action,
+                                  :mod_privileges, :mod_reset_profile, :network, :posts, :role_toggle, :show,
+                                  :soft_delete, :undelete, :vote_summary]
   before_action :check_deleted, only: [:show, :posts, :activity]
   before_action :verify_user_not_deleted, only: [:undelete]
 
@@ -281,6 +283,48 @@ class UsersController < ApplicationController
     @items = items.sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
   end
 
+  def mod_escalation
+    @flag = Flag.new(post_flag_type: nil, reason: '', post_id: @user.id, post_type: 'User', user: current_user)
+  end
+
+  def mod_escalate
+    @flag = Flag.create(post_flag_type: nil, reason: params[:flag][:reason], post_id: @user.id,
+                        post_type: 'User', user: current_user, escalated: true,
+                        escalated_by: current_user, escalated_at: DateTime.now,
+                        escalation_comment: '(escalated via Contact Community Team Tool)')
+    FlagMailer.with(flag: @flag).flag_escalated.deliver_now
+    flash[:success] = 'Thank you for your message. We have been notified and are looking into it.'
+    redirect_to mod_user_path(@user)
+  end
+
+  def mod_message
+    title = params[:title]
+    unless title.present?
+      title = 'Private Moderator Message'
+    end
+
+    body = params[:body]
+
+    @comment_thread = CommentThread.new(title: title, post: nil, is_private: true)
+    @comment = Comment.new(post: nil, content: body, user: current_user, comment_thread: @comment_thread)
+
+    success = ActiveRecord::Base.transaction do
+      @comment_thread.save!
+      @comment.save!
+      ThreadFollower.create! comment_thread: @comment_thread, user: @user
+    end
+
+    if success
+      @user.create_notification("You have received a moderator message: #{@comment_thread.title}",
+                                helpers.comment_link(@comment))
+      redirect_to comment_thread_path(@comment_thread.id)
+    else
+      flash[:danger] = "Could not create comment thread: #{(@comment_thread.errors.full_messages \
+                                                           + @comment.errors.full_messages).join(', ')}"
+      render :mod_contact
+    end
+  end
+
   def full_log
     @posts = Post.by(@user).count
     @comments = Comment.by(@user).count
@@ -313,7 +357,8 @@ class UsersController < ApplicationController
               when 'interesting'
                 Comment.by(@user).deleted.all + Flag.by(@user).declined.all +
                   SuggestedEdit.by(@user).rejected.all +
-                  Post.by(@user).problematic.all
+                  Post.by(@user).problematic.all +
+                  ModWarning.to(@user).all
               else
                 Post.by(@user).all + Comment.by(@user).all + Flag.by(@user).all +
                   SuggestedEdit.by(@user).all + PostHistory.by(@user).all +
@@ -321,8 +366,69 @@ class UsersController < ApplicationController
               end).sort_by(&:created_at).reverse.paginate(page: params[:page], per_page: 50)
   end
 
+  def global_log
+    @posts = Post.unscoped.where(user: @user).count
+    @comments = Comment.unscoped.where(user: @user).count
+    @flags = Flag.unscoped.where(user: @user).count
+    @suggested_edits = SuggestedEdit.unscoped.where(user: @user).count
+    @edits = PostHistory.unscoped.where(user: @user).count
+    @mod_warnings_received = ModWarning.where(community_user: @user.community_users).count +
+                             ModWarning.where(user: @user).count
+
+    @all_edits = @suggested_edits + @edits
+
+    @interesting_comments = Comment.unscoped.where(user: @user, deleted: true).count
+    @interesting_flags = Flag.unscoped.where(user: @user, status: 'declined').count
+    @interesting_edits = SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).count
+    @interesting_posts = Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').count
+
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received +
+                   @interesting_edits + @interesting_posts
+
+    @items = (case params[:filter]
+              when 'posts'
+                Post.unscoped.where(user: @user).all
+              when 'comments'
+                Comment.unscoped.where(user: @user).all
+              when 'flags'
+                Flag.unscoped.where(user: @user).all
+              when 'edits'
+                SuggestedEdit.unscoped.where(user: @user).all +
+                  PostHistory.where(user: @user).all
+              when 'warnings'
+                ModWarning.where(community_user: @user.community_users).all +
+                  ModWarning.where(user: @user).all
+              when 'interesting'
+                Comment.unscoped.where(user: @user, deleted: true).all +
+                  Flag.unscoped.where(user: @user, status: 'declined').all +
+                  SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).all +
+                  Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').all +
+                  ModWarning.unscoped.where(community_user: @user.community_users).all +
+                  ModWarning.where(user: @user).all
+              else
+                Post.unscoped.where(user: @user).all +
+                  Comment.unscoped.where(user: @user).all +
+                  Flag.unscoped.where(user: @user).all +
+                  SuggestedEdit.unscoped.where(user: @user).all +
+                  PostHistory.unscoped.where(user: @user).all +
+                  ModWarning.unscoped.where(community_user: @user.community_users).all +
+                  ModWarning.where(user: @user).all
+              end).sort_by(&:created_at).reverse
+  end
+
   def mod_privileges
     @abilities = Ability.all
+  end
+
+  def mod_clear_profile
+    before = @user.attributes_print
+    @user.update(username: "user#{@user.id}", profile: '', website: '', twitter: '',
+                 profile_markdown: '', discord: '')
+    @user.create_notification('Your profile has been reset by a moderator. Click on this ' \
+                              'notification to update your profile.', edit_user_profile_path)
+    AuditLog.moderator_audit(event_type: 'profile_clear', user: current_user, comment: "<<User #{before}>>",
+                             related: @user)
+    redirect_to mod_user_path(@user)
   end
 
   def soft_delete
@@ -363,10 +469,6 @@ class UsersController < ApplicationController
                      message: 'Failed to undelete user profile',
                      user: @user.id }
     end
-  end
-
-  def edit_profile
-    render layout: 'without_sidebar'
   end
 
   def cleaned_profile_websites(profile_params)

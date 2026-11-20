@@ -42,7 +42,17 @@
       </div>
     <% end %>
     <div class="comment--info">
-      <%= comment_user_link(comment) %> wrote
+      <% if comment.comment_thread.is_private %>
+        <% if comment.user == current_user || current_user.is_moderator || !comment.user.is_moderator %>
+          <%= comment_user_link(comment) %>
+          <% if comment.user.is_moderator %>(only moderators can see name)<% end %>
+        <% else %>
+          <strong>moderator team</strong>
+        <% end %>
+      <% else %>
+        <%= comment_user_link(comment) %>
+      <% end %>
+      wrote
       <span title="<%= comment.created_at.iso8601 %>"><%= time_ago_in_words(comment.created_at) %> ago</span>
       <% if comment.updated_at > comment.created_at %>
         · <span title="<%= comment.updated_at.iso8601 %>">edited <%= time_ago_in_words(comment.updated_at) %> ago</span>
@@ -52,10 +62,10 @@
       <%= link_to comment_link(comment), class: 'js-comment-permalink nowrap', role: 'button' do %>
         <span class="js-text">copy link</span>
       <% end %>
-      <% if with_post_link %>
+      <% if with_post_link && comment.post.present? %>
         <%= link_to 'post', generic_share_link(comment.post) %>
       <% end %>
-      <% if user_signed_in? && (comment.user == current_user || current_user.at_least_moderator?) %>
+      <% if user_signed_in? && !comment.comment_thread.is_private && (comment.user == current_user || current_user.at_least_moderator?) %>
         <a href="#" class="js-comment-edit nowrap" role="button" aria-label="Edit comment">edit</a>
         <% if comment.deleted %>
           <%= form_tag undelete_comment_path(comment), method: :patch do %>

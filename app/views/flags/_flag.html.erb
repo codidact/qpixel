@@ -20,6 +20,10 @@
                comment: flag.post,
                with_post_link: true,
                pingable: flag.post.comment_thread.pingable %>
+  <% elsif flag.post_type == 'User' %>
+    <div class="widget--body">
+      <%= render 'users/common_card', user: flag.post, ckb: false, external_url: true %>
+    </div>
   <% end %>
   <div class="widget--body">
     <p>

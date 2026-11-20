@@ -35,6 +35,8 @@ Rails.application.routes.draw do
     post   'settings/:name',               to: 'site_settings#update', as: :update_site_setting
 
     delete 'users/delete/:id',             to: 'users#soft_delete', as: :soft_delete_user
+    get    'users/suspend/:user_id',       to: 'mod_warning#new_global', as: :new_global_warning
+    post   'users/suspend/:user_id',       to: 'mod_warning#create_global', as: :create_global_warning
     post   'users/undelete/:id',           to: 'users#undelete', as: :undelete_user
 
     get    'privileges',                   to: 'admin#privileges', as: :admin_privileges
@@ -217,6 +219,8 @@ Rails.application.routes.draw do
     get    '/:id/flags',                to: 'flags#history', as: :flag_history
     get    '/:id/activity',             to: 'users#activity', as: :user_activity
     get    '/:id/mod',                  to: 'users#mod', as: :mod_user
+    get    '/:id/mod/profile-reset',    to: 'users#mod_reset_profile', as: :mod_reset_profile
+    post   '/:id/mod/profile-reset',    to: 'users#mod_clear_profile', as: :mod_clear_profile
     get    '/:id/posts',                to: 'users#posts', as: :user_posts
     get    '/:id/vote-summary',         to: 'users#vote_summary', as: :vote_summary
     get    '/:id/network',              to: 'users#network', as: :network
@@ -226,11 +230,16 @@ Rails.application.routes.draw do
     get    '/:id/mod/annotations',      to: 'users#annotations', as: :user_annotations
     post   '/:id/mod/annotations',      to: 'users#annotate', as: :annotate_user
     get    '/:id/mod/activity-log',     to: 'users#full_log', as: :full_user_log
+    get    '/:id/mod/global-log',       to: 'users#global_log', as: :global_user_log
     post   '/:id/failban',              to: 'admin#failban', as: :failban_user
     get    '/:id/mod/delete',           to: 'users#mod_delete', as: :mod_delete
     get    '/:id/mod/delete-network-account', to: 'users#mod_delete_network_account', as: :mod_delete_network_account
     get    '/:id/mod/failban',          to: 'users#mod_failban', as: :mod_failban
     get    '/:id/avatar/:size',         to: 'users#avatar', as: :user_auto_avatar
+    get    '/:id/mod/escalate',         to: 'users#mod_escalation', as: :user_escalation
+    post   '/:id/mod/escalate',         to: 'users#mod_escalate', as: :user_escalate
+    get    '/:id/mod/contact',          to: 'users#mod_contact', as: :mod_contact
+    post   '/:id/mod/contact',          to: 'users#mod_message', as: :mod_message
     get    '/:id/mod/pii',              to: 'moderator#pii_correlation', as: :mod_pii_correlation
   end
 

@@ -249,6 +249,23 @@ class User < ApplicationRecord
     end
   end
 
+  def globally_suspended?
+    return true if is_globally_suspended && !global_suspension_end.past?
+
+    if is_globally_suspended
+      update(is_globally_suspended: false, global_suspension_end: nil)
+    end
+
+    false
+  end
+
+  # Checks if the user can push a given post type to network
+  # @param post_type [PostType] type of the post to be pushed
+  # @return [Boolean]
+  def can_push_to_network(post_type)
+    post_type.system? && (is_global_moderator || is_global_admin)
+  end
+
   # Can the user directly update a given post?
   # @param post [Post] updated post (owners can unilaterally update)
   # @param post_type [PostType] type of the post (some are freely editable)

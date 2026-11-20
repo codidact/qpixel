@@ -3,7 +3,6 @@
 <% end %>
 
 <% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
-
 <%= render 'posts/image_upload' %>
 <%= render 'users/tabs', user: @user, active_tab: 'mod_tools' %>
 
@@ -16,7 +15,8 @@
     <div class="notice is-warning">
       <p>
         Use the warning tool only against users who have violated the site rules. Prefer other measures, such as a
-        friendly comment asking the user to stop certain behaviors.
+        friendly comment or <%= link_to 'contacting them privately', mod_contact_path(@user) %> asking the user to stop
+        certain behaviors.
       </p>
     </div>
 

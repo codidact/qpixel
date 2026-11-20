@@ -46,6 +46,11 @@
         <% end %>
 
         <div class="menu--heading">Warnings and Suspensions</div>
+        <%= link_to mod_contact_path(user),
+                    class: "menu--item #{'is-active' if current_page?(mod_contact_path(user))}" do %>
+          <i class="fas fa-envelope fa-fw"></i>
+          Contact Privately
+        <% end %>
         <%= link_to mod_warning_log_path(user),
                     class: "menu--item #{'is-active' if current_page?(mod_warning_log_path(user))}" do %>
           <i class="fas fa-user-lock fa-fw"></i>
@@ -66,6 +71,11 @@
           <i class="fas fa-users fa-fw"></i>
           Compare PII
         <% end %>
+                    <%= link_to mod_reset_profile_path(user),
+                                class: "menu--item #{'is-active' if current_page?(mod_reset_profile_path(user))}" do %>
+                        <i class="fas fa-user-times fa-fw"></i>
+                        Clear User Profile
+                    <% end %>
         <%= link_to mod_delete_path(user),
                     class: "menu--item #{current_page?(mod_delete_path(user)) ? 'is-active' : 'is-red'}" do %>
           <i class="fas fa-trash fa-fw"></i>
@@ -74,8 +84,19 @@
 
         <% if current_user.at_least_global_moderator? %>
         <div class="menu--heading">Global Mod Tools</div>
+        <%= link_to global_user_log_path(user),
+                    class: "menu--item #{'is-active' if current_page?(global_user_log_path(user))}" do %>
+          <i class="fas fa-heartbeat fa-fw"></i>
+          Global Summary
+        <% end %>
+        <%= link_to new_global_warning_path(user),
+                    class: "menu--item #{'is-active' if current_page?(new_global_warning_path(user))}" do %>
+          <i class="fas fa-user-slash fa-fw"></i>
+          Network-wide Suspension
+        <% end %>
         <%= link_to mod_delete_network_account_path(user),
-                    class: "menu--item #{current_page?(mod_delete_network_account_path(user)) ? 'is-active' : 'is-red'}" do %>
+                    class: "menu--item 
+                            #{current_page?(mod_delete_network_account_path(user)) ? 'is-active' : 'is-red'}" do %>
           <i class="fas fa-skull fa-fw"></i>
           Delete Network Account
         <% end %>
@@ -94,6 +115,17 @@
         <% end %>
         <% end %>
       </div>
+    </div>
+    <div class="widget--body">
+      <p>You can always ask the Community Team for assistance:</p>
+      <%= link_to user_escalation_path(user),
+                  class: "button
+                          is-primary
+                          is-outlined
+                          #{'is-active' if current_page?(user_escalation_path(user))}" do %>
+        <i class="fas fa-flag fa-fw"></i>
+        Contact Community Team
+      <% end %>
     </div>
   </div>
 </div>
