@@ -9,6 +9,8 @@ en:
         Accounts using 2FA cannot be self-deleted. Disable 2FA first.
       self_delete_wrong_username: >
         The username you entered was incorrect.
+      unauthorized: >
+        You need to sign in or sign up to continue
     labels:
       view_abilities_self: View your abilities
       view_answers_self: View your answers

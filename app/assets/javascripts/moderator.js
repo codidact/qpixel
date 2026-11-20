@@ -1,5 +1,5 @@
 $(() => {
-  $('.js-convert-to-comment, .js-toggle-comments, .js-feature-post, .js-lock').on('ajax:success', (_ev) => {
+  $('.js-convert-to-comment, .js-toggle-comments, .js-feature-post, .js-lock, .js-unfeature-post').on('ajax:success', (_ev) => {
     location.reload();
   });
 

@@ -4,10 +4,11 @@ class PostsController < ApplicationController
   include DraftManagement
 
   before_action :authenticate_user!, except: [:document, :help_center, :show]
-  before_action :set_post, only: [:toggle_comments, :feature, :lock, :unlock, :legal_delete]
+  before_action :set_post, only: [:toggle_comments, :feature, :unfeature, :lock, :unlock, :legal_delete]
   before_action :set_scoped_post, only: [:change_category, :show, :edit, :update, :close, :reopen, :delete, :restore]
-  before_action :verify_moderator, only: [:toggle_comments]
+  before_action :verify_moderator, only: [:feature, :toggle_comments, :unfeature]
   before_action :edit_checks, only: [:edit, :update]
+  before_action :unless_featured, only: [:feature]
   before_action :unless_locked, only: [:edit, :update, :close, :reopen, :delete, :restore]
   before_action :verify_staff, only: [:legal_delete]
 
@@ -132,7 +133,6 @@ class PostsController < ApplicationController
       return not_found!
     end
 
-    # @post = @post.includes(:flags, flags: :post_flag_type)
     @children = if current_user&.privilege?('flag_curate') || current_user&.staff?
                   Post.where(parent_id: @post.id)
                 else
@@ -612,8 +612,6 @@ class PostsController < ApplicationController
   end
 
   def feature
-    return not_found!(errors: ['no_privilege']) unless current_user&.at_least_moderator?
-
     data = {
       label: @post.parent.nil? ? @post.title : @post.parent.title,
       link: helpers.generic_show_link(@post),
@@ -621,13 +619,64 @@ class PostsController < ApplicationController
       active: true,
       community: RequestContext.community
     }
-    @link = PinnedLink.create data
 
-    attr = @link.attributes_print
-    AuditLog.moderator_audit(event_type: 'pinned_link_create', related: @link, user: current_user,
-                             comment: "<<PinnedLink #{attr}>>\n(using moderator tools on post)")
-    flash[:success] = helpers.i18ns('posts.post_has_been_featured')
-    render json: { status: 'success', success: true }
+    @link = PinnedLink.create(data)
+
+    success = @link.errors.none?
+    flash_key = success ? :success : :danger
+    i18ns_key = success ? 'success.feature' : 'errors.feature_generic'
+    message = helpers.i18ns("posts.#{i18ns_key}")
+
+    if success
+      PinnedLink.audit_create(current_user, @link)
+    end
+
+    respond_to do |format|
+      format.html do
+        flash[flash_key] = message
+        redirect_back fallback_location: root_path
+      end
+      format.json do
+        status = success ? 'success' : 'failed'
+        res_status = success ? :ok : :internal_server_error
+        render json: { status: status, success: true, message: message },
+               status: res_status
+      end
+    end
+  end
+
+  def unfeature
+    success = true
+
+    ApplicationRecord.transaction do
+      PinnedLink.current.where(active: true, post: @post).each do |pinned_link|
+        before = pinned_link.dup
+        success = pinned_link.update(active: false)
+
+        if success
+          PinnedLink.audit_update(current_user, before, pinned_link)
+        else
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
+
+    flash_key = success ? :success : :danger
+    i18ns_key = success ? 'success.unfeature' : 'errors.unfeature_generic'
+    message = helpers.i18ns("posts.#{i18ns_key}")
+
+    respond_to do |format|
+      format.html do
+        flash[flash_key] = message
+        redirect_back fallback_location: root_path
+      end
+      format.json do
+        status = success ? 'success' : 'failed'
+        res_status = success ? :ok : :internal_server_error
+        render json: { status: status, success: success, message: message },
+               status: res_status
+      end
+    end
   end
 
   def save_draft
@@ -715,6 +764,24 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
   end
 
+  # @param post [Post] post to check
+  def check_if_featured(post)
+    return unless post.featured?
+
+    error_message = helpers.i18ns('posts.errors.feature_conflict')
+
+    respond_to do |format|
+      format.html do
+        flash[:danger] = error_message
+        redirect_back fallback_location: root_path
+      end
+      format.json do
+        render json: { success: false, status: 'failed', message: error_message },
+               status: :conflict
+      end
+    end
+  end
+
   def check_permissions!
     if @post.post_type_id == HelpDoc.post_type_id
       verify_moderator
@@ -739,6 +806,10 @@ class PostsController < ApplicationController
       flash[:danger] = helpers.i18ns('posts.not_public_editable')
       redirect_back fallback_location: root_path
     end
+  end
+
+  def unless_featured
+    check_if_featured(@post)
   end
 
   def unless_locked

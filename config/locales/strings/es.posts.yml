@@ -17,8 +17,6 @@ es:
       No se puede reabrir esta publicación ahora mismo. Inténtelo de nuevo más tarde.
     no_edit_changes: >
       Ningún cambio ha sido salvado porque usted no ha editado la publicación.
-    post_has_been_featured: >
-      La publicación ha sido destacada. Debido a cacheo, podría llevar algo de tiempo hasta que los cambios estén aplicados.
     cant_delete_post: >
       No se puede eliminar esta publicación ahora mismo. Inténtelo de nuevo más tarde.
     already_deleted: >

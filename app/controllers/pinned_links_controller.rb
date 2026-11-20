@@ -45,15 +45,8 @@ class PinnedLinksController < ApplicationController
     @link = PinnedLink.new(pinned_link_params)
 
     if @link.save
-      attr = @link.attributes_print
-
-      AuditLog.moderator_audit(event_type: 'pinned_link_create',
-                               related: @link,
-                               user: current_user,
-                               comment: "<<PinnedLink #{attr}>>")
-
-      flash[:success] =
-        'Your pinned link has been created. Due to caching, it may take some time until it is shown.'
+      PinnedLink.audit_create(current_user, @link)
+      flash[:success] = helpers.i18ns('pinned_links.success.create')
       redirect_to pinned_links_path
     else
       render 'pinned_links/new', status: :bad_request
@@ -63,17 +56,11 @@ class PinnedLinksController < ApplicationController
   def edit; end
 
   def update
-    before = @link.attributes_print
+    before = @link.dup
 
     if @link.update(pinned_link_params)
-      after = @link.attributes_print
-
-      AuditLog.moderator_audit(event_type: 'pinned_link_update',
-                               related: @link,
-                               user: current_user,
-                               comment: "from <<PinnedLink #{before}>>\nto <<PinnedLink #{after}>>")
-
-      flash[:success] = 'The pinned link has been updated. Due to caching, it may take some time until it is shown.'
+      PinnedLink.audit_update(current_user, before, @link)
+      flash[:success] = helpers.i18ns('pinned_links.success.update')
       redirect_to pinned_links_path
     else
       render 'pinned_links/edit', status: :bad_request

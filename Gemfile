@@ -28,7 +28,7 @@ gem 'tzinfo-data', '~> 1.2022.3'
 gem 'devise', '~> 5.0'
 gem 'devise_saml_authenticatable', '~> 1.9'
 gem 'msgpack', '~> 1.8' # required for ActiveSupport::MessageEncryptor
-gem 'omniauth', '~> 2.1'
+gem 'omniauth', '~> 2.2'
 
 # Markdown support in both directions.
 gem 'commonmarker', '~> 0.23'
@@ -92,6 +92,7 @@ gem 'premailer-rails', '~> 1.11'
 group :test do
   gem 'minitest', '~> 5.25.2'
   gem 'minitest-ci', '~> 3.4.0'
+  gem 'minitest-stub_any_instance', '~> 1.0.3'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'simplecov', '~> 0.21'
   gem 'simplecov_json_formatter', '~> 0.1'
