@@ -17,6 +17,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display&family=Roboto&family=Roboto+Mono&display=swap');
 @import 'variables';
 
+html, body {
+  height: 100%;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: $font-stack-display;
 }
@@ -41,14 +45,6 @@ img {
 
 a {
   overflow-wrap: break-word;
-}
-
-a.header--site-name {
-  display: flex !important;
-}
-.header .header--item.is-complex:not(.is-mobile-menu) {
-  align-items: center !important;
-  display: flex !important;
 }
 
 @media all and (max-width: 73.5em) {
@@ -84,38 +80,8 @@ a.header--site-name {
   }
 }
 
-/* Copied from Co-Design for compatibility purposes */
-ul.pagination li.active {
-  border-color:#293338;
-  background-color:#3f4e56;
-  box-shadow:2px 3px 2px -2px #344147;
-  color:#fff;
-  font-weight:600
-}
-
-ul.pagination li.active a:hover {
-  background-color:transparent
-}
-
-ul.pagination li.disabled {
-  box-shadow:none
-}
-/* *** */
-
 .notice__dev-mode {
   font-size: 14px;
-}
-
-header {
-  &.header {
-    z-index: 5;
-    position: relative;
-    box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2);
-  }
-  &.header.sticky {
-    position: sticky;
-    top: 0;
-  }
 }
 
 .notice a.has-font-size-larger {
@@ -174,10 +140,6 @@ hr {
   overflow-y: scroll;
 }
 
-.header--container {
-  align-items: center !important;
-}
-
 img {
   align-self: flex-start;
 }
@@ -189,12 +151,17 @@ img {
 .widget .widget--body + .widget--header {
   border-top: 1px solid #d0d9dd;
 }
+
 .widget.is-tertiary .widget--body + .widget--header {
   border-top: 1px solid #9daeb7;
 }
 
 .widget .widget--body .widget--body-extra {
   margin-left: 0.75em;
+}
+
+.widget--body, .widget-body p {
+  overflow-wrap: break-word;
 }
 
 pre {
@@ -216,7 +183,10 @@ pre .hljs {
 table {
   border-collapse: collapse;
   padding: 4px;
-  max-width: 100%
+  max-width: 100%;
+  td {
+    overflow-wrap: anywhere;
+  }
 }
 
 table.is-full-width {
@@ -252,52 +222,46 @@ table.is-with-hover tr:hover td {
   background-color: #eee
 }
 
-/* The default header size (2.5rem) is too huge for small headers. */
-.header.is-small .header--brand .header--site-name {
-  font-size: 2rem;
-}
-
 .notice {
   z-index: 9999;
-}
-
-/* Fix header images being stretched - https://meta.codidact.com/posts/278377 */
-img.header--item-image {
-  object-fit: contain;
 }
 
 .widget--header-link {
   margin: 0 0 0 0.5em;
 }
 
+mjx-assistive-mml {
+  max-width: 100%;
+}
 
-.is-partial-only:not(.open) {
-  max-height: 100px;
-  overflow: hidden;
-  position: relative;
+mjx-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 
-  &::after {
-    content: '';
-    position: absolute;
-    right: 0; left: 0;
-    bottom: 0;
-    height: 75px;
-    background-color: rgba(255, 255, 255, 0.5);
-    background: linear-gradient(#ffffff66, #fffffffa);
-    z-index: 10000000;
-  }
+code,
+kbd {
+  padding: {
+    top: 0.1em;
+    bottom: 0.1em;
+    left: 0.25em;
+    right: 0.25em;
+  };
+}
 
-  &::before {
-    content: 'expand';
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%);
-    bottom: 10px;
-    z-index: 10000001;
-    padding: 5px 20px;
-    background-color: #ddd;
-    border: 1px solid #666;
-    border-radius: 15px;
-    cursor: pointer;
-  }
+kbd {
+  border: {
+    color: $muted-graphic;
+    radius: 0.25em;
+    style: solid;
+    width: 1px;
+  };
+  font: {
+    family: $font-stack-code;
+    size: map-get($font-sizes, 'xxs');
+  };
+  margin: {
+    left: 0.15em;
+    right: 0.15em;
+  };
 }

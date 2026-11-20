@@ -11,3 +11,6 @@
 - name: nominated_for_promotion
 - name: promotion_removed
 - name: history_hidden
+- name: category_changed
+- name: post_locked
+- name: post_unlocked

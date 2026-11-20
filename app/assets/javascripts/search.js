@@ -1,8 +1,9 @@
 $(() => {
-  let postTypes;
+  /** @type {QPixelPostType[] | null} */
+  let postTypes = null;
   const $itemTemplate = $('<a href="javascript:void(0)" class="item"></a>');
 
-  $(document).on('keyup', 'input[name="search"]', async ev => {
+  $(document).on('keyup', 'input[name="search"]', async (ev) => {
     if (QPixel.Popup.isSpecialKey(ev.keyCode)) {
       return;
     }
@@ -18,29 +19,29 @@ $(() => {
       return;
     }
 
+    /**
+     * @type {QPixelPopupCallback}
+     */
     const callback = (ev, popup) => {
       const $item = $(ev.target).hasClass('item') ? $(ev.target) : $(ev.target).parents('.item');
       const id = $item.data('post-type-id');
       $tgt[0].selectionStart = caretPos - posInWord;
       $tgt[0].selectionEnd = (caretPos - posInWord) + currentWord.length;
-      QPixel.replaceSelection($tgt, `post_type:${id}`);
+      QPixel.MD.replaceSelection($tgt, `post_type:${id}`);
       popup.destroy();
       $tgt.focus();
     };
 
     if (!postTypes) {
-      const resp = await fetch(`/posts/types`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
+      const resp = await QPixel.getJSON(`/posts/types`);
+
       postTypes = await resp.json();
     }
 
-    const items = postTypes.filter(pt => pt.name.startsWith(currentWord.substr(10))).map(pt => {
+    const items = postTypes.filter((pt) => pt.name.startsWith(currentWord.substr(10))).map((pt) => {
       return $itemTemplate.clone().text(pt.name).attr('data-post-type-id', pt.id);
     });
+
     QPixel.Popup.getPopup(items, $tgt[0], callback);
   });
 });

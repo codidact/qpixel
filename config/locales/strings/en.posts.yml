@@ -1,12 +1,16 @@
 en:
   posts:
     #alert/notice
+    create_requires_post: >
+      Can't create a post without content. Please try again later or contact us.
     category_low_trust_level: >
       You don't have a high enough trust level to post in the :name category.
     type_requires_category: >
       You can't create a :type without a category.
     type_requires_parent: >
       You can't create a :type without a parent post.
+    spam_blocked: >
+      Couldn't create your post. Try again later.
     not_public_editable: >
       This type of post can only be edited by its author and the site moderators.
     cant_close_post: >
@@ -33,6 +37,8 @@ en:
       Can't restore a post that isn't deleted.
     cant_restore_deleted_by_moderator: >
       You cannot restore this post deleted by a moderator.
+    cant_restore_deleted_by_staff: >
+      You cannot restore this post deleted by staff.
     cant_change_category: >
       You don't have permission to make that change.
     type_not_included: >

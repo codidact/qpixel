@@ -1,0 +1,1 @@
+UpdateUserStatsJob.perform_later

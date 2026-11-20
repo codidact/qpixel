@@ -1,5 +1,5 @@
-$(() => {
-  $(document).on('click', '.vote-button', async evt => {
+document.addEventListener('DOMContentLoaded', () => {
+  $(document).on('click', '.vote-button', async (evt) => {
     const $tgt = $(evt.target).is('button') ? $(evt.target) : $(evt.target).parents('button');
     const $post = $tgt.parents('.post');
 
@@ -7,44 +7,27 @@ $(() => {
 
     const $up = $container.find('.js-upvote-count');
     const $down = $container.find('.js-downvote-count');
+    const postId = $post.data('post-id');
     const voteType = $tgt.data('vote-type');
     const voted = $tgt.hasClass('is-active');
 
     if (voted) {
       const voteId = $tgt.attr('data-vote-id');
 
-      const resp = await fetch(`/votes/${voteId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'X-CSRF-Token': QPixel.csrfToken() }
-      });
+      const data = await QPixel.retractVote(voteId);
 
-      const data = await resp.json();
-
-      if (data.status === 'OK') {
+      QPixel.handleJSONResponse(data, (data) => {
         $up.text(`+${data.upvotes}`);
         $down.html(`&minus;${data.downvotes}`);
         $container.attr("title", `Score: ${data.score}`);
         $tgt.removeClass('is-active')
             .removeAttr('data-vote-id');
-      }
-      else {
-        console.error('Vote delete failed');
-        console.log(resp);
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${data.message} (${resp.status})`);
-      }
+      });
     }
     else {
-      const resp = await fetch('/votes/new', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': QPixel.csrfToken() },
-        body: JSON.stringify({post_id: $post.data('post-id'), vote_type: voteType})
-      });
+      const data = await QPixel.vote(postId, voteType);
 
-      const data = await resp.json();
-
-      if (data.status === 'modified' || data.status === 'OK') {
+      QPixel.handleJSONResponse(data, (data) => {
         $up.text(`+${data.upvotes}`);
         $down.html(`&minus;${data.downvotes}`);
         $container.attr("title", `Score: ${data.score}`);
@@ -56,12 +39,7 @@ $(() => {
           $oppositeVote.removeClass('is-active')
                        .removeAttr('data-vote-id');
         }
-      }
-      else {
-        console.error('Vote create failed');
-        console.log(resp);
-        QPixel.createNotification('danger', `<strong>Failed:</strong> ${data.message} (${resp.status})`);
-      }
+      });
     }
   });
 });

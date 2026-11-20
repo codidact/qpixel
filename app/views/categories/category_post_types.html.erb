@@ -1,8 +1,17 @@
-<p class="has-font-size-caption">
-  <%= link_to edit_category_path(@category) do %>
-    &laquo; Back to category edit
-  <% end %>
-</p>
+<%#
+    View for managing allowed category post types
+
+    Parameters:
+      params[:no_return] : whether to suppress the return link
+%>
+
+<% unless params[:no_return] == '1' %>
+  <p class="has-font-size-caption">
+    <%= link_to edit_category_path(@category) do %>
+      &laquo; Back to category edit
+    <% end %>
+  </p>
+<% end %>
 <h1>Allowed post types for <%= @category.name %></h1>
 <p class="has-font-size-caption">
   Only post types listed here are allowed to be posted in this category. Not all will be displayed as available options

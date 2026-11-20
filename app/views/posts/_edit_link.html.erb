@@ -1,0 +1,11 @@
+<%#
+  Helper for rendering post edit link buttons
+
+  Variables:
+    post : Post to create the link for
+%>
+
+<%= link_to edit_post_path(post), class: 'tools--item', 'aria-label': 'Edit this post' do %>
+  <i class="fa fa-pencil-alt"></i>
+  Edit
+<% end %>

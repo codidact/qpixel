@@ -7,7 +7,7 @@ QPixel.Popup = class Popup {
    * Remove all currently open popups.
    */
   static destroyAll () {
-    Object.values(QPixel._popups).forEach(popup => {
+    Object.values(QPixel._popups).forEach((popup) => {
       popup.destroy();
     });
   }
@@ -15,7 +15,7 @@ QPixel.Popup = class Popup {
   /**
    * Indicates whether the pressed key will be handled by the Popup class, and hence whether any
    * calling event handlers should ignore the key press.
-   * @param code the event keyCode property
+   * @param {number} code the event keyCode property
    */
   static isSpecialKey (code) {
     return [13, 27, 38, 40].includes(code);
@@ -24,10 +24,9 @@ QPixel.Popup = class Popup {
   /**
    * Get a popup for a given input field. You should generally use this method instead of directly
    * calling the constructor, as this accounts for pre-existing popups.
-   * @param items an array of jQuery-wrappable elements to include - apply the `item` class to each one
-   * @param field the parent textarea HTMLElement that this popup is for
-   * @param cb a callback that will be called when an item is clicked - it will be passed the click event
-   * @returns {QPixel.Popup}
+   * @param {JQuery[]} items an array of jQuery-wrappable elements to include - apply the `item` class to each one
+   * @param {HTMLInputElement | HTMLTextAreaElement} field parent field that the popup is for
+   * @param {QPixelPopupCallback} cb a callback that will be called when an item is clicked
    */
   static getPopup (items, field, cb) {
     const popupId = $(field).attr('data-popup');
@@ -44,10 +43,10 @@ QPixel.Popup = class Popup {
   }
 
   /**
-   * Create a textarea 'suggestions'-type popup that drops down from the current caret position.
-   * @param items an array of jQuery-wrappable elements to include - apply the `item` class to each one
-   * @param field the parent textarea HTMLElement that this popup is for
-   * @param cb a callback that will be called when an item is clicked - it will be passed the click event
+   * Create a 'suggestions'-type popup that drops down from the current caret position.
+   * @param {JQuery[]} items an array of jQuery-wrappable elements to include - apply the `item` class to each one
+   * @param {HTMLInputElement | HTMLTextAreaElement} field parent field that the popup is for
+   * @param {QPixelPopupCallback} cb a callback to call when an item is clicked
    * @constructor
    */
   constructor (items, field, cb) {
@@ -61,9 +60,9 @@ QPixel.Popup = class Popup {
     this._clickHandler = this.getClickHandler();
     this._keyHandler = this.getKeyHandler();
 
-    this.items.forEach(el => {
+    this.items.forEach((el) => {
       this.$popup.append(el);
-      $(el).on('click', ev => {
+      $(el).on('click', (ev) => {
         ev.stopPropagation();
         return !!this.callback ? this.callback(ev, this) : null;
       });
@@ -85,13 +84,13 @@ QPixel.Popup = class Popup {
 
   /**
    * Update the items shown in the popup.
-   * @param items a new list of items to display, in the same format as for getPopup
+   * @param {JQuery[]} items a new list of items to display, in the same format as for getPopup
    */
   updateItems (items) {
     this.$popup.empty();
-    items.forEach(el => {
+    items.forEach((el) => {
       this.$popup.append(el);
-      $(el).on('click', ev => {
+      $(el).on('click', (ev) => {
         ev.stopPropagation();
         return !!this.callback ? this.callback(ev, this) : null;
       });
@@ -114,7 +113,7 @@ QPixel.Popup = class Popup {
    * Change the callback function to the provided function.
    * Necessary because if the callback is in a closure, old variable values (like cursor position)
    * will remain unless we update the callback to a new function in an updated closure.
-   * @param cb the new callback function to apply
+   * @param {QPixelPopupCallback} cb the new callback function to apply
    */
   setCallback (cb) {
     this.callback = cb;
@@ -122,10 +121,13 @@ QPixel.Popup = class Popup {
 
   getActiveIdx () {
     const items = this.$popup.find('.item').toArray();
-    const matching = items.filter(x => $(x).hasClass('active'));
+    const matching = items.filter((x) => $(x).hasClass('active'));
     return matching.length > 0 ? items.indexOf(matching[0]) : null;
   }
 
+  /**
+   * @param {number} idx 
+   */
   setActive (idx) {
     const items = this.$popup.find('.item');
     items.removeClass('active');
@@ -149,17 +151,19 @@ QPixel.Popup = class Popup {
    */
   getClickHandler () {
     const self = this;
-    return function (ev) {
+    return function (_ev) {
       self.destroy();
     };
   }
 
   /**
    * Internal. Handle a keypress anywhere on the body element.
-   * @param ev the keydown Event
    */
-  getKeyHandler (ev) {
+  getKeyHandler () {
     const self = this;
+    /**
+     * @param {JQuery.KeyboardEventBase} ev
+     */
     return function (ev) {
       switch (ev.keyCode) {
         case 27: // Escape
@@ -180,7 +184,6 @@ QPixel.Popup = class Popup {
           break;
         case 13: // Enter
           const selected = self.$popup.find('.item.active');
-          console.log('enter, selected: ', selected);
           if (selected.length > 0) {
             ev.stopPropagation();
             ev.preventDefault();

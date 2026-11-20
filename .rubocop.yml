@@ -4,13 +4,16 @@ require:
   - ./lib/rubocop/path_in_helpers.rb
 
 AllCops:
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.1
   Exclude:
     - 'config/**/*'
-    - 'db/**/*'
+    - 'db/schema.rb'
+    - 'docker/mysql/**/*'
     - 'scripts/**/*'
     - 'bin/**/*'
     - 'lib/namespaced_env_cache.rb'
+    - 'vendor/bundle/**/*'
+    - 'docker/**/*'
   NewCops: enable
   SuggestExtensions: false
 
@@ -23,7 +26,9 @@ Layout/LineLength:
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 Layout/SpaceInsideArrayLiteralBrackets:
-  Enabled: false
+  Enabled: true
+Layout/EndOfLine:
+  EnforcedStyle: lf
 
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
@@ -53,6 +58,16 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/BlockForwarding:
+  EnforcedStyle: explicit
+Naming/PredicateMethod:
+  Mode: conservative
+  AllowedPatterns: ['verify_.*', 'check_.*', 'enforce_.*', 'setup_.*','add_.*', 'remove_.*']
+  AllowedMethods:
+    - post_sign_in # returns a boolean but is a necessary after-sign-in method for both normal and SAML flows
+    - comment_rate_limited? # returns a tuple with the boolean as the first value
+  AllowBangMethods: true
+
 Style/ClassAndModuleChildren:
   Enabled: false
 Style/ClassVars:
@@ -72,6 +87,9 @@ Style/GuardClause:
   Enabled: false
 Style/HashEachMethods:
   Enabled: true
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+  EnforcedShorthandSyntax: never
 Style/HashTransformKeys:
   Enabled: true
 Style/HashTransformValues:

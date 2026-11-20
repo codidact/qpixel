@@ -1,0 +1,26 @@
+<%#
+   "Helper for rendering the follow/unfollow comments buttons
+
+    Variables:
+      post : Post to create the link for
+      user : User to check the following status for
+"%>
+
+<%
+  is_followed = post.followed_by?(user)
+  action_path = is_followed ?
+                  unfollow_post_comments_path(post_id: post.id) :
+                  follow_post_comments_path(post_id: post.id)
+  text = "#{is_followed ? 'Unfollow' : 'Follow'} new"
+  title = 'Switch following new comment threads on this post'
+%>
+
+<%= form_tag action_path, method: :post do %>
+  <%= button_tag type: :submit,
+                 class: "button is-muted is-outlined is-small js-follow-comments",
+                 data: { post_id: post.id, action: is_followed ? 'unfollow' : 'follow' },
+                 aria: { label: title },
+                 title: title do %>
+    <i class="fas fa-fw <%= is_followed ? 'fa-bell-slash' : 'fa-bell' %>"></i> <%= text %>
+  <% end %>
+<% end %>

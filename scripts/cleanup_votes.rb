@@ -1,1 +1,1 @@
-CleanupVotesJob.perform_later
+CleanupVotesJob.perform_now

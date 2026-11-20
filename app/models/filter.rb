@@ -2,6 +2,10 @@ class Filter < ApplicationRecord
   belongs_to :user
   has_many :category_filter_defaults, dependent: :destroy
   validates :name, uniqueness: { scope: :user }
-  serialize :include_tags, Array
-  serialize :exclude_tags, Array
+  serialize :include_tags, coder: YAML, type: Array
+  serialize :exclude_tags, coder: YAML, type: Array
+
+  def system?
+    user_id == -1
+  end
 end

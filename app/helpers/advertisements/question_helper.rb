@@ -6,6 +6,7 @@ module Advertisements::QuestionHelper
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/BlockLength
   def question_ad(question)
+    # TODO: trying to cache like this is probably a terrible idea - review options
     Rails.cache.fetch "posts/#{question.id}/ad", expires_in: 60.minutes do
       ad = Image.new(600, 500)
       ad.background_color = 'white'
@@ -28,9 +29,9 @@ module Advertisements::QuestionHelper
         img.fill = 'white'
       end
 
-      icon_path = SiteSetting.find_by(name: 'SiteLogoPath', community: question.community).typed
-      if icon_path.present?
-        icon = community_icon(icon_path)
+      icon = community_icon(SiteSetting['SiteLogoPath', community: question.community])
+
+      if icon.present?
         icon.resize_to_fit!(175, 75)
         ad.composite!(icon, SouthWestGravity, 20, 15, SrcAtopCompositeOp)
       else

@@ -1,6 +1,10 @@
-<% content_for :title, "Close Reasons" %>
+<%
+  title = "Edit close reason \"#{@close_reason.name}\""
+%>
 
-<h1>Edit close reason</h1>
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <div class="notice is-warning has-color-yellow-900 has-font-size-caption flex-row-always jc-sb ai-c">
   <i class="fas fa-exclamation-triangle"></i>

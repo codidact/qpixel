@@ -15,9 +15,16 @@
   <% end %>
   <div class="field">
     <%= f.label :value %>
-    <%= f.text_field :value, class: "form-control" %>
+    <% if @setting.array? %>
+      <%= f.select :value,
+                   options_for_select(@setting.typed, selected: @setting.typed),
+                   {},
+                   class: 'form-element' %>
+    <% else %>
+      <%= f.text_field :value, class: "form-control" %>
+    <% end %>
   </div>
   <div class="field">
-    <%= f.submit "Update", class: "btn btn-info" %>
+    <%= f.submit "Update", class: "btn btn-info has-display-block" %>
   </div>
 <% end %>

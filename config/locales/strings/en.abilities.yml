@@ -1,0 +1,10 @@
+en:
+  abilities:
+    #_form.html.erb
+    body_label: >
+      Description
+    unsaved_changes_confirmation: >
+      Any unsaved changes will be lost. Are you sure?
+    success:
+      update_generic: >
+        Ability successfully updated.

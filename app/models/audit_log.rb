@@ -1,8 +1,12 @@
 class AuditLog < ApplicationRecord
   include CommunityRelated
+  include Timestamped
+  include UserSortable
 
   belongs_to :related, polymorphic: true, optional: true
   belongs_to :user, optional: true
+
+  scope :of_type, ->(name) { where(event_type: name) }
 
   class << self
     [:admin_audit, :moderator_audit, :action_audit, :user_annotation, :user_history, :pii_history, :block_log,

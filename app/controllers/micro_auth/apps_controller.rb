@@ -23,9 +23,9 @@ class MicroAuth::AppsController < ApplicationController
   def create
     @app = MicroAuth::App.new(app_params.merge({
                                                  public_key: SecureRandom.base58(32),
-      secret_key: SecureRandom.base58(32),
-      app_id: generate_app_id,
-      user: current_user
+                                                 secret_key: SecureRandom.base58(32),
+                                                 app_id: generate_app_id,
+                                                 user: current_user
                                                }))
     if @app.save
       redirect_to oauth_app_path(@app.app_id)
@@ -66,7 +66,7 @@ class MicroAuth::AppsController < ApplicationController
   end
 
   def verify_ownership
-    not_found unless @app.user == current_user || helpers.admin?
+    not_found! unless @app.user.same_as?(current_user) || helpers.admin?
   end
 
   def app_params

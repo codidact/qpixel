@@ -1,17 +1,19 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  app_id: MyString
-  public_key: MyString
-  secret_key: MyString
+owned_by_standard:
+  name: App owned by the standard user
+  app_id: StdApp
+  public_key: KF2zSr1dgedXNgUfwmWtjjrN7MNpSWAh
+  secret_key: FHWv7FJ9ZrJ2AJbriQELXFv8J6JXmK2K
   description: MyText
   auth_domain: MyString
+  user: standard_user
 
-two:
-  name: MyString
-  app_id: MyString
-  public_key: MyString
-  secret_key: MyString
+owned_by_admin:
+  name: App owned by a community admin
+  app_id: AdminApp
+  public_key: dQUptrgdqiLKZHSKm2ArZXJRwRh9yLXD
+  secret_key: PWT7h32gnQC6Sam32iTNoTHD5DnbTTRU
   description: MyText
   auth_domain: MyString
+  user: admin

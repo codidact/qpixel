@@ -1,11 +1,45 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+active_with_label:
+  community: sample
+  label: test link
+  link: https://example.com
+  active: true
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+active_with_post:
+  community: sample
+  post: question_one
+  active: true
+
+inactive:
+  community: sample
+  label: test link
+  link: https://example.com
+  active: false
+
+timed_past:
+  community: sample
+  label: link in the past
+  link: https://example.com
+  active: true
+  shown_before: 2019-01-01T00:00:00.000000Z
+
+timed_present:
+  community: sample
+  label: link in the present
+  link: https://example.com
+  active: true
+  shown_after: 2019-01-01T00:00:00.000000Z
+  shown_before: <%= DateTime.now + 1 %>
+
+timed_future:
+  community: sample
+  label: link in the future
+  link: https://example.com
+  active: true
+  shown_after: <%= DateTime.now + 1 %>
+  shown_before: <%= DateTime.now + 1 %>
+
+global_active_with_label:
+  community: ~
+  label: test global link
+  link: https://example.com
+  active: true

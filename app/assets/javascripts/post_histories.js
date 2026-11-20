@@ -1,9 +1,14 @@
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
   const openRelevantEditOnly = () => {
-    $("details.history-event").prop('open', false);
-    $(location.hash).prop('open', true);
-  }
+    const [[, historyId]] = location.hash.split(':~:');
 
-  window.addEventListener("hashchange", openRelevantEditOnly);
+    document.querySelectorAll('details.history-event').forEach((el) => {
+      if (el instanceof HTMLDetailsElement) {
+        el.open = el.id === historyId;
+      }
+    });
+  };
+
+  window.addEventListener('hashchange', openRelevantEditOnly);
   openRelevantEditOnly();
 });

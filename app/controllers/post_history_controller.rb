@@ -3,7 +3,7 @@ class PostHistoryController < ApplicationController
     @post = Post.find(params[:id])
 
     unless @post.can_access?(current_user)
-      return not_found
+      return not_found!
     end
 
     @history = PostHistory.where(post_id: params[:id])
@@ -22,7 +22,7 @@ class PostHistoryController < ApplicationController
     @post = Post.by_slug(params[:slug], current_user)
 
     if @post.nil?
-      return not_found
+      return not_found!
     end
 
     @history = PostHistory.where(post_id: @post.id)

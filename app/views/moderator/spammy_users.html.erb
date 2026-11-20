@@ -1,0 +1,49 @@
+<% content_for :title, 'Moderate Spam Profiles' %>
+
+<h1>Spam Profiles</h1>
+<p>
+  These are user accounts which have been automatically identified as potential spam based on the account's
+  characteristics. Review the list and place a tick against those that are spam, then click Handle to block and delete.
+</p>
+
+<div class="flex-row space-between">
+  <div class="button-list is-gutterless">
+    <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="all">Tick all</button>
+    <button type="button" class="button is-muted is-outlined js-bulk-check" data-check="none">Clear all</button>
+  </div>
+  <div class="button-list is-gutterless">
+    <%= link_to '24 hours',
+                query_url(period: 'day'),
+                class: "button is-muted is-outlined#{' is-active' if params[:period] == 'day'}" %>
+    <%= link_to '7 days',
+                query_url(period: 'week'),
+                class: "button is-muted is-outlined#{' is-active' if params[:period] == 'week'}" %>
+    <%= link_to '30 days',
+                query_url(period: 'month'),
+                class: "button is-muted is-outlined#{' is-active' if params[:period].blank? || params[:period] == 'month'}" %>
+  </div>
+</div>
+
+<%= form_tag mod_handle_spammers_path, method: :post, class: 'js-spammer-form' do %>
+  <% @users.each do |user| %>
+    <div class="widget">
+      <div class="widget--body">
+        <%= render 'users/common_card', user: user %>
+        <pre><%= user.profile_markdown.first(1000) %></pre>
+      </div>
+      <div class="widget--footer check-group-horizontal check-group__right">
+        <%= label_tag "spammer_#{user.id}", 'Spammer?', class: 'form-element' %>
+        <%= check_box_tag "spam_ids[]", user.id, id: "spammer_#{user.id}", class: 'checkbox__large' %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @users.empty? %>
+    <p class="has-font-size-display has-text-align-center"><i class="fas fa-virus-slash"></i></p>
+    <p class="has-text-align-center">Yay! No spammers here.</p>
+  <% end %>
+
+  <div class="actions">
+    <button type="submit" class="button is-filled is-danger" <%= 'disabled' if @users.empty? %>>Handle</button>
+  </div>
+<% end %>

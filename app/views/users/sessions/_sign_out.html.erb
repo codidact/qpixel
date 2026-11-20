@@ -1,0 +1,16 @@
+<%#
+   "Renders a sign out button depending on what sign in method is enabled (Devise or SAML)
+
+   Variables:
+   ? is_danger : whether the button should be rended as a dangerous action
+"%>
+
+<%
+  is_danger = defined?(is_danger) ? is_danger : false
+%>
+
+<%= link_to 'Sign Out',
+            devise_sign_in_enabled? ? destroy_user_session_path : destroy_saml_user_session_path,
+            class: "button #{is_danger ? 'is-outlined is-danger' : 'is-muted'}",
+            method: :delete,
+            role: 'button' %>

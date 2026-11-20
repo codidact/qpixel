@@ -1,5 +1,5 @@
 class MicroAuth::App < ApplicationRecord
-  has_many :tokens, class_name: 'MicroAuth::Token'
+  has_many :tokens, class_name: 'MicroAuth::Token', dependent: :destroy
   has_many :users, through: :tokens
   belongs_to :user
   belongs_to :deactivated_by, class_name: 'User', required: false

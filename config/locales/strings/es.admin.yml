@@ -30,6 +30,6 @@ es:
       privileges: 'Privilegios'
       close_reasons: 'Razones para Cerrar'
       licenses: 'Licencias'
-      audit_log: 'Registro de Auditoría'
+      audit_logs: 'Registro de Auditoría'
       post_types: 'Tipos de Publicación'
     user_fed_stat: 'STAT alimentado con usuario/a.'

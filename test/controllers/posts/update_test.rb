@@ -10,7 +10,7 @@ class PostsControllerTest < ActionController::TestCase
                              post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
                                      tags_cache: sample.edit.tags_cache } }
     after_history = PostHistory.where(post: posts(:question_one)).count
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to post_path(posts(:question_one))
     assert_not_nil assigns(:post)
     assert_equal sample.edit.body_markdown, assigns(:post).body_markdown
@@ -24,7 +24,7 @@ class PostsControllerTest < ActionController::TestCase
                              post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
                                      tags_cache: sample.edit.tags_cache } }
     after_history = PostHistory.where(post: posts(:question_one)).count
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to post_path(posts(:question_one))
     assert_not_nil assigns(:post)
     assert_equal sample.edit.body_markdown, assigns(:post).body_markdown
@@ -35,8 +35,8 @@ class PostsControllerTest < ActionController::TestCase
     patch :update, params: { id: posts(:question_one).id,
                              post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
                                      tags_cache: sample.edit.tags_cache } }
-    assert_response 302
-    assert_redirected_to new_user_session_path
+
+    assert_redirected_to_sign_in
   end
 
   test 'update by unprivileged user generates suggested edit' do
@@ -49,7 +49,7 @@ class PostsControllerTest < ActionController::TestCase
                                      tags_cache: sample.edit.tags_cache } }
     after_history = PostHistory.where(post: posts(:question_one)).count
     after_edits = SuggestedEdit.where(post: posts(:question_one)).count
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to post_path(posts(:question_one))
     assert_not_nil assigns(:post)
     assert_equal before_body, assigns(:post).body_markdown, 'Suggested edit incorrectly applied immediately'
@@ -65,11 +65,31 @@ class PostsControllerTest < ActionController::TestCase
                              post: { title: post.title, body_markdown: post.body_markdown,
                                      tags_cache: post.tags_cache } }
     after_history = PostHistory.where(post: posts(:question_one)).count
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to post_path(posts(:question_one))
     assert_not_nil assigns(:post)
     assert_not_nil flash[:danger]
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on no-change update'
+  end
+
+  test 'update rejects edit with no change apart from line ending style' do
+    sign_in users(:standard_user)
+    post = posts(:question_three)
+    before_history = PostHistory.where(post: post).count
+    bm = post.body_markdown
+    body_markdown_with_crlf = bm.encode(bm.encoding, universal_newline: true).split("\n").join("\r\n")
+    patch :update, params: { id: post.id,
+                             post: { title: post.title,
+                                     body_markdown: body_markdown_with_crlf,
+                                     tags_cache: post.tags_cache } }
+    after_history = PostHistory.where(post: post).count
+    assert_response(:found)
+    assert_redirected_to post_path(post)
+    assert_not_nil assigns(:post)
+    assert_not_nil flash[:danger]
+    assert_equal before_history,
+                 after_history,
+                 'PostHistory event incorrectly created on line-ending-change-only update'
   end
 
   test 'cannot update locked post' do
@@ -79,7 +99,7 @@ class PostsControllerTest < ActionController::TestCase
                              post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
                                      tags_cache: sample.edit.tags_cache } }
     after_history = PostHistory.where(post: posts(:locked)).count
-    assert_response 403
+    assert_response(:forbidden)
     assert_equal before_history, after_history, 'PostHistory event incorrectly created on update'
   end
 
@@ -90,7 +110,7 @@ class PostsControllerTest < ActionController::TestCase
                              post: { title: sample.edit.title, body_markdown: sample.edit.body_markdown,
                                      tags_cache: sample.edit.tags_cache } }
     after_history = PostHistory.where(post: posts(:free_edit)).count
-    assert_response 302
+    assert_response(:found)
     assert_redirected_to post_path(posts(:free_edit))
     assert_not_nil assigns(:post)
     assert_equal sample.edit.body_markdown, assigns(:post).body_markdown

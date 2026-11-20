@@ -1,4 +1,6 @@
 class Reaction < ApplicationRecord
+  include Timestamped
+
   belongs_to :reaction_type
   belongs_to :user
   belongs_to :post

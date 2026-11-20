@@ -1,6 +1,14 @@
+<%
+  title = 'Reports'
+%>
+
+<% content_for :title, title %>
+
 <%= link_to moderator_path, class: 'has-font-size-small' do %>
   &laquo; Return to moderator tools
 <% end %>
+
+<h1><%= title %></h1>
 
 <% global = current_page?(global_users_report_path) ||
             current_page?(global_subs_report_path) ||

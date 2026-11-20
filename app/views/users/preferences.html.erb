@@ -1,6 +1,12 @@
-<%= render 'tabs', user: current_user %>
+<%
+  title = 'Preferences'
+%>
 
-<h1>Preferences</h1>
+<% content_for :title, title %>
+
+<%= render 'tabs', user: current_user, active_tab: 'preferences' %>
+
+<h1><%= title %></h1>
 <p>
   Manage your user preferences here. Changes are automatically saved.
 </p>

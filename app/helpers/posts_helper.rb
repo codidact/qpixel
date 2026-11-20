@@ -1,8 +1,39 @@
 module PostsHelper
-  def post_markdown(scope, field_name)
-    params['__html'].presence || render_markdown(params[scope][field_name])
+  # Gets a link to a given post's user
+  # @param post [Post] post to link the user for
+  # @param active [Boolean] if +true+, will link to the user with the last activity on the post
+  # @return [String] user link
+  def post_user_link(post, active: false)
+    user = active ? post.last_activity_by || post.user : post.user
+    user_link(user, { host: post.community.host })
   end
 
+  # Renders title for a given post
+  # @param post [Post] post to render the title for
+  # @return [ActiveSupport::SafeBuffer] rendered title
+  def rendered_title(post)
+    raw_title = post.top_level? ? post.title : post.parent.title
+    sanitize(render_markdown(raw_title), scrubber: title_scrubber)
+  end
+
+  ##
+  # Get HTML for a field - should only be used in Markdown create/edit requests. Prioritises using the client-side
+  # rendered HTML over rendering server-side.
+  # @param scope [Symbol] The parameter scope for the markdown - i.e. if the form submits it as +posts[body_markdown]+,
+  #   this should be +:posts+.
+  # @param field_name [Symbol] The parameter name for the markdown - i.e. +:body_markdown+ in the same example.
+  # @return [String]
+  def rendered_post(scope, field_name)
+    if params['__html'].present? && params['__html'] != '<!-- g: js, mdit -->'
+      params['__html']
+    else
+      render_markdown params[scope][field_name]
+    end
+  end
+
+  ##
+  # Get the redirect path to use when the user cancels an edit.
+  # @return [String]
   def cancel_redirect_path(post)
     if post.id.present?
       post_url(post)
@@ -15,21 +46,28 @@ module PostsHelper
     end
   end
 
-  # @param category [Category, Nil]
-  # @return [Integer] the minimum length for post bodies
+  ##
+  # Get the minimum body length for the specified category.
+  # @param category [Category, nil]
+  # @return [Integer]
   def min_body_length(category)
     category&.min_body_length || 30
   end
 
-  # @param _category [Category, Nil]
-  # @return [Integer] the maximum length for post bodies
+  ##
+  # Get the maximum body length for the specified category. Returns a constant 30,000 at present but intended to return
+  # a configurable value in the future.
+  # @param _category [Category, nil]
+  # @return [Integer]
   def max_body_length(_category)
     30_000
   end
 
-  # @param category [Category, Nil] post category, if any
-  # @param post_type [PostType] type of the post (system limits are relaxed)
-  # @return [Integer] the minimum length for post titles
+  ##
+  # Get the minimum title length for the specified category.
+  # @param category [Category, nil]
+  # @param post_type [PostType] Type of the post (system limits are relaxed)
+  # @return [Integer]
   def min_title_length(category, post_type)
     if post_type.system?
       1
@@ -38,19 +76,32 @@ module PostsHelper
     end
   end
 
-  # @param _category [Category, Nil]
-  # @return [Integer] the maximum length for post titles
+  ##
+  # Get the maximum title length for the specified category. Has a hard limit of 255 characters.
+  # @param _category [Category, nil]
+  # @return [Integer]
   def max_title_length(_category)
     [SiteSetting['MaxTitleLength'] || 255, 255].min
   end
 
-  class PostScrubber < Rails::Html::PermitScrubber
+  class PostTitleScrubber < Rails::HTML::PermitScrubber
     def initialize
       super
-      # IF YOU CHANGE THESE VALUES YOU MUST ALSO CHANGE app/assets/javascripts/posts.js
-      self.tags = %w[a p span b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img strike del code pre br ul ol li sup sub
-                     section details summary ins table thead tbody tr th td s]
-      self.attributes = %w[id class href title src height width alt rowspan colspan lang start dir]
+
+      attrs = []
+      tags = []
+
+      allowed_types = SiteSetting['AllowedPostTitleFormattingTypes'] || ['code', 'italic', 'keyboard']
+      tags.push('del', 'strike') if allowed_types.include?('strikethrough')
+      tags << 'code' if allowed_types.include?('code')
+      tags << 'kbd' if allowed_types.include?('keyboard')
+      tags << 'em' if allowed_types.include?('italic')
+      tags << 'strong' if allowed_types.include?('bold')
+      tags << 'sub' if allowed_types.include?('subscript')
+      tags << 'sup' if allowed_types.include?('superscript')
+
+      self.tags = tags
+      self.attributes = attrs
     end
 
     def skip_node?(node)
@@ -58,7 +109,34 @@ module PostsHelper
     end
   end
 
+  class PostScrubber < Rails::Html::PermitScrubber
+    ALLOWED_ATTRS = %w[id class href title src height width alt rowspan colspan lang start dir].freeze
+
+    ALLOWED_TAGS = %w[a p span b i em strong hr h1 h2 h3 h4 h5 h6 blockquote img
+                      strike del code pre br ul ol li sup sub kbd
+                      section details summary ins table thead tbody tr th td s].freeze
+
+    def initialize
+      super
+      self.tags = ALLOWED_TAGS
+      self.attributes = ALLOWED_ATTRS
+    end
+
+    def skip_node?(node)
+      node.text?
+    end
+  end
+
+  ##
+  # Get a post scrubber instance.
+  # @return [PostScrubber]
   def scrubber
     PostsHelper::PostScrubber.new
+  end
+
+  # Get a post title scrubber instance
+  # @return [PostTitleScrubber]
+  def title_scrubber
+    PostsHelper::PostTitleScrubber.new
   end
 end

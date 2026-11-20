@@ -1,0 +1,18 @@
+<%#
+   "Renders flagged state notice for a given post
+
+    Variables:
+      post : Post to render the notice for
+      user : User to show the notice for
+"%>
+
+<div class="notice has-margin-2">
+  <% if post.user.same_as?(user) %>
+    <p>
+      Your post has been flagged by members of our community.
+      Please review our <a href="/help/spam">guidelines for promotional content</a>.
+    </p>
+  <% else %>
+    <p><strong>Possible spam:</strong> this post has pending flags for spam. Be careful when following links.</p>
+  <% end %>
+</div>

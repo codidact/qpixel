@@ -12,12 +12,18 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
-  # Show full error reports and disable caching.
-  config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  # Set this to +true+ unless you want to skip exceptions_app:
+  config.consider_all_requests_local = ActiveRecord::Type::Boolean.new.cast(ENV['ALL_REQUESTS_LOCAL'] || 'true')
+
+  # Controller caching (+false+ by default, can be overridden via the env variable):
+  perform_caching = ActiveRecord::Type::Boolean.new.cast(ENV['PERFORM_CACHING'])
+  config.action_controller.perform_caching = perform_caching || false
+  Rack::MiniProfiler.config.disable_caching = !perform_caching
 
   # Enable server timing
   config.server_timing = true
+
+  config.log_level = ENV['LOG_LEVEL'] || :info
 
   # Set the cache store to the redis that was configured in the database.yml
   processed = ERB.new(File.read(Rails.root.join('config', 'database.yml'))).result(binding)
@@ -38,11 +44,16 @@ Rails.application.configure do
   config.hosts << /[a-z0-9\-.]+\.ngrok-free\.app/
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.delivery_method = :ses
+  raise_delivery_errors = ActiveRecord::Type::Boolean.new.cast(ENV['RAISE_DELIVERY_ERRORS'])
+  config.action_mailer.raise_delivery_errors = raise_delivery_errors || false
   config.action_mailer.asset_host = 'https://meta.codidact.com'
-
   config.action_mailer.perform_caching = false
+  delivery_method = ENV['MAILER_DELIVERY_METHOD']
+  config.action_mailer.delivery_method = delivery_method&.to_sym || :letter_opener_web
+  config.action_mailer.default_url_options = {
+    host: ENV['MAILER_HOST'] || 'meta.codidact.com',
+    protocol: ENV['MAILER_PROTOCOL'] || 'https'
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -79,11 +90,7 @@ Rails.application.configure do
   # Raises error for missing translations.
   config.i18n.raise_on_missing_translations = true
 
-  config.action_mailer.delivery_method = :letter_opener_web
-
-  config.action_mailer.default_url_options = { 
-    host: 'meta.codidact.com', protocol: ENV['MAILER_PROTOCOL'] || 'https'
-  }
+  config.active_job.queue_adapter = :inline
 
   # Ensure docker ip added to allowed, given that we are in container
   if File.file?('/.dockerenv') == true

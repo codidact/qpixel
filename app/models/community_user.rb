@@ -1,18 +1,18 @@
 class CommunityUser < ApplicationRecord
+  include SoftDeletable
+
   belongs_to :community
   belongs_to :user
 
   has_many :mod_warnings, dependent: :nullify
   has_many :user_abilities, dependent: :destroy
-  belongs_to :deleted_by, required: false, class_name: 'User'
 
   validates :user_id, uniqueness: { scope: [:community_id], case_sensitive: false }
 
   scope :for_context, -> { where(community_id: RequestContext.community_id) }
-  scope :active, -> { where(deleted: false) }
-  scope :deleted, -> { where(deleted: true) }
 
   after_create :prevent_ulysses_case
+  after_update :recalc_trust_level, if: :saved_change_affects_trust_level?
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
@@ -31,7 +31,7 @@ class CommunityUser < ApplicationRecord
   end
 
   def latest_warning
-    mod_warnings&.order(created_at: 'desc')&.first&.created_at
+    mod_warnings.order(created_at: 'desc')&.first&.created_at
   end
 
   # Calculation functions for privilege scores
@@ -39,8 +39,8 @@ class CommunityUser < ApplicationRecord
   def post_score
     Rails.cache.fetch("privileges/#{id}/post_score", expires_in: 3.hours) do
       exclude_types = ApplicationController.helpers.post_type_ids(is_freely_editable: true)
-      good_posts = Post.where(user: user).where('score > 0.5').where.not(post_type_id: exclude_types).count
-      bad_posts = Post.where(user: user).where('score < 0.5').where.not(post_type_id: exclude_types).count
+      good_posts = Post.by(user).good.where.not(post_type_id: exclude_types).count
+      bad_posts = Post.by(user).bad.where.not(post_type_id: exclude_types).count
 
       (good_posts + 2.0) / (good_posts + bad_posts + 4.0)
     end
@@ -48,8 +48,8 @@ class CommunityUser < ApplicationRecord
 
   def edit_score
     Rails.cache.fetch("privileges/#{id}/edit_score", expires_in: 3.hours) do
-      good_edits = SuggestedEdit.where(user: user).where(active: false, accepted: true).count
-      bad_edits = SuggestedEdit.where(user: user).where(active: false, accepted: false).count
+      good_edits = SuggestedEdit.by(user).approved.count
+      bad_edits = SuggestedEdit.by(user).rejected.count
 
       (good_edits + 2.0) / (good_edits + bad_edits + 4.0)
     end
@@ -57,15 +57,18 @@ class CommunityUser < ApplicationRecord
 
   def flag_score
     Rails.cache.fetch("privileges/#{id}/flag_score", expires_in: 3.hours) do
-      good_flags = Flag.where(user: user).where(status: 'helpful').count
-      bad_flags = Flag.where(user: user).where(status: 'declined').count
+      good_flags = Flag.by(user).helpful.count
+      bad_flags = Flag.by(user).declined.count
 
       (good_flags + 2.0) / (good_flags + bad_flags + 4.0)
     end
   end
 
+  # Checks if the community user has a given ability
+  # @param internal_id [String] The +internal_id+ of the ability to check
+  # @return [Boolean] check result
   def privilege?(internal_id, ignore_suspension: false, ignore_mod: false)
-    if internal_id != 'mod' && !ignore_mod && user.is_moderator
+    if internal_id != 'mod' && !ignore_mod && user.at_least_moderator?
       return true # includes: privilege? 'mod'
     end
 
@@ -101,7 +104,7 @@ class CommunityUser < ApplicationRecord
   # @param sandbox [Boolean] Whether to run in sandbox mode - if sandboxed, the ability will not be granted but the
   #   return value indicates whether it would have been.
   # @return [Boolean] Whether or not the ability was granted.
-  def recalc_privilege(internal_id, sandbox: false)
+  def recalc_privilege!(internal_id, sandbox: false)
     # Do not recalculate privileges already granted
     return true if privilege?(internal_id, ignore_suspension: true, ignore_mod: false)
 
@@ -121,41 +124,69 @@ class CommunityUser < ApplicationRecord
     # If not sandbox mode, create new privilege entry
     grant_privilege!(internal_id) unless sandbox
     recalc_trust_level unless sandbox
+
+    AuditLog.admin_audit(event_type: 'ability_grant', related: user,
+                         user: User.system,
+                         comment: priv.name)
     true
   end
 
   ##
   # Recalculate a list of standard abilities for this CommunityUser.
-  # @param sandbox [Boolean] Whether to run in sandbox mode - see {#recalc_privilege}.
+  # @param sandbox [Boolean] Whether to run in sandbox mode - see {#recalc_privilege!}.
   # @return [Array<Boolean>]
-  def recalc_privileges(sandbox: false)
+  def recalc_privileges!(sandbox: false)
     [:everyone, :unrestricted, :edit_posts, :edit_tags, :flag_close, :flag_curate].map do |ability|
-      recalc_privilege(ability, sandbox: sandbox)
+      recalc_privilege!(ability, sandbox: sandbox)
     end
   end
 
   alias ability? privilege?
   alias ability privilege
   alias grant_ability! grant_privilege!
-  alias recalc_ability recalc_privilege
-  alias recalc_abilities recalc_privileges
+  alias recalc_ability! recalc_privilege!
+  alias recalc_abilities! recalc_privileges!
 
   # This check makes sure that every user gets the
   # 'everyone' permission upon creation. We do not want
   # to create a no permissions user by accident.
   # Polyphemus is very grateful for this.
   def prevent_ulysses_case
-    recalc_privileges
+    recalc_privileges!
   end
 
   def trust_level
     attributes['trust_level'] || recalc_trust_level
   end
 
+  # Checks if the community user is an admin (global or on the current community)
+  # @return [Boolean] check result
+  def admin?
+    is_admin || user&.global_admin? || false
+  end
+
+  # Checks if the community user is a moderator (global or on the current community)
+  # @return [Boolean] check result
+  def moderator?
+    is_moderator || user&.global_moderator? || false
+  end
+
+  # Checks if the community user is a moderator or has higher access (global or on the current community)
+  # @return [Boolean] check result
+  def at_least_moderator?
+    moderator? || admin?
+  end
+
+  # Checks if one of the persisted changes affects trust_level
+  # @return [Boolean] check result
+  def saved_change_affects_trust_level?
+    ['is_admin', 'is_moderator'].any? { |attr| saved_change_to_attribute?(attr) }
+  end
+
   def recalc_trust_level
     trust = if user.staff?
               5
-            elsif is_moderator || user.is_global_moderator || is_admin || user.is_global_admin
+            elsif at_least_moderator?
               4
             elsif privilege?('flag_close') || privilege?('edit_posts')
               3
@@ -166,5 +197,28 @@ class CommunityUser < ApplicationRecord
             end
     update(trust_level: trust)
     trust
+  end
+
+  # Soft-deletes the community user
+  # @param attribute_to [User] user to attribute the action to
+  def soft_delete(attribute_to)
+    AuditLog.moderator_audit(event_type: 'profile_delete', related: self, user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+
+    update(deleted: true, deleted_by: attribute_to, deleted_at: DateTime.now)
+  end
+
+  # Undeletes the community user if it's soft-deleted
+  # @param attribute_to [User] user to attribute the action to
+  # @return [Boolean] whether the community user has been undeleted
+  def undelete(attribute_to)
+    return true unless deleted?
+
+    AuditLog.moderator_audit(event_type: 'profile_undelete',
+                             related: self,
+                             user: attribute_to,
+                             comment: attributes_print(join: "\n"))
+
+    update(deleted: false, deleted_by: nil, deleted_at: nil)
   end
 end

@@ -1,0 +1,35 @@
+<%#
+   "Renders a sorting widget
+
+    Variables:
+      types         : list of available sorting types
+    ? default_order : Defualt sorting order, if any
+    ? default_type  : Default sorting type, if any
+"%>
+
+<%
+  default_order = defined?(default_order) ? default_order : nil
+  default_type = defined?(default_type) ? default_type : nil
+  order = params[:order]&.to_sym || default_order
+  reverse_order = order == :asc ? :desc : :asc
+%>
+
+<div class="button-list is-gutterless">
+
+  <% types.each do |option| %>
+    <% type = option.is_a?(String) ? option : option[:type] %>
+    <% title = "Sort by #{option.is_a?(String) ? option.humanize.downcase : option[:title]}" %>
+    <% is_active = params[:sort] == type || (params[:sort].nil? && default_type.to_s == type) %>
+    <%= link_to query_url(sort: type, order: is_active ? reverse_order : nil),
+                class: "button is-muted is-outlined #{'is-active' if is_active}",
+                role: 'button',
+                title: title,
+                aria: { label: title } do %>
+      <% if is_active %>
+        <i class="has-margin-right-1 fa fa-caret-<%= order == :asc ? 'up' : 'down' %>"></i> <%= type.humanize %>
+      <% else %>
+        <%= type.humanize %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

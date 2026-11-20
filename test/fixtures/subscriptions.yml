@@ -35,3 +35,13 @@ interesting:
   last_sent_at: 2020-01-01T00:00:00
   name: Interesting things
   community: sample
+
+category:
+  type: category
+  qualifier: <%= ActiveRecord::FixtureSet.identify :main %>
+  user: standard_user
+  enabled: true
+  frequency: 1
+  last_sent_at: 2020-01-01T00:00:00
+  name: Meta subscription
+  community: sample

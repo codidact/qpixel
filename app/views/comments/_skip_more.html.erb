@@ -1,0 +1,11 @@
+<%#
+    Renders widgets indicating that there more comments are not shown
+
+    Variables:
+      num_skipped : number of comments skipped on the thread
+      thread      : CommentThread to display the widget for
+%>
+
+<div class="widget--body widget--more-comments" role="listitem">
+  <p>Skipping <%= pluralize(num_skipped, 'more comment') %></p>
+</div>

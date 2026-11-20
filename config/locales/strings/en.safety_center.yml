@@ -1,0 +1,4 @@
+en:
+  safety_center:
+    training_complete: 'Thank you. Your training has been marked as complete.'
+    training_complete_failed: 'Something went wrong. Please tell a staff member about this.'

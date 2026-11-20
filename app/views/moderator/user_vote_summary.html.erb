@@ -1,11 +1,9 @@
 <% content_for :title, "Moderator Tools: #{rtl_safe_username(@user)}" %>
-
-<%= render 'users/tabs', user: @user %>
+<%= render 'users/tabs', user: @user, active_tab: 'mod_tools' %>
 
 <div class="grid">
   <%= render 'shared/user_mod_sidebar', user: @user %>
-
-  <div class="grid--cell is-9">
+  <div class="grid--cell is-9-lg is-12">
     <h1>Vote Summary</h1>
     <p>
       This is a summary of votes cast and received by this user. This may help you to identify voting patterns and
@@ -42,7 +40,9 @@
             <% pct = count * 100.0 / @vote_data[type].total %>
             <td>
               <% if pct >= 50 %>
-                <%= text_bg 'red-700', number_to_percentage(pct, precision: 2), class: 'has-color-white has-padding-1' %>
+                <%= text_bg 'red-700',
+                            number_to_percentage(pct, precision: 2),
+                            class: 'has-color-white has-padding-1' %>
               <% elsif pct >= 40 %>
                 <%= text_bg 'red-200', number_to_percentage(pct, precision: 2), class: 'has-padding-1' %>
               <% elsif pct >= 30 %>

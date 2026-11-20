@@ -1,0 +1,213 @@
+name: ci-cd
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+env:
+  RAILS_ENV: test
+  RUBY_VERSION: 3.4
+
+permissions:
+  actions: write
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  rubocop:
+    name: Rubocop checking
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -yqq libmagickwand-dev
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      - run: bundle exec rubocop
+
+  typescript:
+    name: TypeScript type checking
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 22
+      - run: npm ci --verbose
+      - run: npx tsc --version
+      - run: npm run typecheck
+
+  tests:
+    name: Ruby on Rails tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby_version: [3.3, 3.4]
+
+    services:
+      mysql: &db-service
+        image: mysql:8.4.2 # please keep the image in sync with Dockerfile.db
+        env:
+          MYSQL_ROOT_HOST: '%'
+          MYSQL_ROOT_PASSWORD: 'root'
+          MYSQL_DATABASE: 'qpixel_test'
+        ports:
+          - 3306:3306
+      redis: &redis-service
+        image: redis:8.0
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -yqq install libmariadb-dev \
+                                    libmagickwand-dev \
+                                    mariadb-client
+      - name: Report database client versions
+        run: |
+          mysql --version
+          mysqldump --version
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+          bundler-cache: true
+      - name: Prepare for testing
+        run: |
+          echo "${{ secrets.MASTER_KEY }}" > config/master.key
+          cp config/database.sample.yml config/database.yml
+          cp config/storage.sample.yml config/storage.yml
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rails db:migrate
+          bundle exec rails test:prepare
+      - run: bundle exec rails test
+      - uses: codecov/codecov-action@v5
+        if: ${{ matrix.ruby_version == env.RUBY_VERSION && github.actor != 'dependabot[bot]' }}
+        with:
+          directory: coverage
+          fail_ci_if_error: true
+          report_type: coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  system-tests:
+    name: Ruby on Rails system tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby_version: [3.3, 3.4]
+
+    services:
+      mysql: *db-service
+      redis: *redis-service
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
+      - name: Setup Firefox
+        uses: browser-actions/setup-firefox@v1.5.4
+      - name: Check Firefox setup
+        run: firefox --version
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+          bundler-cache: true
+      - name: Prepare for testing
+        run: |
+          cp config/database.sample.yml config/database.yml
+          cp config/storage.sample.yml config/storage.yml
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+          bundle exec rails db:migrate
+          bundle exec rails test:prepare
+      - run: bundle exec rails test:system
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: screenshots-${{ matrix.ruby_version }}
+          path: tmp/screenshots
+          if-no-files-found: ignore
+
+  deploy:
+    name: Dev server deployment
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }}
+    needs:
+      - rubocop
+      - typescript
+      - tests
+      - system-tests
+
+    env:
+      SSH_IP: ${{ secrets.DEV_SSH_IP }}
+      SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+      SSH_PORT: ${{ secrets.DEV_SSH_PORT }}
+      SSH_USER: ${{ secrets.DEV_SSH_USER }}
+
+    steps:
+      - name: Check SSH version
+        run: ssh -V
+      - name: Import key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy.key
+          chmod 0700 ~/.ssh/deploy.key
+      - name: Deploy
+        run: |
+          ssh -o 'StrictHostKeyChecking no' \
+              -o 'KbdInteractiveAuthentication no' \
+              -o 'PasswordAuthentication no' \
+              -p "$SSH_PORT" \
+              -i ~/.ssh/deploy.key \
+              "$SSH_USER"@"$SSH_IP" \
+              "sudo su -l qpixel /var/apps/deploy-dev"
+
+  db_changes:
+    name: Check for data dump changes
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -yqq install libmariadb-dev libmagickwand-dev
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4
+          bundler-cache: true
+      - name: Check for changes
+        run: |
+          bundle exec ruby lib/database_changes_checker.rb origin/${{ github.event.pull_request.base.ref }} \
+            origin/${{ github.event.pull_request.head.ref }} ${{ secrets.GITHUB_TOKEN }} \
+            ${{ github.event.pull_request.number }}

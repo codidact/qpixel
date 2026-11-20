@@ -1,13 +1,20 @@
-# Represents a user. Most of the User's logic is controlled by Devise and its overrides. A user, as far as the
-# application code (i.e. excluding Devise) is concerned, has many questions, answers, and votes.
+# rubocop:disable Metrics/ClassLength
 class User < ApplicationRecord
-  include ::UserMerge
-  include ::SamlInit
+  include EmailValidations
+  include UsernameValidations
+  include UserRateLimits
+  include UserMerge
+  include Timestamped
+  include SoftDeletable
+  include SamlInit
+  include Inspectable
+  include Identity
 
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable,
          :lockable, :omniauthable, :saml_authenticatable
 
+  has_many :apps, class_name: 'MicroAuth::App', dependent: :destroy
   has_many :posts, dependent: :nullify
   has_many :votes, dependent: :destroy
   has_many :notifications, dependent: :destroy
@@ -28,55 +35,217 @@ class User < ApplicationRecord
   has_many :category_filter_defaults, dependent: :destroy
   has_many :filters, dependent: :destroy
   has_many :user_websites, dependent: :destroy
+  has_many :complaints, dependent: :nullify
+  has_many :complaint_comments, dependent: :nullify
+  has_many :assigned_complaints, class_name: 'Complaint', foreign_key: 'assignee_id', dependent: :nullify
   accepts_nested_attributes_for :user_websites
-  belongs_to :deleted_by, required: false, class_name: 'User'
 
-  validates :username, presence: true, length: { minimum: 3, maximum: 50 }
+  after_update :recalc_trust_level, if: :saved_change_affects_trust_level?
+
   validates :login_token, uniqueness: { allow_blank: true, case_sensitive: false }
-  validate :no_links_in_username
-  validate :username_not_fake_admin
-  validate :no_blank_unicode_in_username
-  validate :email_domain_not_blocklisted
-  validate :is_not_blocklisted
-  validate :email_not_bad_pattern
 
-  delegate :reputation, :reputation=, :privilege?, :privilege, to: :community_user
+  delegate :recalc_trust_level, :reputation, :reputation=, :privilege?, :privilege, to: :community_user, allow_nil: true
 
-  scope :active, -> { where(deleted: false) }
-  scope :deleted, -> { where(deleted: true) }
+  alias_attribute :name, :username
 
-  after_create :send_welcome_tour_message, :ensure_websites
+  # Gets users appropriately scoped for a given user
+  # @param user [User] user to check
+  # @return [ActiveRecord::Relation<User>]
+  def self.accessible_to(user)
+    (user&.at_least_moderator? ? User.all : User.undeleted)
+  end
 
   def self.list_includes
     includes(:posts, :avatar_attachment)
   end
 
   def self.search(term)
-    where('username LIKE ?', "#{sanitize_sql_like(term)}%")
+    where('username LIKE ?', "%#{sanitize_sql_like(term)}%")
   end
 
-  def inspect
-    "#<User #{attributes.compact.map { |k, v| "#{k}: #{v}" }.join(', ')}>"
+  # Gets the system user
+  # @return [User, nil]
+  def self.system
+    find_by(id: -1)
   end
 
+  # Safely gets the user's reputation even if they don't have a community user
+  # @return [Integer] user's reputation
+  def reputation
+    community_user&.reputation || 1
+  end
+
+  # Safely gets the user's trust level even if they don't have a community user
+  # @return [Integer] user's trust level
   def trust_level
-    community_user.trust_level
+    community_user&.trust_level || 0
   end
 
-  # Checks whether this user is the same as a given user
-  # @param [User] user user to compare with
-  def same_as?(user)
-    id == user.id
+  # Is the user a new user?
+  # @return [Boolean] check result
+  def new?
+    !privilege?('unrestricted')
+  end
+
+  # Does the user own a given post or its parent, if any?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def owns_post_or_parent?(post)
+    post.user_id == id || post.parent&.user_id == id
   end
 
   # This class makes heavy use of predicate names, and their use is prevalent throughout the codebase
   # because of the importance of these methods.
-  # rubocop:disable Naming/PredicateName
-  def has_post_privilege?(name, post)
-    if post.user == self
-      true
+  def post_privilege?(name, post)
+    post.user == self || privilege?(name)
+  end
+
+  # Can the user vote on this post?
+  # This post does not check for the 'AllowSelfVotes' site setting, only
+  # whether this user has the ability to vote on this post.
+  # @param post [Post] to check
+  # @return [Boolean] check result
+  def can_vote_on?(post)
+    privilege?('unrestricted') || owns_post_or_parent?(post)
+  end
+
+  # Can the user rename a given comment thread?
+  # @param thread [CommentThread] thread to rename
+  # @return [Boolean] check result
+  def can_rename?(thread)
+    privilege?('flag_curate') ||
+      Comment.where(user: self, comment_thread_id: thread.id).any?
+  end
+
+  # Can the user archive a given comment thread?
+  # @param thread [CommentThread] thread to archive
+  # @return [Boolean] check result
+  def can_archive?(thread)
+    privilege?('flag_curate') && !thread.archived?
+  end
+
+  # Can the user unarchive a given comment thread?
+  # @param thread [CommentThread] thread to archive
+  # @return [Boolean] check result
+  def can_unarchive?(thread)
+    privilege?('flag_curate') && thread.archived?
+  end
+
+  # Can the user decide (approve or reject) a given suggested edit?
+  # @param edit [SuggestedEdit] edit to check
+  # @return [Boolean] check result
+  def can_decide?(edit)
+    edit.post.present? && can_update?(edit.post, edit.post.post_type)
+  end
+
+  alias can_approve? can_decide?
+  alias can_reject? can_decide?
+
+  # Can the user comment on a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def can_comment_on?(post)
+    return true if at_least_moderator?
+
+    post.comments_allowed? && !comment_rate_limited?(post)
+  end
+
+  # Can the user close a given post?
+  # @param post [Post] post to check
+  # @return [Boolean] check result
+  def can_close?(post)
+    return false unless post.closeable?
+    return false if post.locked?
+
+    privilege?('flag_close') || post.user&.same_as?(self)
+  end
+
+  # Can the user delete a given target?
+  # @param target [ApplicationRecord] record to delete
+  # @return [Boolean] check result
+  def can_delete?(target)
+    privilege?('flag_curate') && !target.deleted?
+  end
+
+  # Can the user edit abilities?
+  # @return [Boolean] check result
+  def can_edit_abilities?
+    at_least_moderator?
+  end
+
+  # Can the user edit tags?
+  # @return [Boolean] check result
+  def can_edit_tags?
+    privilege?('edit_tags') || false
+  end
+
+  # Can the user handle flags?
+  # @return [Boolean] check result
+  def can_handle_flags?
+    privilege?('flag_curate') || false
+  end
+
+  # Can the user undelete a given target?
+  # @param target [ApplicationRecord] record to undelete
+  # @return [Boolean] check result
+  def can_undelete?(target)
+    privilege?('flag_curate') && target.deleted?
+  end
+
+  # Can the user lock a given target?
+  # @param target [Lockable] record to lock
+  # @return [Boolean] check result
+  def can_lock?(target)
+    privilege?('flag_curate') && !target.locked?
+  end
+
+  # Can the user unlock a given target?
+  # @param target [Lockable] record to unlock
+  # @return [Boolean] check result
+  def can_unlock?(target)
+    privilege?('flag_curate') && target.locked?
+  end
+
+  # Can the user post in the current category?
+  # @param category [Category, nil] category to check
+  # @return [Boolean] check result
+  def can_post_in?(category)
+    category.blank? || category.min_trust_level.blank? || category.min_trust_level <= trust_level
+  end
+
+  # Can the user reply to a given comment thread?
+  # @param [CommentThread] thread to check
+  # @return [Boolean] check result
+  def can_reply_to?(thread)
+    return true if at_least_moderator?
+
+    can_comment_on?(thread.post) && !thread.read_only?
+  end
+
+  # Can the user see a given category at all?
+  # @param category [Category] category to check
+  # @return [Boolean] check result
+  def can_see_category?(category)
+    category_trust_level = category.min_view_trust_level || -1
+    trust_level >= category_trust_level
+  end
+
+  # Is the user allowed to see deleted posts?
+  # @return [Boolean] check result
+  def can_see_deleted_posts?
+    privilege?('flag_curate') || false
+  end
+
+  # Can the user push a given target network-wide?
+  # @param target [Ability, PostType] target to be pushed
+  # @return [Boolean] check result
+  def can_push_to_network?(target)
+    return false unless global_moderator? || global_admin?
+
+    if target.is_a?(PostType)
+      target.system?
     else
-      privilege?(name)
+      true
     end
   end
 
@@ -97,33 +266,44 @@ class User < ApplicationRecord
     post_type.system? && (is_global_moderator || is_global_admin)
   end
 
-  # Checks if the user can directly update a given post
+  # Can the user directly update a given post?
   # @param post [Post] updated post (owners can unilaterally update)
   # @param post_type [PostType] type of the post (some are freely editable)
-  # @return [Boolean]
-  def can_update(post, post_type)
-    privilege?('edit_posts') || is_moderator || self == post.user || \
+  # @return [Boolean] check result
+  def can_update?(post, post_type)
+    return false unless can_post_in?(post.category)
+
+    post_privilege?('edit_posts', post) || at_least_moderator? ||
       (post_type.is_freely_editable && privilege?('unrestricted'))
   end
 
+  # Checks if one of the persisted changes affects trust_level
+  # @return [Boolean] check result
+  def saved_change_affects_trust_level?
+    ['is_global_admin', 'is_global_moderator', 'staff'].any? do |attr|
+      saved_change_to_attribute?(attr)
+    end
+  end
+
   def metric(key)
+    return 0 unless community_user
+
     Rails.cache.fetch("community_user/#{community_user.id}/metric/#{key}", expires_in: 24.hours) do
       case key
       when 'p'
-        Post.qa_only.undeleted.where(user: self).count
+        Post.qa_only.undeleted.by(self).count
       when '1'
-        Post.undeleted.where(post_type: PostType.top_level, user: self).count
+        Post.undeleted.by(self).where(post_type: PostType.top_level).count
       when '2'
-        Post.undeleted.where(post_type: PostType.second_level, user: self).count
+        Post.undeleted.by(self).where(post_type: PostType.second_level).count
       when 's'
-        Vote.where(recv_user_id: id, vote_type: 1).count - \
-          Vote.where(recv_user_id: id, vote_type: -1).count
+        Vote.for(self).where(vote_type: 1).count - Vote.for(self).where(vote_type: -1).count
       when 'v'
-        Vote.where(recv_user_id: id).count
+        Vote.for(self).count
       when 'V'
         votes.count
       when 'E'
-        PostHistory.where(user: self, post_history_type: PostHistoryType.find_by(name: 'post_edited')).count
+        PostHistory.by(self).of_type('post_edited').count
       end
     end
   end
@@ -160,16 +340,83 @@ class User < ApplicationRecord
     end
   end
 
-  def is_moderator
-    is_global_moderator || community_user&.is_moderator || is_admin || community_user&.privilege?('mod') || false
+  # Is the user a global admin (ensures consistent return type & naming scheme)?
+  # @return [Boolean] check result
+  def global_admin?
+    is_global_admin || false
   end
 
-  def is_admin
-    is_global_admin || community_user&.is_admin || false
+  # Is the user a global moderator (ensures consistent return type & naming scheme)?
+  # @return [Boolean] check result
+  def global_moderator?
+    is_global_moderator || false
   end
 
-  # Used by network profile: does this user have a profile on that other comm?
-  def has_profile_on(community_id)
+  # Is the user either a global admin or an admin on the current community?
+  # @return [Boolean] check result
+  def admin?
+    global_admin? || community_user&.admin? || false
+  end
+
+  # Is the user either a global moderator or a moderator on the current community?
+  # @return [Boolean] check result
+  def moderator?
+    global_moderator? || community_user&.moderator? || false
+  end
+
+  # Is the user at least a moderator, meaning the user is either:
+  # - a global moderator or a moderator on the current community
+  # - a global admin or an admin on the current community
+  # - has an explicit moderator privilege on the current community
+  # @return [Boolean] check result
+  def at_least_moderator?
+    moderator? || admin? || community_user&.privilege?('mod') || false
+  end
+
+  # Is the user neither a moderator nor an admin (global or on the current community)?
+  # @return [Boolean] check result
+  def standard?
+    !at_least_moderator?
+  end
+
+  # Is the user is a global moderator or a global admin?
+  # @return [Boolean] check result
+  def at_least_global_moderator?
+    global_moderator? || global_admin? || false
+  end
+
+  # Which communities is this user a moderator (local or global) on?
+  # @return [Community[]] list of communities
+  def moderator_communities
+    if global_moderator?
+      Community.all
+    else
+      Community.joins(:community_users).where(community_users: { user_id: id, is_moderator: true })
+    end
+  end
+
+  # Which communities is this user an admin (local or global) of?
+  # @return [Community[]] list of communities
+  def admin_communities
+    if global_admin?
+      Community.all
+    else
+      Community.joins(:community_users).where(community_users: { user_id: id, is_admin: true })
+    end
+  end
+
+  # Is the user a moderator on a given community?
+  # @param community_id [Integer] community id to check for
+  # @return [Boolean] check result
+  def moderator_on?(community_id)
+    cu = community_users.where(community_id: community_id).first
+    cu&.at_least_moderator? || cu&.privilege?('mod') || false
+  end
+
+  # Does the user have a profile on a given community?
+  # @param community_id [Integer] id of the community to check
+  # @return [Boolean] check result
+  def profile_on?(community_id)
     cu = community_users.where(community_id: community_id).first
     !cu&.user_id.nil? || false
   end
@@ -184,15 +431,13 @@ class User < ApplicationRecord
     cu&.post_count || 0
   end
 
-  def is_moderator_on(community_id)
+  # Does the user have an ability on a given community?
+  # @param community_id [Integer] community id to check for
+  # @param ability_internal_id [String] internal ability id
+  # @return [Boolean] check result
+  def ability_on?(community_id, ability_internal_id)
     cu = community_users.where(community_id: community_id).first
-    # is_moderator is a DB check, not a call to is_moderator()
-    is_global_moderator || is_admin || cu&.is_moderator || cu&.privilege?('mod') || false
-  end
-
-  def has_ability_on(community_id, ability_internal_id)
-    cu = community_users.where(community_id: community_id).first
-    if cu&.is_moderator || cu&.is_admin || is_global_moderator || is_global_admin || cu&.privilege?('mod')
+    if cu&.at_least_moderator? || cu&.privilege?('mod')
       true
     elsif cu.nil?
       false
@@ -208,82 +453,8 @@ class User < ApplicationRecord
     "#{username}\u202D"
   end
 
-  def username_not_fake_admin
-    admin_badge = SiteSetting['AdminBadgeCharacter']
-    mod_badge = SiteSetting['ModBadgeCharacter']
-
-    [admin_badge, mod_badge].each do |badge|
-      if badge.present? && username.include?(badge)
-        errors.add(:username, "may not include the #{badge} character")
-      end
-    end
-  end
-
-  def no_blank_unicode_in_username
-    not_valid = !username.scan(/[\u200B-\u200D\uFEFF]/).empty?
-    if not_valid
-      errors.add(:username, 'may not contain blank unicode characters')
-    end
-  end
-
-  def email_domain_not_blocklisted
-    return unless File.exist?(Rails.root.join('../.qpixel-domain-blocklist.txt'))
-    return unless saved_changes.include? 'email'
-
-    blocklist = File.read(Rails.root.join('../.qpixel-domain-blocklist.txt')).split("\n")
-    email_domain = email.split('@')[-1]
-    matched = blocklist.select { |x| email_domain == x }
-    if matched.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      matched_domains = matched.map { |d| "equals: #{d}" }
-      AuditLog.block_log(event_type: 'user_email_domain_blocked',
-                         comment: "email: #{email}\n#{matched_domains.join("\n")}\nsource: file")
-    end
-  end
-
-  def is_not_blocklisted
-    return unless saved_changes.include? 'email'
-
-    email_domain = email.split('@')[-1]
-    is_mail_blocked = BlockedItem.emails.where(value: email)
-    is_mail_host_blocked = BlockedItem.email_hosts.where(value: email_domain)
-    if is_mail_blocked.any? || is_mail_host_blocked.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      if is_mail_blocked.any?
-        AuditLog.block_log(event_type: 'user_email_blocked', related: is_mail_blocked.first,
-                           comment: "email: #{email}\nfull match to: #{is_mail_blocked.first.value}")
-      end
-      if is_mail_host_blocked.any?
-        AuditLog.block_log(event_type: 'user_email_domain_blocked', related: is_mail_host_blocked.first,
-                           comment: "email: #{email}\ndomain match to: #{is_mail_host_blocked.first.value}")
-      end
-    end
-  end
-
-  def email_not_bad_pattern
-    return unless File.exist?(Rails.root.join('../.qpixel-email-patterns.txt'))
-    return unless changes.include? 'email'
-
-    patterns = File.read(Rails.root.join('../.qpixel-email-patterns.txt')).split("\n")
-    matched = patterns.select { |p| email.match? Regexp.new(p) }
-    if matched.any?
-      errors.add(:base, ApplicationRecord.useful_err_msg.sample)
-      matched_patterns = matched.map { |p| "matched: #{p}" }
-      AuditLog.block_log(event_type: 'user_email_pattern_match',
-                         comment: "email: #{email}\n#{matched_patterns.join("\n")}")
-    end
-  end
-
   def ensure_community_user!
     community_user || create_community_user(reputation: SiteSetting['NewUserInitialRep'])
-  end
-
-  def no_links_in_username
-    if %r{(?:http|ftp)s?://(?:\w+\.)+[a-zA-Z]{2,10}}.match?(username)
-      errors.add(:username, 'cannot contain links')
-      AuditLog.block_log(event_type: 'user_username_link_blocked',
-                         comment: "username: #{username}")
-    end
   end
 
   def extract_ip_from(request)
@@ -299,7 +470,7 @@ class User < ApplicationRecord
                         'how this site works.', '/tour')
   end
 
-  def block(reason, length: 180.days)
+  def block(reason, length: 10.years, automatic: true)
     user_email = email
     user_ip = [last_sign_in_ip]
 
@@ -308,10 +479,10 @@ class User < ApplicationRecord
     end
 
     BlockedItem.create(item_type: 'email', value: user_email, expires: length.from_now,
-                       automatic: true, reason: "#{reason}: #" + id.to_s)
+                       automatic: automatic, reason: "#{reason}: #" + id.to_s)
     user_ip.compact.uniq.each do |ip|
       BlockedItem.create(item_type: 'ip', value: ip, expires: length.from_now,
-                         automatic: true, reason: "#{reason}: #" + id.to_s)
+                         automatic: automatic, reason: "#{reason}: #" + id.to_s)
     end
   end
 
@@ -329,7 +500,7 @@ class User < ApplicationRecord
   def category_preference(category_id)
     category_key = "prefs.#{id}.category.#{RequestContext.community_id}.category.#{category_id}"
     AppConfig.preferences.select { |_, v| v['category'] }.transform_values { |v| v['default'] }
-             .merge(RequestContext.redis.hgetall(category_key))
+                                                         .merge(RequestContext.redis.hgetall(category_key))
   end
 
   def validate_prefs!
@@ -341,7 +512,7 @@ class User < ApplicationRecord
     }.each do |key, prefs|
       saved = RequestContext.redis.hgetall(key)
       valid_prefs = prefs.keys
-      deprecated = saved.reject { |k, _v| valid_prefs.include? k }.map { |k, _v| k }
+      deprecated = saved.except(*valid_prefs).map { |k, _v| k }
       unless deprecated.empty?
         RequestContext.redis.hdel key, *deprecated
       end
@@ -352,7 +523,7 @@ class User < ApplicationRecord
     preferences[community ? :community : :global][name]
   end
 
-  def has_active_flags?(post)
+  def active_flags_on?(post)
     !post.flags.where(user: self, status: nil).empty?
   end
 
@@ -360,15 +531,51 @@ class User < ApplicationRecord
     post.flags.where(user: self, status: nil)
   end
 
-  def do_soft_delete(attribute_to)
+  # Anonymizes the user (f.e., for the purpose of soft deletion)
+  # @param persist_changes [Boolean] if set to +true+, will persist the changes
+  def anonymize(persist_changes: false)
+    assign_attributes(username: "user#{id}",
+                      email: "#{id}@deleted.localhost",
+                      password: SecureRandom.hex(32))
+
+    if persist_changes
+      skip_reconfirmation!
+      save
+    end
+  end
+
+  # Soft-deletes the user (username, password, and email are irrevocably reset!)
+  # @param attribute_to [User] user to attribute the action to
+  def soft_delete(attribute_to)
     AuditLog.moderator_audit(event_type: 'user_delete', related: self, user: attribute_to,
                              comment: attributes_print(join: "\n"))
-    assign_attributes(deleted: true, deleted_by_id: attribute_to.id, deleted_at: DateTime.now,
-                      username: "user#{id}", email: "#{id}@deleted.localhost",
-                      password: SecureRandom.hex(32))
+
+    assign_attributes(deleted: true,
+                      deleted_by_id: attribute_to.id,
+                      deleted_at: DateTime.now)
+
+    anonymize(persist_changes: false)
+
     skip_reconfirmation!
     save
   end
 
-  # rubocop:enable Naming/PredicateName
+  # Gets user's post counts by post type
+  # @return [Hash{Integer => Integer}]
+  def posts_by_post_type
+    posts.undeleted.group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+  end
+
+  # Gets user's vote counts by vote type
+  # @return [Hash{Integer => Integer}]
+  def votes_by_type
+    votes.group(:vote_type).count(:vote_type)
+  end
+
+  # Gets user's vote counts by post type
+  # @return [Hash{Integer => Integer}]
+  def votes_by_post_type
+    votes.joins(:post).group(Arel.sql('posts.post_type_id')).count(Arel.sql('posts.post_type_id'))
+  end
 end
+# rubocop:enable Metrics/ClassLength

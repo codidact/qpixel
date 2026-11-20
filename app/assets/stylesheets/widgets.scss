@@ -1,0 +1,14 @@
+.widget--body {
+  transition: all 0.2s ease;
+}
+
+.widget--body.hiding {
+  scale: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.widget--body.hidden {
+  display: none;
+}

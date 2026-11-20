@@ -44,3 +44,17 @@ base:
   name: base
   community: sample
   tag_set: main
+
+with_vacuous_wiki:
+  name: vacuous-wiki
+  community: sample
+  tag_set: main
+  wiki: '<p><a href=""></a></p>'
+  wiki_markdown: '[]()'
+
+with_wiki:
+  name: with-wiki
+  community: sample
+  tag_set: main
+  wiki: <p>This tag has a wiki</p>
+  wiki_markdown: This tag has a wiki

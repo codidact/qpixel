@@ -1,0 +1,26 @@
+<h1 class="has-font-size-heading">Your report has been received</h1>
+<p>
+  This email is to confirm that we have received your <%= report_type(@complaint.report_type)['name'].downcase %>.
+</p>
+<p>
+  We want to reassure you that we take all content reports seriously. A member of staff will be assigned to review your
+  report and will take any appropriate action.
+</p>
+
+<% if @complaint.user_wants_updates? %>
+  <p>
+    You will receive a further email when your report has been reviewed and responded to.
+  </p>
+<% else %>
+  <p>
+    You have requested that we <em>not</em> contact you further about this report, so this is the only email you will
+    receive in relation to your report.
+  </p>
+<% end %>
+
+<p>
+  If you would like to view the progress of your report, you can
+  <%= link_to 'view it here', complaint_url(@complaint.access_token) %>.
+</p>
+
+<p>Thank you for taking the time to report this to us.</p>

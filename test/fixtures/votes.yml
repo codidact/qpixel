@@ -60,3 +60,10 @@ old_answer_2:
   vote_type: 1
   recv_user: standard_user
   community: sample
+
+on_editor_by_standard:
+  user: standard_user
+  post: question_two
+  vote_type: 1
+  recv_user: editor
+  community: sample

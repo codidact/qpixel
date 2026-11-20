@@ -2,14 +2,21 @@ class SuggestedEditController < ApplicationController
   before_action :set_suggested_edit, only: [:show, :approve, :reject]
 
   def category_index
+    @show_decided = params[:show_decided].present? && params[:show_decided] == '1'
+
+    sort_orders = { asc: :asc, desc: :desc }
+    sort_types = { age: :created_at, decided: :decided_at }
+
+    @default_sort_order = :desc
+    @default_sort_type = @show_decided ? :decided : :age
+    @sort_order = sort_orders[params[:order]&.to_sym] || sort_orders[@default_sort_order]
+    @sort_type = sort_types[params[:sort]&.to_sym] || sort_types[@default_sort_type]
+
     @category = params[:category].present? ? Category.find(params[:category]) : nil
-    @edits = if params[:show_decided].present? && params[:show_decided] == '1'
-               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: false) \
-                            .order('created_at DESC')
-             else
-               SuggestedEdit.where(post: Post.undeleted.where(category: @category), active: true) \
-                            .order('created_at ASC')
-             end
+
+    @edits = SuggestedEdit.accessible_to(current_user, @category)
+                          .where(active: !@show_decided)
+                          .order(@sort_type => @sort_order)
   end
 
   def show
@@ -23,10 +30,11 @@ class SuggestedEditController < ApplicationController
     end
 
     @post = @edit.post
-    unless check_your_privilege('edit_posts', @post, false)
-      render(json: { status: 'error', message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
-             status: :bad_request)
 
+    unless current_user&.can_approve?(@edit)
+      render(json: { status: 'error',
+                     message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: :forbidden)
       return
     end
 
@@ -43,11 +51,7 @@ class SuggestedEditController < ApplicationController
              before_tags: @post.tags.to_a,
              after_tags: @edit.tags }
 
-    before = { before_body: @post.body,
-               before_body_markdown: @post.body_markdown,
-               before_tags_cache: @post.tags_cache.dup,
-               before_tags: @post.tags.to_a,
-               before_title: @post.title }
+    before = before_attributes(@post)
 
     @post.transaction do
       post_update_status = @post.update(applied_details)
@@ -85,29 +89,40 @@ class SuggestedEditController < ApplicationController
 
   def reject
     unless @edit.active?
-      render json: { status: 'error', message: 'This edit has already been reviewed.' }, status: :conflict
+      render json: { status: 'error',
+                     message: 'This edit has already been reviewed.' },
+             status: :conflict
       return
     end
 
     @post = @edit.post
 
-    unless check_your_privilege('edit_posts', @post, false)
-      render(json: { status: 'error', redirect_url: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
-             status: :bad_request)
-
+    unless current_user&.can_reject?(@edit)
+      render json: { status: 'error',
+                     message: helpers.ability_err_msg(:edit_posts, 'review suggested edits') },
+             status: :forbidden
       return
     end
 
-    now = DateTime.now
+    before = before_attributes(@post)
 
-    if @edit.update(active: false, accepted: false, rejected_comment: params[:rejection_comment], decided_at: now,
-                    decided_by: current_user, updated_at: now)
+    if @edit.update(before.merge(active: false,
+                                 accepted: false,
+                                 rejected_comment: params[:rejection_comment],
+                                 decided_at: DateTime.now,
+                                 decided_by: current_user,
+                                 updated_at: DateTime.now))
+
       flash[:success] = 'Edit rejected successfully.'
       AbilityQueue.add(@edit.user, "Suggested Edit Rejected ##{@edit.id}")
-      render json: { status: 'success', redirect_url: helpers.generic_share_link(@post) }
+      render json: {
+        status: 'success',
+        redirect_url: helpers.generic_share_link(@post)
+      }
     else
-      render json: { status: 'error', redirect_url: 'Cannot reject this suggested edit... Strange.' },
-             status: :bad_request
+      render json: { status: 'error',
+                     message: 'Cannot reject this suggested edit... Strange.' },
+             status: :internal_server_error
     end
   end
 
@@ -128,5 +143,13 @@ class SuggestedEditController < ApplicationController
       last_edited_at: DateTime.now,
       last_edited_by: @edit.user
     }.compact
+  end
+
+  def before_attributes(post)
+    { before_body: post.body,
+      before_body_markdown: post.body_markdown,
+      before_tags_cache: post.tags_cache.dup,
+      before_tags: post.tags.to_a,
+      before_title: post.title }
   end
 end

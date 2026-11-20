@@ -4,11 +4,11 @@
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception, store: :cookie
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_globals
   before_action :enforce_signed_in, unless: :devise_controller?
-  before_action :check_if_warning_or_suspension_pending
+  before_action :check_if_warning_or_suspension_pending, if: [:user_signed_in?], unless: [:devise_controller?]
   before_action :distinguish_fake_community
   before_action :stop_the_awful_troll
 
@@ -48,20 +48,20 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [:profile, :website, :twitter])
   end
 
-  def not_found(**add)
+  def not_found!(**add)
     respond_to do |format|
       format.json do
         render json: { status: 'failed', success: false, errors: ['not_found'] }.merge(add), status: :not_found
       end
       format.any do
-        render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+        render 'errors/not_found', formats: [:html], layout: 'without_sidebar', status: :not_found
       end
     end
     false
   end
 
   def verify_moderator
-    if !user_signed_in? || !(current_user.is_moderator || current_user.is_admin)
+    if !user_signed_in? || !current_user.at_least_moderator?
       respond_to do |format|
         format.html do
           render 'errors/not_found', layout: 'without_sidebar', status: :not_found
@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_admin
-    if !user_signed_in? || !current_user.is_admin
+    if !user_signed_in? || !current_user.admin?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -85,7 +85,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_global_admin
-    if !user_signed_in? || !current_user.is_global_admin
+    if !user_signed_in? || !current_user.global_admin?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_global_moderator
-    if !user_signed_in? || !(current_user.is_global_moderator || current_user.is_global_admin)
+    if !user_signed_in? || !current_user.at_least_global_moderator?
       render 'errors/not_found', layout: 'without_sidebar', status: :not_found
       return false
     end
@@ -108,8 +108,16 @@ class ApplicationController < ActionController::Base
     true
   end
 
+  def verify_staff
+    if !user_signed_in? || !current_user.staff?
+      render 'errors/not_found', layout: 'without_sidebar', status: :not_found
+      return false
+    end
+    true
+  end
+
   def check_your_privilege(name, post = nil, render_error = true)
-    unless current_user&.privilege?(name) || (current_user&.has_post_privilege?(name, post) if post)
+    unless current_user&.privilege?(name) || (current_user&.post_privilege?(name, post) if post)
       @privilege = Ability.find_by(name: name)
       render 'errors/forbidden', layout: 'without_sidebar', privilege_name: name, status: :forbidden if render_error
       return false
@@ -118,7 +126,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_if_locked(post)
-    return if current_user.is_moderator
+    return if current_user.at_least_moderator?
 
     if post.locked?
       respond_to do |format|
@@ -136,31 +144,12 @@ class ApplicationController < ActionController::Base
     helpers.post_type_ids(is_top_level: false, has_parent: true)
   end
 
-  def check_edits_limit!(post)
-    recent_edits = SuggestedEdit.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
-                                .where('active = TRUE OR accepted = FALSE').count
+  [:json, :html, :xml].each do |format|
+    define_method "#{format}_request?" do
+      return false unless request.format.respond_to?("#{format}?")
 
-    max_edits = SiteSetting[if current_user.privilege?('unrestricted')
-                              'RL_SuggestedEdits'
-                            else
-                              'RL_NewUserSuggestedEdits'
-                            end]
-
-    edit_limit_msg = if current_user.privilege? 'unrestricted'
-                       "You may only suggest #{max_edits} edits per day."
-                     else
-                       "You may only suggest #{max_edits} edits per day. " \
-                         'Once you have some well-received posts, that limit will increase.'
-                     end
-
-    if recent_edits >= max_edits
-      post.errors.add :base, edit_limit_msg
-      AuditLog.rate_limit_log(event_type: 'suggested_edits', related: post, user: current_user,
-                              comment: "limit: #{max_edits}")
-      render :edit, status: :bad_request
-      return true
+      request.format.send("#{format}?")
     end
-    false
   end
 
   private
@@ -170,22 +159,22 @@ class ApplicationController < ActionController::Base
       return redirect_to :fc_communities if request.fullpath == '/'
 
       unless devise_controller? || ['fake_community', 'admin', 'users', 'site_settings'].include?(controller_name)
-        not_found
+        not_found!
       end
     else
-      return not_found if ['fake_community'].include?(controller_name)
+      not_found! if ['fake_community'].include?(controller_name)
     end
   end
 
   def stop_the_awful_troll
     # There shouldn't be any trolls in the test environment... :D
-    return true if Rails.env.test?
+    return if Rails.env.test?
 
     # Only stop trolls doing things, not looking at them.
-    return true if request.method.upcase == 'GET'
+    return if request.method.upcase == 'GET'
 
     # Trolls can't be awful without user accounts. User model is already checking for creation cases.
-    return true if current_user.nil?
+    return if current_user.nil?
 
     ip = current_user.extract_ip_from(request)
     email_domain = current_user.email.split('@')[-1]
@@ -207,9 +196,7 @@ class ApplicationController < ActionController::Base
         format.html { render 'errors/stat', layout: 'without_sidebar', status: 418 }
         format.json { render json: { status: 'failed', message: ApplicationRecord.useful_err_msg.sample }, status: 418 }
       end
-      return false
     end
-    true
   end
 
   def set_globals
@@ -219,14 +206,18 @@ class ApplicationController < ActionController::Base
     pull_pinned_links_and_hot_questions
     pull_categories
 
-    if user_signed_in? && current_user.is_moderator
+    if user_signed_in? && current_user.at_least_moderator?
       @open_flags = Flag.unhandled.count
     end
 
     @first_visit_notice = !user_signed_in? && cookies[:dismiss_fvn] != 'true'
 
-    if current_user&.is_admin
+    if current_user&.admin?
       Rack::MiniProfiler.authorize_request
+    end
+
+    if current_user&.staff?
+      @complaints_count = Complaint.where(status: 'new').count
     end
   end
 
@@ -234,9 +225,10 @@ class ApplicationController < ActionController::Base
     RequestContext.clear!
 
     host_name = request.raw_host_with_port # include port to support multiple localhost instances
-    RequestContext.community = @community = Rails.cache.fetch("#{host_name}/community", expires_in: 1.hour) do
-      Community.unscoped.find_by(host: host_name)
-    end
+    @community = Rails.cache.fetch_collection("#{host_name}/community", expires_in: 1.hour) do
+      Community.unscoped.where(host: host_name)
+    end.first
+    RequestContext.community = @community
 
     Rails.logger.info "  Host #{host_name}, community ##{RequestContext.community_id} " \
                       "(#{RequestContext.community&.name})"
@@ -259,7 +251,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pull_pinned_links_and_hot_questions
-    @pinned_links = Rails.cache.fetch('pinned_links', expires_in: 2.hours) do
+    @pinned_links = Rails.cache.fetch_collection('pinned_links', expires_in: 2.hours) do
       Rack::MiniProfiler.step 'pinned_links: cache miss' do
         PinnedLink.where(active: true).where('shown_before IS NULL OR shown_before > NOW()').all
       end
@@ -276,37 +268,34 @@ class ApplicationController < ActionController::Base
     # I.e., if pinned_post_ids contains null, the selection will never return records
     pinned_post_ids = @pinned_links.map(&:post_id).compact
 
-    @hot_questions = Rails.cache.fetch('hot_questions', expires_in: 4.hours) do
+    @hot_questions = Rails.cache.fetch_collection('hot_questions', expires_in: 4.hours) do
       Rack::MiniProfiler.step 'hot_questions: cache miss' do
-        Post.undeleted.where(closed: false)
-            .where(locked: false)
+        Post.undeleted.not_locked.where(closed: false)
             .where(last_activity: (Rails.env.development? ? 365 : 7).days.ago..DateTime.now)
             .where(post_type_id: [Question.post_type_id, Article.post_type_id])
             .joins(:category).where(categories: { use_for_hot_posts: true })
             .where('score >= ?', SiteSetting['HotPostsScoreThreshold'])
             .where.not(id: pinned_post_ids)
-            .order('score DESC').limit(SiteSetting['HotQuestionsCount']).all
+            .limit(SiteSetting['HotQuestionsCount'])
       end
-    end
+    end.order('score DESC')
+
+    # eager loading revived collections' used relation to prevent N+1 queries
+    @pinned_links = @pinned_links.list_includes
+    @hot_questions = @hot_questions.list_includes
   end
 
   def pull_categories
-    @header_categories = Rails.cache.fetch('header_categories') do
-      Category.all.order(sequence: :asc, id: :asc)
-    end
+    @header_categories = Rails.cache.fetch_collection('header_categories') do
+      Category.all
+    end.order(sequence: :asc, id: :asc)
   end
 
   def check_if_warning_or_suspension_pending
-    return if current_user.nil?
-
-    warning = ModWarning.where(community_user: current_user.community_user)
-                        .or(ModWarning.where(user: current_user, is_global: true))
-                        .where(active: true)
-                        .any?
-    return unless warning
-
-    # Ignore devise and warning routes
-    return if devise_controller? || ['custom_sessions', 'mod_warning', 'errors'].include?(controller_name)
+    return unless ModWarning.to(current_user)
+                            .or(ModWarning.where(user: current_user, is_global: true))
+                            .active
+                            .any?
 
     flash.clear
 
@@ -321,8 +310,7 @@ class ApplicationController < ActionController::Base
        SiteSetting['EnableMandatoryGlobalAdminMod2FA'] &&
        # Enable users to log out even if 2fa is enforced
        !request.fullpath.end_with?('/users/sign_out') &&
-       (current_user.is_global_admin ||
-         current_user.is_global_moderator) &&
+       current_user.at_least_global_moderator? &&
        (current_user.sso_profile.blank? || SiteSetting['Enable2FAForSsoUsers'])
       redirect_path = '/users/two-factor'
       unless request.fullpath.end_with?(redirect_path)
@@ -350,7 +338,7 @@ class ApplicationController < ActionController::Base
                    path.start_with?('/assets/') ||
                    path.end_with?('.css') || path.end_with?('.js')
 
-    # Make available to controller that the we should not leak posts in the sidebar
+    # Used by derived controllers to avoid leaking featured posts to the sidebar
     @prevent_sidebar = true
 
     # Allow /help (help center), /help/* and /policy/* depending on settings
@@ -385,6 +373,10 @@ class ApplicationController < ActionController::Base
     helpers.current_user
   end
 
+  def system_user
+    helpers.system_user
+  end
+
   def user_signed_in?
     helpers.user_signed_in?
   end
@@ -397,16 +389,20 @@ class ApplicationController < ActionController::Base
     helpers.devise_sign_in_enabled?
   end
 
+  def redirect_to_sign_in
+    if devise_sign_in_enabled?
+      redirect_to new_user_session_path
+    else
+      redirect_to new_saml_user_session_path
+    end
+  end
+
   def authenticate_user!(_fav = nil, **_opts)
     unless user_signed_in?
       respond_to do |format|
         format.html do
           flash[:error] = 'You need to sign in or sign up to continue.'
-          if devise_sign_in_enabled?
-            redirect_to new_user_session_path
-          else
-            redirect_to new_saml_user_session_path
-          end
+          redirect_to_sign_in
         end
         format.json do
           render json: { error: 'You need to sign in or sign up to continue.' }, status: 401
@@ -436,5 +432,25 @@ class ApplicationController < ActionController::Base
   # Stores the location in the system for the current session, such that after login we send them back to the same page.
   def store_user_location!
     store_location_for(:user, request.fullpath)
+  end
+
+  def require_sudo
+    unless user_signed_in? && session[:sudo].present? &&
+           DateTime.iso8601(session[:sudo]) >= AppConfig.server_settings['user_sudo_duration'].minutes.ago
+      session[:sudo_return] = request.fullpath
+      redirect_to user_sudo_path
+    end
+  end
+
+  # default request_authenticity_tokens only checks form tokens and request.x_csrf_token
+  # for some reason, even if cookie-based strategy is officially supported, it's not checked here
+  def request_authenticity_tokens
+    super << csrf_token_storage_strategy.fetch(request)
+  end
+
+  def normalize(maybe_string)
+    return maybe_string unless maybe_string.is_a?(String)
+
+    maybe_string.encode(maybe_string.encoding, universal_newline: true).strip
   end
 end

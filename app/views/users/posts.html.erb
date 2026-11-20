@@ -1,6 +1,6 @@
 <% content_for :title, "Posts by #{rtl_safe_username(@user)}" %>
 
-<% if moderator? && deleted_user?(@user) %>
+<% if at_least_moderator? && deleted_user?(@user) %>
   <%= render 'deleted', user: @user %>
 <% end %>
 
@@ -10,14 +10,19 @@
 <div class="has-color-tertiary-500 category-meta">
   <span title="<%= post_count %> posts">
     <%= short_number_to_human post_count, precision: 1, significant: false %>
-    <%= 'post'.pluralize(post_count) %> 
+    <%= 'post'.pluralize(post_count) %>
   </span>
 
   <div class="button-list is-gutterless has-margin-2">
-    <%= link_to 'Score', request.params.merge(sort: 'score'), class: 'button is-muted is-outlined ' + (active_search?('score') ? 'is-active' : ''),
-                role: 'button', 'aria-label': 'Sort by score' %>
-    <%= link_to 'Age', request.params.merge(sort: 'age'), class: 'button is-muted is-outlined ' + (active_search?('created_at') ? 'is-active' : ''),
-                role: 'button', 'aria-label': 'Sort by age' %>
+    <%= link_to 'Activity', query_url(sort: 'activity'), 
+                            class: 'button is-muted is-outlined ' + (active_search?('last_activity') ? 'is-active' : ''),
+                            role: 'button', 'aria-label': 'Sort by activity' %>
+    <%= link_to 'Age', query_url(sort: 'age'), 
+                       class: 'button is-muted is-outlined ' + (active_search?('created_at') ? 'is-active' : ''),
+                       role: 'button', 'aria-label': 'Sort by age' %>
+    <%= link_to 'Score', query_url(sort: 'score'), 
+                         class: 'button is-muted is-outlined ' + (active_search?('score') ? 'is-active' : ''),
+                         role: 'button', 'aria-label': 'Sort by score' %>
   </div>
 </div>
 

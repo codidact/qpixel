@@ -29,13 +29,14 @@ class TagSetsController < ApplicationController
       AuditLog.admin_audit(event_type: 'tag_set_update', related: @tag_set, user: current_user,
                            comment: "from <<TagSet #{before}>>\nto <<TagSet #{@tag_set.attributes_print}>>")
     else
-      render json: { tag_set: @tag_set, status: 'failed' }, status: :internal_server_error
+      render json: { tag_set: @tag_set, status: 'failed', message: 'Failed to change tag set name' },
+             status: :internal_server_error
     end
   end
 
   private
 
   def set_tag_set
-    @tag_set = (current_user&.is_global_admin ? TagSet.unscoped : TagSet).find(params[:id])
+    @tag_set = (current_user&.global_admin? ? TagSet.unscoped : TagSet).find(params[:id])
   end
 end

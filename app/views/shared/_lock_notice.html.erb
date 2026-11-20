@@ -1,0 +1,16 @@
+<%# 
+  Reusable helper view for lock notices (posts & comments).
+
+  Variables:
+    level : notice severity level (one of: 'info', 'error', default 'error')
+    text  : notice text to display
+%>
+
+<%
+  #defaults
+  level ||= defined?(level) && !level.nil? ? level : 'error'
+%>
+
+<p class="<%= level == 'error' ? 'has-color-red-500' : 'has-color-tertiary-500' %>">
+<i class="fa fa-lock"></i> <%= sanitize(text) %>
+</p>

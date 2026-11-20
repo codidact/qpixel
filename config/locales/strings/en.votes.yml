@@ -2,3 +2,6 @@ en:
   votes:
     summary:
       post_missing: 'Post not found'
+    limits:
+      own_post: 'You may not vote on your own posts.'
+      restricted_ability: 'You must have the Participate Everywhere ability to vote on this post.'

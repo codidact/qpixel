@@ -1,7 +1,14 @@
+<%
+  title = t('admin.tools.email_moderators')
+  blurb = t('admin.email_moderators_blurb')
+%>
+
+<% content_for :title, title %>
+
 <%= render 'posts/markdown_script' %>
 
-<h1><%= t 'admin.tools.email_moderators' %></h1>
-<p><%= t 'admin.email_moderators_blurb' %></p>
+<h1><%= title %></h1>
+<p><%= blurb %></p>
 
 <%= form_with url: send_moderator_email_path do |f| %>
   <div class="form-group">

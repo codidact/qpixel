@@ -5,7 +5,8 @@
 <%= form_tag two_factor_confirm_disable_path do %>
   <div class="form-group">
     <%= label_tag 'code', 'Code', class: 'form-element' %>
-    <%= text_field_tag 'code', '', class: 'form-element' %>
+    <%= number_field_tag 'code', '', class: 'form-element', autocomplete: 'one-time-code', autofocus: 'true',
+        inputmode: 'numeric' %>
   </div>
 
   <%= submit_tag 'Confirm', class: 'button is-filled' %>

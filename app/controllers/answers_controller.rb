@@ -6,7 +6,7 @@ class AnswersController < ApplicationController
   before_action :check_if_answer_locked, only: [:convert_to_comment]
 
   def convert_to_comment
-    return not_found unless current_user.has_post_privilege?('flag_curate', @answer)
+    return not_found! unless current_user.post_privilege?('flag_curate', @answer)
 
     text = @answer.body_markdown
     comments = helpers.split_words_max_length(text, 500)

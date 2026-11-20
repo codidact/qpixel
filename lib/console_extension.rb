@@ -1,3 +1,4 @@
+# rubocop:disable Style/OneClassPerFile
 module ConsoleExtension
   extend ActiveSupport::Concern
 
@@ -104,3 +105,4 @@ module Qpixel
     end
   end
 end
+# rubocop:enable Style/OneClassPerFile

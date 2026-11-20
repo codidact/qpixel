@@ -1,0 +1,64 @@
+<p class="has-font-size-caption has-color-tertiary-600">Last updated 12 March 2026</p>
+
+<h1 class="is-brand-comp with-subtitle">Online Safety Act</h1>
+<h2 class="subtitle">Overview</h2>
+
+<p>
+  The Online Safety Act 2023 (<a href="https://www.legislation.gov.uk/ukpga/2023/50">available here</a>) is a law
+  established in the UK in 2023 with the aim of improving online safety, particularly with regard to children, but with
+  wide-ranging effects for all online services. All services with UK users are required to comply with the Act. There
+  are ongoing cases which will define whether this is enforceable on non-UK entities in practice, but because Codidact
+  is a UK-based entity, we are clearly within scope and required to comply.
+</p>
+<p>
+  The Act is enforced by the UK's communications regulator, Ofcom, which also sets out the Register of Risks and Codes
+  of Practice on which our approach is based.
+</p>
+
+<h3>Types of service</h3>
+<p>
+  The Act defines two types of service: search services and user-to-user services. User-to-user services are those where
+  users may interact with one another; this is where we fall. There are different requirements imposed on each kind of
+  service, which for user-to-user services primarily focus on preventing and removing harmful content, and protecting
+  users from related harms.
+</p>
+
+<h3>Our responsibilities</h3>
+<p>
+  Responsibility for compliance with the requirements of the Act obviously falls on us (meaning the Codidact Foundation
+  as the organisation running the platform). The Foundation designates one of the Board of Directors as a named
+  individual with ultimate responsibility for compliance with the Act, which is currently
+  <%= user_link(User.find_by(id: SiteSetting['OSADirector'])) %>.
+</p>
+<p>
+  One of our responsibilities is to ensure that our volunteer moderators (that's you) have an awareness of the Act and
+  are provided with appropriate training in order to equip them to handle any harmful content which may appear on the
+  platform.
+</p>
+
+<h3>Your responsibilities</h3>
+<p>
+  As a volunteer moderator, your job is to guide, curate, and set the tone for your community. Part of that job is
+  protecting the community from any unwanted content. The majority of the time, that might take the form of off-topic
+  posts, arguments between users, or handling flags for your attention. Unfortunately, it may also take the form of
+  harmful or illegal content covered by the Act, and one of your responsibilities is to ensure this is dealt with and
+  escalated appropriately.
+</p>
+<p>
+  To be clear: we're <strong>not</strong> expecting you to handle harmful or illegal content alone. Our ask of you is
+  simple: if you identify something that you think would be covered by the Act, please:
+</p>
+<ul>
+  <li>Delete it to remove it from public view</li>
+  <li>
+    Escalate it to the Community Team straight away: either ping us in Discord, or flag it yourself and escalate your
+    own flag for us to review.
+  </li>
+</ul>
+
+<div class="has-text-align-right">
+  <%= link_to osa_training_path('illegal-content') do %>
+    <strong>Next</strong><br/>
+    Priority & Non-Priority Illegal Content &raquo;
+  <% end %>
+</div>

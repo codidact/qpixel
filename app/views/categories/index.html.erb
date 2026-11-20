@@ -1,4 +1,10 @@
-<h1>Categories</h1>
+<%
+  title = t('admin.tools.categories')
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <% @categories.each do |cat| %>
   <% next unless (current_user&.trust_level || 0) >= (cat.min_view_trust_level || -1) %>
@@ -18,14 +24,14 @@
       <%= link_to category_path(cat), class: 'button is-filled' do %>
         See posts &raquo;
       <% end %>
-      <% if current_user&.is_admin %>
+      <% if current_user&.admin? %>
         <%= link_to 'Edit', edit_category_path(cat), class: 'button is-outlined' %>
       <% end %>
     </div>
   </div>
 <% end %>
 
-<% if current_user&.is_admin %>
+<% if current_user&.admin? %>
   <%= link_to new_category_path, class: 'button is-outlined' do %>
     Add new category &raquo;
   <% end %>

@@ -5,9 +5,22 @@ duplicate:
   requires_other_post: true
   community: sample
 
+second_community:
+  name: not on this community
+  active: true
+  requires_other_post: false
+  community: second
+
 not_good:
   name: not good
   description: not good
   active: true
   requires_other_post: false
   community: sample
+
+global:
+  name: global
+  description: global
+  active: true
+  requires_other_post: false
+  community: ~

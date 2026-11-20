@@ -10,38 +10,34 @@
     <tr class="<%= deleted_item?(i) ? 'deleted-content' : '' %>">
       <% if i.class == Post %>
         <% type_name = (i.question? ? 'Question' : (i.article? ? 'Article' : 'Answer')) %>
-        <td>
-          <span class="h-fw-bold">
-            <%= type_name %>
-          </span>
-        </td>
+        <td class="wrap-word"><span class="h-fw-bold"><%= type_name %></span></td>
         <td>&mdash;</td>
         <td class="h-fs-caption">
           <% working_title = i.answer? ? "A: #{i.parent.title}" : i.title %>
           <strong><%= working_title %></strong><br>
-          <%= i.body_plain[0..300] + ((i.body_plain.length > 300) ? "..." : "") %><br>
-          <%= link_to '(more)', generic_share_link(i), 'aria-label': "More information about #{type_name} #{working_title}" %>
+          <%= i.body_plain&.truncate(300) %><br>
+          <%= link_to '(more)',
+                      generic_share_link(i),
+                      'aria-label': "More information about #{type_name} #{working_title}" %>
         </td>
         <td>&mdash;</td>
       <% elsif i.class == Comment %>
+        <td class="wrap-word">Comment</td>
         <td>
-          Comment
-        </td>
-        <td>
-          <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
+          <% if i.post.nil? %>
+              <%= link_to 'Private', comment_link(i), 'aria-label': 'Location of comment in private thread' %>
+          <% else %>
+              <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
+          <% end %>
         </td>
         <td class="h-fs-caption">
-          <%= i.content[0..300] + ((i.content.length > 300) ? "..." : "") %><br>
+          <%= i.content&.truncate(300) %><br>
           <%= link_to '(more)', comment_link(i), 'aria-label': 'More information about comment' %>
         </td>
         <td>&mdash;</td>
       <% elsif i.class == PostHistory %>
-        <td>
-          Edit
-        </td>
-        <td>
-          <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
-        </td>
+        <td class="wrap-word">Edit</td>
+        <td><%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %></td>
         <td class="h-fs-caption">
           <% if i.comment %>
             <em><%= i.post_history_type.name.gsub("_", " ").capitalize %></em>:<br><%= i.comment %>
@@ -51,49 +47,43 @@
         </td>
         <td>&mdash;</td>
       <% elsif i.class == SuggestedEdit %>
-        <td>
-          Suggested Edit
-        </td>
-        <td>
-          <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
-        </td>
+        <td class="wrap-word">Suggested Edit</td>
+        <td><%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %></td>
         <td class="h-fs-caption">
           <em>Suggested edit</em>:<br><%= i.comment %><br>
-          <%= link_to '(more)', suggested_edit_url(i.id), 'aria-label': "More information about suggested edit #{i.comment}" %>
+          <%= link_to '(more)',
+                      suggested_edit_url(i.id),
+                      'aria-label': "More information about suggested edit #{i.comment}" %>
         </td>
         <td>
-          <%= (i.pending? ? "pending" : (i.approved? ? "helpful" : "declined")) %>
+          <%= (i.pending? ? 'pending' : (i.approved? ? 'helpful' : 'declined')) %>
         </td>
       <% elsif mod && i.class == ModWarning %>
-        <td>
-          <span class="h-fw-bold h-c-red-700">Warning</span>
-        </td>
+        <td class="wrap-word"><span class="h-fw-bold h-c-red-700">Warning</span></td>
         <td>&mdash;</td>
         <td class="h-fs-caption">
-          <%= i.body[0..300] + ((i.body.length > 300) ? "..." : "") %>
+          <%= i.body&.truncate(300) %>
         </td>
         <td>&mdash;</td>
       <% elsif mod && i.class == Flag %>
+        <td class="wrap-word">Flag</td>
         <td>
-          Flag
-        </td>
-        <td>
-	  <% if i.post_type == 'Post' %>
-          <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post)%>
-	  <% elsif i.post_type == 'Comment' %>
-	  <%= link_to "Comment thread: " + i.post.comment_thread.title, comment_link(i.post) %>
-	  <% end %>
+          <% if i.post_type == 'Post' %>
+            <%= link_to "Post #" + i.post.id.to_s, generic_share_link(i.post) %>
+          <% elsif i.post_type == 'Comment' %>
+            <%= link_to "Comment thread: " + i.post.comment_thread.title, comment_link(i.post) %>
+          <% elsif i.post_type == 'User' %>
+            <%= link_to 'User #' + i.post.id.to_s, user_path(i.post) %>
+          <% end %>
         </td>
         <td class="h-fs-caption">
-          <%= i.reason[0..300] + ((i.reason.length > 300) ? "..." : "") %><br>
+          <%= i.reason&.truncate(300) %><br>
         </td>
         <td>
           <%= i.status || "pending" %>
         </td>
       <% else %>
-        <td>
-          <span class="badge is-tag is-muted">Unknown</span>
-        </td>
+        <td class="wrap-word"><span class="badge is-tag is-muted">Unknown</span></td>
         <td>&mdash;</td>
         <td><%= i.class %></td>
         <td>&mdash;</td>

@@ -1,4 +1,5 @@
 class SubscriptionMailer < ApplicationMailer
+  helper PostsHelper
   helper UsersHelper
 
   def subscription

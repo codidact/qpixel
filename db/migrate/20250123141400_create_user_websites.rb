@@ -1,7 +1,7 @@
 class CreateUserWebsites < ActiveRecord::Migration[7.0]
   def change
     create_table :user_websites do |t|
-      t.column :label, :string, limit:80
+      t.column :label, :string, limit: 80
       t.string :url
       t.integer :position
     end

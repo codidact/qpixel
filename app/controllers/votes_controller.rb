@@ -7,12 +7,19 @@ class VotesController < ApplicationController
     post = Post.find(params[:post_id])
 
     if post.user == current_user && !SiteSetting['AllowSelfVotes']
-      render(json: { status: 'failed', message: 'You may not vote on your own posts.' }, status: :forbidden) && return
+      render(json: { status: 'failed', message: I18n.t('votes.limits.own_post') },
+             status: :forbidden)
+      return
     end
 
-    recent_votes = Vote.where(created_at: 24.hours.ago..DateTime.now, user: current_user) \
-                       .where.not(post: Post.includes(:parent).where(parents_posts: { user_id: current_user.id })).count
-    max_votes_per_day = SiteSetting[current_user.privilege?('unrestricted') ? 'RL_Votes' : 'RL_NewUserVotes']
+    unless current_user.can_vote_on?(post)
+      render(json: { status: 'failed', message: I18n.t('votes.limits.restricted_ability') },
+             status: :forbidden)
+      return
+    end
+
+    recent_votes = current_user.recent_votes_count
+    max_votes_per_day = current_user.max_votes_per_day
 
     if !post.parent&.user_id == current_user.id && recent_votes >= max_votes_per_day
       vote_limit_msg = "You have used your daily vote limit of #{recent_votes} votes. " \
@@ -42,7 +49,7 @@ class VotesController < ApplicationController
     AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
 
     modified = !destroyed.empty?
-    state = { status: (modified ? 'modified' : 'OK'),
+    state = { status: (modified ? 'modified' : 'success'),
               vote_id: vote.id,
               upvotes: post.upvote_count,
               downvotes: post.downvote_count,
@@ -62,7 +69,7 @@ class VotesController < ApplicationController
 
     if vote.destroy
       AbilityQueue.add(post.user, "Vote Change on ##{post.id}")
-      render json: { status: 'OK',
+      render json: { status: 'success',
                      upvotes: post.upvote_count,
                      downvotes: post.downvote_count,
                      score: post.score }

@@ -1,0 +1,11 @@
+<%#
+  Helper for rendering suggested edit review link buttons
+
+  Variables:
+    post : Post to create the link for
+%>
+
+<%= link_to suggested_edit_url(post.pending_suggested_edit.id), class: 'tools--item is-danger is-filled' do %>
+  <i class="fa fa-spell-check"></i>
+  Review suggested edit
+<% end %>

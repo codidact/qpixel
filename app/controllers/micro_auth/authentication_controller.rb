@@ -73,7 +73,7 @@ class MicroAuth::AuthenticationController < ApplicationController
 
   def set_app
     @app = MicroAuth::App.find_by app_id: params[:app_id]
-    not_found if @app.nil?
+    not_found! if @app.nil?
   end
 
   def clean_scope(scope)

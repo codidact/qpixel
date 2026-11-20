@@ -15,7 +15,7 @@ class EmailLogsController < ApplicationController
           EmailLog.create(log_type: 'SubscriptionConfirmation', data: aws_data)
         else
           message_data = JSON.parse aws_data['Message']
-          log_type = message_data['notificationType']
+          log_type = message_data['notificationType'] || message_data['eventType']
           destination = message_data['mail']['destination'].join(', ')
           EmailLog.create(log_type: log_type, destination: destination, data: aws_data['Message'])
         end

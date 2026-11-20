@@ -1,0 +1,17 @@
+<h1 class="has-font-size-heading">Your report has been reviewed</h1>
+<p>
+  Thank you for your <%= report_type(@complaint.report_type)['name'].downcase %> of
+  <%= @complaint.created_at.strftime '%d %B %Y' %>. We can confirm that we have now reviewed your report.
+</p>
+
+<p>
+  The outcome of your report is: <strong><%= outcome(@complaint.outcome)['name'] %></strong>. This means
+  <%= outcome(@complaint.outcome)['user_facing'][@complaint.report_type]['content'] %>
+</p>
+
+<p>
+  For the full details and the response from the member of staff who reviewed your report, please
+  <%= link_to 'view your report here', complaint_url(@complaint.access_token) %>.
+</p>
+
+<p>Thank you again for taking the time to report this to us and helping to keep our corner of the Internet safe.</p>

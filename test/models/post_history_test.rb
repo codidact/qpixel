@@ -36,4 +36,19 @@ class PostHistoryTest < ActiveSupport::TestCase
     assert_equal post.body_markdown, event.after_state
     assert_nil event.before_state
   end
+
+  test 'allowed_to_see_details? should correctly check if a given user can acces a revision' do
+    editor = users(:editor)
+    mod = users(:moderator)
+    admin = users(:admin)
+
+    hidden = post_histories(:question_one_hidden_revision)
+
+    assert_equal hidden.allowed_to_see_details?(editor), false
+    assert_equal hidden.allowed_to_see_details?(mod), false
+    assert_equal hidden.allowed_to_see_details?(admin), true
+
+    # post author should always see history items
+    assert_equal hidden.allowed_to_see_details?(hidden.post.user), true
+  end
 end

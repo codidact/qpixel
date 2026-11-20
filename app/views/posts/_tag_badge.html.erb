@@ -1,0 +1,19 @@
+<%#
+    Renders a linked badge for a given post & tag
+
+    Variables:
+      post             : Post the tag is on
+      tag              : Tag to render the badge for
+    ? required_tag_ids : list of tag IDs required for the post's category
+    ? topic_tag_ids    : list of tag IDs topical for the post's category
+    ? moderator_tag_ids      : list of mod-only tags IDs for the post's category
+%>
+
+<% required = required_tag_ids&.include?(tag.id) ? 'is-filled' : '' %>
+<% topic = topic_tag_ids&.include?(tag.id) ? 'is-outlined' : '' %>
+<% mod_only = moderator_tag_ids&.include?(tag.id) ? 'is-red is-outlined' : '' %>
+
+<%= link_to tag.name,
+            tag_url(id: post.category_id, tag_id: tag.id, host: post.community.host),
+            class: "badge is-tag #{required} #{topic} #{mod_only}",
+            title: tag.excerpt.present? ? tag.excerpt : "(no description yet)" %>

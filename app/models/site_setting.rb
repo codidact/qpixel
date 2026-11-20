@@ -9,15 +9,17 @@ class SiteSetting < ApplicationRecord
   scope :global, -> { for_community_id(nil) }
   scope :priority_order, -> { order(Arel.sql('IF(site_settings.community_id IS NULL, 1, 0)')) }
 
-  def self.[](name)
-    key = "SiteSettings/#{RequestContext.community_id}/#{name}"
+  serialize :options, coder: YAML, type: Array
+
+  def self.[](name, community: nil)
+    key = "SiteSettings/#{community.present? ? community.id : RequestContext.community_id}/#{name}"
     cached = Rails.cache.fetch key, include_community: false do
-      SiteSetting.applied_setting(name)&.typed
+      SiteSetting.applied_setting(name, community: community)&.typed
     end
 
     if cached.nil?
       Rails.cache.delete key, include_community: false
-      value = SiteSetting.applied_setting(name)&.typed
+      value = SiteSetting.applied_setting(name, community: community)&.typed
       Rails.cache.write key, value, include_community: false
       value
     else
@@ -25,15 +27,40 @@ class SiteSetting < ApplicationRecord
     end
   end
 
-  def self.exist?(name)
-    Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}", include_community: false) ||
-      SiteSetting.where(name: name).count.positive?
+  def self.[]=(name, value)
+    key = "SiteSettings/#{RequestContext.community_id}/#{name}"
+
+    setting = applied_setting(name)
+
+    typed_value = SettingConverter.new(value).send("as_#{setting.value_type.downcase}")
+
+    setting.update(value: typed_value)
+
+    Rails.cache.write key, typed_value, include_community: false
   end
 
-  # Checks whether the setting is a global site setting
-  # @return [Boolean]
+  def self.exist?(name)
+    Rails.cache.exist?("SiteSettings/#{RequestContext.community_id}/#{name}", include_community: false) ||
+      SiteSetting.where(name: name).any?
+  end
+
+  # Is the setting global?
+  # @return [Boolean] check result
   def global?
     community_id.nil?
+  end
+
+  # Defines predicates for each value type
+  [:array, :boolean, :float, :integer, :string, :text, :uri_path].each do |method|
+    define_method "#{method}?" do
+      value_type.downcase.to_sym == method
+    end
+  end
+
+  # Is the setting numeric-valued?
+  # @return [Boolean] check result
+  def numeric?
+    float? || integer?
   end
 
   def typed
@@ -44,8 +71,9 @@ class SiteSetting < ApplicationRecord
     SettingConverter.new(setting.value).send("as_#{setting.value_type.downcase}")
   end
 
-  def self.applied_setting(name)
-    SiteSetting.for_community_id(RequestContext.community_id).or(global).where(name: name).priority_order.first
+  def self.applied_setting(name, community: nil)
+    SiteSetting.for_community_id(community.present? ? community.id : RequestContext.community_id)
+               .or(global).where(name: name).priority_order.first
   end
 
   def self.all_communities(name)
@@ -73,35 +101,5 @@ class SiteSetting < ApplicationRecord
         end
       ]
     end
-  end
-end
-
-class SettingConverter
-  def initialize(value)
-    @value = value
-  end
-
-  def as_string
-    @value&.to_s
-  end
-
-  def as_text
-    @value&.to_s
-  end
-
-  def as_integer
-    @value&.to_i
-  end
-
-  def as_float
-    @value&.to_f
-  end
-
-  def as_boolean
-    ActiveModel::Type::Boolean.new.cast(@value)
-  end
-
-  def as_json
-    JSON.parse(@value)
   end
 end

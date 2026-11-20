@@ -7,7 +7,7 @@
     is_policy = @post.post_type_id == PolicyDoc.post_type_id
     history_path = is_hc ? help_post_history_path(@post.doc_slug) : policy_post_history_path(@post.doc_slug)
   %>
-  <% if (moderator? && is_hc) || (admin? && is_policy) %>
+  <% if (at_least_moderator? && is_hc) || (admin? && is_policy) %>
     <%= link_to 'edit', edit_post_path(@post), class: "button is-outlined is-muted" %>
   <% end %>
   <%= link_to 'history', history_path,  class: "button is-outlined is-muted" %>

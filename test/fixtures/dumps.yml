@@ -1,0 +1,8 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+without_comment:
+  title: Data dump without a comment
+
+with_comment:
+  title: Data dump with comment
+  comment: we decided to include a helpful comment this time

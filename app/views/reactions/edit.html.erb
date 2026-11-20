@@ -1,4 +1,10 @@
-<h1>Edit reaction</h1>
+<%
+  title = "Edit reaction \"#{@reaction_type.name}\""
+%>
+
+<% content_for :title, title %>
+
+<h1><%= title %></h1>
 
 <div class="notice is-warning has-color-yellow-900 has-font-size-caption flex-row-always jc-sb ai-c">
   <i class="fas fa-exclamation-triangle"></i>

@@ -1,0 +1,80 @@
+@import 'variables';
+
+.post--comments-thread-wrapper {
+  .post--comments-thread {
+    .widget--body:not(.widget--deleted-comments):not(.widget--more-comments) {
+      padding: 0;
+
+      .comment {
+        margin: 0;
+      }
+    }
+  }
+
+  .droppanel {
+    max-width: 15em;
+
+    .droppanel--menu {
+      max-width: unset;
+    }
+  }
+}
+
+.thread {
+  &.widget {
+    .widget--header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      justify-content: space-between;
+    }
+
+    .widget--header-link {
+      font-size: 0.75em;
+      margin: 0;
+      padding: 0;
+      white-space: nowrap;
+    }
+  }
+
+  .thread--actions {
+    display: flex;
+    flex-wrap:wrap;
+    gap: 0.5em;
+    justify-content: end;
+    margin-top: 0.2rem;
+
+    @media screen and (max-width: $screen-sm) {
+      justify-content: start;
+    }
+  }
+
+  .widget--full-thread,
+  .widget--more-comments,
+  .widget--deleted-comments {
+    font-size: 0.8em;
+    padding: 0.5em;
+    text-align: center;
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+.thread-followers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+
+  .user-card--content {
+    max-width: 75%;
+  }
+}
+
+.new-thread-wrapper,
+.reply-to-thread-wrapper {
+  align-items: center;
+  gap: 0.25em;
+  display: inline-flex;
+}

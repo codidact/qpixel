@@ -1,24 +1,117 @@
 require 'simplecov'
 require 'simplecov_json_formatter'
 SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
-SimpleCov.start 'rails'
+SimpleCov.start('rails')
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 
 require 'minitest/ci'
+require 'minitest/mock'
 Minitest::Ci.report_dir = Rails.root.join('test/reports/minitest').to_s
 
-Dir.glob(Rails.root.join('test/support/**/*.rb')).sort.each { |f| require f }
+require 'webmock/minitest'
+
+# cleanup seeds after all tests are run (can't use teardown callbacks as they run after each test)
+Minitest.after_run do
+  # IMPORTANT: the order is very specific to prevent FK constraint errors without disabling them
+  models = [
+    WarningTemplate,
+    ModWarning,
+    ThreadFollower,
+    NewThreadFollower,
+    Comment,
+    CommentThread,
+    Reaction,
+    ReactionType,
+    Flag,
+    PinnedLink,
+    PostFlagType,
+    SuggestedEdit,
+    Vote,
+    Post,
+    PostHistory,
+    PostHistoryTag,
+    PostHistoryType,
+    UserAbility,
+    AbilityQueue,
+    Ability,
+    CategoryFilterDefault,
+    Category,
+    CloseReason,
+    PostType,
+    License,
+    TagSynonym,
+    Tag,
+    TagSet,
+    Filter,
+    CommunityUser,
+    UserWebsite,
+    AuditLog,
+    BlockedItem,
+    EmailLog,
+    ErrorLog,
+    Subscription,
+    MicroAuth::Token,
+    MicroAuth::App,
+    ComplaintComment,
+    Complaint,
+    User,
+    Notification,
+    SiteSetting,
+    Community
+  ]
+
+  models.each do |model|
+    if model == PostType
+      model.unscoped.where.not(answer_type_id: nil).delete_all
+      model.unscoped.where(answer_type_id: nil).delete_all
+    elsif model == Tag
+      model.unscoped.where.not(parent_id: nil).delete_all
+      model.unscoped.where(parent_id: nil).delete_all
+    elsif model == User
+      model.unscoped.where.not(deleted_by_id: nil).delete_all
+      model.unscoped.where(deleted_by_id: nil).delete_all
+    else
+      model.unscoped.all.delete_all
+    end
+  end
+end
+
+Dir.glob(Rails.root.join('test/support/**/*.rb')).each { |f| require f }
+
+module WebMockStubs
+  extend ActiveSupport::Concern
+
+  included do
+    setup do
+      # TODO: for now just stubbing out the whole response is enough.
+      # Consider returning something resembling the real response
+      stub_request(:get, lambda do |uri|
+        uri.origin == 'https://cdn.jsdelivr.net'
+      end)
+    end
+
+    teardown do
+      WebMock.reset!
+    end
+  end
+end
 
 class ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+  include WebMockStubs
+
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
   setup :set_request_context
 
-  teardown :clear_cache
+  teardown do
+    clear_enqueued_jobs
+    clear_cache
+  end
 
   protected
 
@@ -26,7 +119,7 @@ class ActiveSupport::TestCase
   # This means that we can leverage it's smart transaction behavior to significantly speed up our tests (by a factor of 6).
   def load_fixtures(config)
     # Loading a fixture deletes all data in the same tables, so it has to happen before we load our normal seeds.
-    fixture_data = super(config)
+    fixture_data = super
     load_tags_paths
     load_seeds
 
@@ -46,7 +139,8 @@ class ActiveSupport::TestCase
   end
 
   def load_tags_paths
-    ActiveRecord::Base.connection.execute File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))
+    sql = File.read(Rails.root.join('db/scripts/create_tags_path_view.sql'))
+    ActiveRecord::Base.connection.execute(sql)
   end
 
   def clear_cache
@@ -59,26 +153,98 @@ class ActiveSupport::TestCase
     end
   end
 
+  def assert_audit_log(event_type, related: nil)
+    log_entry = AuditLog.where(event_type: event_type)
+                        .order(created_at: :desc)
+                        .last
+    assert_not_nil(log_entry)
+    assert_equal event_type, log_entry['event_type']
+
+    if related.present?
+      assert_equal related.id, log_entry['related_id']
+    else
+      assert_nil(log_entry['related_id'])
+    end
+  end
+
+  def assert_draft_deleted(user, path, *fields)
+    base_key = "saved_post.#{user.id}.#{path}"
+
+    fields.each do |key|
+      key_name = DraftManagement::NESTED_DRAFTABLE_FIELDS.include?(key) ? base_key : "#{base_key}.#{key}"
+      assert_not(RequestContext.redis.exists?(key_name),
+                 "Expected '#{key_name}' draft to be deleted")
+    end
+  end
+
+  def assert_valid_json_response
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+    end
+  end
+
+  def assert_json_failure(code, status: 'failed')
+    assert_response(code)
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+      assert_equal status, parsed['status']
+    end
+  end
+
+  def assert_json_success(status: 'success')
+    assert_response(:success)
+    assert_nothing_raised do
+      parsed = JSON.parse(response.body)
+      assert_not_nil(parsed)
+      assert_equal status, parsed['status']
+    end
+  end
+
+  def assert_json_response_message(expected)
+    assert_equal expected, JSON.parse(response.body)['message']
+  end
+
+  def assert_nil_unless(condition, actual)
+    assert_operator(nil, condition ? '!=' : '==', actual)
+  end
+
+  def assert_redirected_to_sign_in
+    assert_response(:found)
+    assert_redirected_to(new_user_session_path)
+  end
+
+  ##
+  # Assert that the given array contains at least one of the array of expected values.
+  # @param ary [Array] array to check
+  # @param expected [Array] array of expected values
+  # @param error_message [String] error message to display if the assertion fails
+  def assert_include_any(ary, expected, error_message = nil)
+    default_error = 'Expected array to contain any expected value.'
+    assert ary.any? { |x| expected.include?(x) }, error_message || default_error
+  end
+
   PostMock = Struct.new(:title, :body_markdown, :body, :tags_cache, :edit, keyword_init: true)
 
-  def sample
-    PostMock.new(
-      title: 'This is a sample title',
-      body_markdown: 'This is a sample post with some **Markdown** and [a link](/).',
-      body: '<p>This is a sample post with some <b>Markdown</b> and <a href="/">a link</a></p>',
-      tags_cache: ['discussion', 'posts', 'tags'],
-      edit: PostMock.new(
-        title: 'This is another sample title',
-        body_markdown: 'This is a sample post with some more **Markdown** and [a link](/).',
-        body: '<p>This is a sample post with some more <b>Markdown</b> and <a href="/">a link</a></p>',
-        tags_cache: ['discussion', 'posts', 'tags', 'edits'],
-        edit: nil
-      )
-    )
+  def sample(**options)
+    PostMock.new(title: 'This is a sample title',
+                 body_markdown: 'This is a sample post with some **Markdown** and [a link](/).',
+                 body: '<p>This is a sample post with some <b>Markdown</b> and <a href="/">a link</a></p>',
+                 tags_cache: ['discussion', 'posts', 'tags'],
+                 edit: PostMock.new(
+                   title: 'This is another sample title',
+                   body_markdown: 'This is a sample post with some more **Markdown** and [a link](/).',
+                   body: '<p>This is a sample post with some more <b>Markdown</b> and <a href="/">a link</a></p>',
+                   tags_cache: ['discussion', 'posts', 'tags', 'edits'],
+                   edit: nil
+                 ), **options)
   end
 end
 
 class ActionController::TestCase
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
@@ -87,9 +253,19 @@ class ActionController::TestCase
 end
 
 class ActionDispatch::IntegrationTest
+  include WebMockStubs
+
   setup :load_host
 
   def load_host
     integration_session.host = Community.first.host
+  end
+end
+
+class ActionMailer::TestCase
+  include WebMockStubs
+
+  def default_url_options
+    Rails.application.config.action_mailer.default_url_options
   end
 end

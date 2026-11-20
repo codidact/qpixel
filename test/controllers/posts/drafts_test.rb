@@ -15,10 +15,9 @@ class PostsControllerTest < ActionController::TestCase
       tags: ['tag1', 'tag2'],
       title: 'test_title'
     }
-    assert_response 200
-    assert_nothing_raised do
-      JSON.parse(response.body)
-    end
+
+    assert_response(:success)
+    assert_valid_json_response
 
     base_key = JSON.parse(response.body)['key']
 
@@ -35,6 +34,6 @@ class PostsControllerTest < ActionController::TestCase
   test 'can delete draft' do
     sign_in users(:standard_user)
     post :delete_draft, params: { path: 'test' }
-    assert_response 200
+    assert_response(:success)
   end
 end

@@ -8,7 +8,8 @@
 <% end %>
 
 <div class="notice is-info">
-  <i class="fas fa-info-circle"></i> If you have an account on another <a href="https://codidact.com/">Codidact site</a>,
+  <i class="fas fa-info-circle"></i> If you have an account on another 
+  <a href="<%= SiteSetting['NetworkURL'] %>"><%= SiteSetting['NetworkName'] %> site</a>,
   don't create a new account here - <%= link_to 'sign in', new_user_session_path %> with your existing details instead.
 </div>
 
@@ -28,7 +29,7 @@
   <div class="form-group">
     <%= f.label :password, class: "form-element" %>
     <% if @minimum_password_length %>
-    <div class="form-caption">(<%= @minimum_password_length %> characters minimum)</div>
+      <div class="form-caption">(<%= @minimum_password_length %> characters minimum)</div>
     <% end %>
     <%= f.password_field :password, class: 'form-element', autocomplete: "new-password" %>
   </div>

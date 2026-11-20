@@ -1,0 +1,27 @@
+<script type="application/javascript">
+  window.QPixel ||= {};
+
+  Object.defineProperty(QPixel, 'ALLOWED_POST_ATTRS', {
+    configurable: false,
+    value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_ATTRS %>),
+    writable: false,
+  });
+
+  Object.defineProperty(QPixel, 'ALLOWED_POST_TAGS', {
+    configurable: false,
+    value: Object.freeze(<%= raw PostsHelper::PostScrubber::ALLOWED_TAGS %>),
+    writable: false,
+  });
+
+  Object.defineProperty(QPixel, 'LOCALE', {
+    configurable: false,
+    value: "<%= I18n.locale %>",
+    writable: false,
+  });
+
+  Object.defineProperty(QPixel, 'MAX_UPLOAD_SIZE', {
+    configurable: false,
+    value: <%= SiteSetting['MaxRequestBodySize'].presence || 2 * 1024 * 1024 %>,
+    writable: false,
+  });
+</script>

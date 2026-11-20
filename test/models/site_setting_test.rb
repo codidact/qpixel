@@ -53,4 +53,19 @@ class SiteSettingTest < ActiveSupport::TestCase
     SiteSetting.create(community_id: nil, name: 'test', value: 'bar', value_type: 'string')
     assert_equal SiteSetting.where(name: 'test').first, setting1
   end
+
+  test 'type predicates should correctly check the setting\'s value type' do
+    [:array, :boolean, :float, :integer, :string, :text].each do |method|
+      site_settings.each do |setting|
+        assert_equal setting.value_type == method.to_s, setting.send("#{method}?")
+      end
+    end
+  end
+
+  test 'numeric? should correctly check if the setting\'s value is numeric' do
+    assert site_settings(:int).numeric?
+    assert site_settings(:float).numeric?
+    assert_not site_settings(:string).numeric?
+    assert_not site_settings(:text).numeric?
+  end
 end
