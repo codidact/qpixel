@@ -372,7 +372,7 @@ class UsersController < ApplicationController
     @flags = Flag.unscoped.where(user: @user).count
     @suggested_edits = SuggestedEdit.unscoped.where(user: @user).count
     @edits = PostHistory.unscoped.where(user: @user).count
-    @mod_warnings_received = ModWarning.where(community_user: @user.community_users).count + \
+    @mod_warnings_received = ModWarning.where(community_user: @user.community_users).count +
                              ModWarning.where(user: @user).count
 
     @all_edits = @suggested_edits + @edits
@@ -382,7 +382,7 @@ class UsersController < ApplicationController
     @interesting_edits = SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).count
     @interesting_posts = Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').count
 
-    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received + \
+    @interesting = @interesting_comments + @interesting_flags + @mod_warnings_received +
                    @interesting_edits + @interesting_posts
 
     @items = (case params[:filter]
@@ -393,25 +393,25 @@ class UsersController < ApplicationController
               when 'flags'
                 Flag.unscoped.where(user: @user).all
               when 'edits'
-                SuggestedEdit.unscoped.where(user: @user).all + \
+                SuggestedEdit.unscoped.where(user: @user).all +
                   PostHistory.where(user: @user).all
               when 'warnings'
-                ModWarning.where(community_user: @user.community_users).all + \
+                ModWarning.where(community_user: @user.community_users).all +
                   ModWarning.where(user: @user).all
               when 'interesting'
-                Comment.unscoped.where(user: @user, deleted: true).all + \
-                  Flag.unscoped.where(user: @user, status: 'declined').all + \
-                  SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).all + \
-                  Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').all + \
-                  ModWarning.unscoped.where(community_user: @user.community_users).all + \
+                Comment.unscoped.where(user: @user, deleted: true).all +
+                  Flag.unscoped.where(user: @user, status: 'declined').all +
+                  SuggestedEdit.unscoped.where(user: @user, active: false, accepted: false).all +
+                  Post.unscoped.where(user: @user).where('score < 0.25 OR deleted=1').all +
+                  ModWarning.unscoped.where(community_user: @user.community_users).all +
                   ModWarning.where(user: @user).all
               else
-                Post.unscoped.where(user: @user).all + \
-                  Comment.unscoped.where(user: @user).all + \
-                  Flag.unscoped.where(user: @user).all + \
-                  SuggestedEdit.unscoped.where(user: @user).all + \
-                  PostHistory.unscoped.where(user: @user).all + \
-                  ModWarning.unscoped.where(community_user: @user.community_users).all + \
+                Post.unscoped.where(user: @user).all +
+                  Comment.unscoped.where(user: @user).all +
+                  Flag.unscoped.where(user: @user).all +
+                  SuggestedEdit.unscoped.where(user: @user).all +
+                  PostHistory.unscoped.where(user: @user).all +
+                  ModWarning.unscoped.where(community_user: @user.community_users).all +
                   ModWarning.where(user: @user).all
               end).sort_by(&:created_at).reverse
   end
