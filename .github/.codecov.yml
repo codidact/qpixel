@@ -43,3 +43,7 @@ component_management:
       name: scripts
       paths:
         - app/scripts/**
+    - component_id: module_initializers
+      name: initializers
+      paths:
+        - config/initializers/**
