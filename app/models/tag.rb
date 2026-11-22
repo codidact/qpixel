@@ -107,7 +107,7 @@ class Tag < ApplicationRecord
 
   def all_children
     Rails.cache.fetch "tags/#{id}/all_children" do
-      query = File.read(Rails.root.join('db/scripts/tag_children.sql'))
+      query = Rails.cache.persistent('tag_children_sql')
       query = query.gsub('$ParentId', id.to_s)
       ActiveRecord::Base.connection.execute(query).to_a.map(&:first)
     end
